@@ -27,6 +27,15 @@ public class Livre implements Serializable{
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY)
 	private Collection<Pret> prets; 
 	
+	
+	
+	public Livre(String titre, String auteur, LivreStatut livreStatut) {
+		super();
+		this.titre = titre;
+		this.auteur = auteur;
+		this.livreStatut = livreStatut;
+	}
+
 	public Livre(String titre, String auteur, LivreStatut livreStatut, User user) {
 		super();
 		this.titre = titre;

@@ -1,7 +1,8 @@
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,14 +11,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+
 @Entity
 public class Pret implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long numPret;
-	private Date datePret;
-	private Date dateRetour;
+	private LocalDate datePret;
+	private LocalDate dateRetour;
 	private PretStatut pretStatut;
 	@ManyToOne()
 	@JoinColumn(name="USER")
@@ -25,11 +27,13 @@ public class Pret implements Serializable{
 	@ManyToOne()
 	@JoinColumn(name="LIVRE")
 	private Livre livre;
+	
 	public Pret() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Pret(Date datePret, Date dateRetour, PretStatut pretStatut, User user, Livre livre) {
+
+	public Pret(LocalDate datePret, LocalDate dateRetour, PretStatut pretStatut, User user, Livre livre) {
 		super();
 		this.datePret = datePret;
 		this.dateRetour = dateRetour;
@@ -37,7 +41,7 @@ public class Pret implements Serializable{
 		this.user = user;
 		this.livre = livre;
 	}
-	public Pret(Long numPret, Date datePret, Date dateRetour, PretStatut pretStatut, User user, Livre livre) {
+	public Pret(Long numPret, LocalDate datePret, LocalDate dateRetour, PretStatut pretStatut, User user, Livre livre) {
 		super();
 		this.numPret = numPret;
 		this.datePret = datePret;
@@ -52,16 +56,16 @@ public class Pret implements Serializable{
 	public void setNumPret(Long numPret) {
 		this.numPret = numPret;
 	}
-	public Date getDatePret() {
+	public LocalDate getDatePret() {
 		return datePret;
 	}
-	public void setDatePret(Date datePret) {
+	public void setDatePret(LocalDate datePret) {
 		this.datePret = datePret;
 	}
-	public Date getDateRetour() {
+	public LocalDate getDateRetour() {
 		return dateRetour;
 	}
-	public void setDateRetour(Date dateRetour) {
+	public void setDateRetour(LocalDate dateRetour) {
 		this.dateRetour = dateRetour;
 	}
 	public PretStatut getPretStatut() {
