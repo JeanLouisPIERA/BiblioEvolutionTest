@@ -9,15 +9,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 @Entity
 public class User implements Serializable {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE)
-	private Long numUser;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	private String username;
 	private String password;
+	@Transient
+	private String passwordConfirm;
 	private String adresseMail;
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	Collection<Livre> livres;
@@ -36,23 +39,24 @@ public class User implements Serializable {
 		this.adresseMail = adresseMail;
 	}
 
-	public User(Long numUser, String username, String password, String adresseMail, Collection<Livre> livres,
-			Collection<Pret> prets) {
+	public User(Long id, String username, String password, String passwordConfirm, String adresseMail,
+			Collection<Livre> livres, Collection<Pret> prets) {
 		super();
-		this.numUser = numUser;
+		this.id = id;
 		this.username = username;
 		this.password = password;
+		this.passwordConfirm = passwordConfirm;
 		this.adresseMail = adresseMail;
 		this.livres = livres;
 		this.prets = prets;
 	}
 
-	public Long getNumUser() {
-		return numUser;
+	public Long getId() {
+		return id;
 	}
 
-	public void setNumUser(Long numUser) {
-		this.numUser = numUser;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -69,6 +73,14 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
 	}
 
 	public String getAdresseMail() {
@@ -94,6 +106,8 @@ public class User implements Serializable {
 	public void setPrets(Collection<Pret> prets) {
 		this.prets = prets;
 	}
+	
+	
 	
 	
 

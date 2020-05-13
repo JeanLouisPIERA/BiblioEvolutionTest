@@ -2,9 +2,10 @@ package biblioWebServiceRest.entities;
 
 public enum PretStatut {
 	
-	ENCOURS("ENCOURS", "En cours"),
-	ECHU("ECHU", "Echu"),
-	PROLONGE("PROLONGE", "PROLONGE");
+	ENCOURS("ENCOURS", "Prêt en cours"),
+	ECHU("ECHU", "Prêt échu"),
+	PROLONGE("PROLONGE", "Prêt prolongé"), 
+	CLOTURE("CLOTURE", "Livre restitué");
 	
 	 private String code;
 	  private String text;
@@ -47,6 +48,8 @@ public enum PretStatut {
 			return"Pret échu";
 		}else if (this==PROLONGE) {
 			return"Pret prolongé";
+		}else if (this==CLOTURE) {
+			return"Livre restitué";
 		}
 		return super.toString();
 		
