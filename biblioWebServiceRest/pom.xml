@@ -5,8 +5,8 @@
     <artifactId>Biblio</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>webServiceRest</artifactId>
+  <artifactId>biblioWebServiceRest</artifactId>
   <packaging>war</packaging>
-  <name>webServiceRest</name>
-  <description>web service consommable par un client HTTP fixe ou mobile selon le protocole REST </description>
+  <name>biblioWebServiceRest</name>
+  <description>web service consommable par un client HTTP fixe ou mobile selon le protocole REST</description>
 </project>

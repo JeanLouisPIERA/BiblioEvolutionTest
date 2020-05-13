@@ -77,4 +77,8 @@
 		</plugins>
 	</build>
 
+	<modules>
+		<module>biblioWebAppli</module>
+		<module>biblioWebServiceRest</module>
+	</modules>
 </project>
