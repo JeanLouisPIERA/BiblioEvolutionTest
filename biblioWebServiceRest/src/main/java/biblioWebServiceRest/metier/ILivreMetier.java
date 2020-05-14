@@ -15,7 +15,7 @@ public interface ILivreMetier {
 /*
  * Méthode pour la Lecture de l'enregistrement d'un Livre
  */
-	Livre readLivre(Livre livre);
+	Livre readLivre(long numLivre);
 
 
 /*

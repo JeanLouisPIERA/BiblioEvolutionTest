@@ -8,7 +8,7 @@ public enum PretStatut {
 	CLOTURE("CLOTURE", "Livre restitué");
 	
 	 private String code;
-	  private String text;
+	 private String text;
 	  
 	private PretStatut(String code, String text) {
 		this.code = code;
@@ -16,14 +16,14 @@ public enum PretStatut {
 	}
 	
 	public static PretStatut getPretStatutByCode(String code) {
-		for (PretStatut pretStatut : PretStatut.values()) {
-			if(pretStatut.code.equals(code)){
+		for(PretStatut pretStatut : PretStatut.values()) {
+			if(pretStatut.code.equals(code)) {
 				return pretStatut;
 			}
 		}
 		return null;
 	}
-
+	
 	public String getCode() {
 		return code;
 	}
@@ -43,20 +43,15 @@ public enum PretStatut {
 	@Override
 	public String toString() {
 		if(this==ENCOURS) {
-			return"Pret en-cours";
-		}else if (this==ECHU) {
-			return"Pret échu";
-		}else if (this==PROLONGE) {
-			return"Pret prolongé";
-		}else if (this==CLOTURE) {
-			return"Livre restitué";
+			return "Pret en-cours";
+		}else if(this==ECHU) {
+			return "Pret échu";
+		}else if(this==PROLONGE) {
+			return "Pret prolongé";
+		}else if(this==CLOTURE) {
+			return "Ouvrage restitué";
 		}
 		return super.toString();
-		
-		}
-	
-	  
-	  
-	  
-	
+	}
+
 }

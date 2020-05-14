@@ -1,12 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  
+  <artifactId>biblioWebServiceRest</artifactId>
+  <packaging>war</packaging>
+  <name>biblioWebServiceRest</name>
+  <description>web service consommable par un client HTTP fixe ou mobile selon le protocole REST</description>
+  
   <parent>
     <groupId>fr.jeanlouispiera</groupId>
     <artifactId>Biblio</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>biblioWebServiceRest</artifactId>
-  <packaging>war</packaging>
-  <name>biblioWebServiceRest</name>
-  <description>web service consommable par un client HTTP fixe ou mobile selon le protocole REST</description>
+  
+  
+  
+
+
+  
 </project>

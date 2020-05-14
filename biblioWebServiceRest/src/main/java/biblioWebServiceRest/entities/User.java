@@ -8,8 +8,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+
+
 
 @Entity
 public class User implements Serializable {
@@ -22,6 +25,8 @@ public class User implements Serializable {
 	@Transient
 	private String passwordConfirm;
 	private String adresseMail;
+	@ManyToOne
+    private Role role;
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	Collection<Livre> livres;
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
@@ -32,21 +37,35 @@ public class User implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public User(String username, String password, String adresseMail) {
+	public User(String username, String password, String passwordConfirm, String adresseMail,
+			Role role) {
+		super();
+		this.username = username;
+		this.password = password;
+		this.passwordConfirm = passwordConfirm;
+		this.adresseMail = adresseMail;
+		this.role = role;
+	}
+	
+	
+
+	public User(String username, String password, String adresseMail, Role role) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.adresseMail = adresseMail;
+		this.role = role;
 	}
 
 	public User(Long id, String username, String password, String passwordConfirm, String adresseMail,
-			Collection<Livre> livres, Collection<Pret> prets) {
+			Role role, Collection<Livre> livres, Collection<Pret> prets) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.passwordConfirm = passwordConfirm;
 		this.adresseMail = adresseMail;
+		this.role = role;
 		this.livres = livres;
 		this.prets = prets;
 	}
@@ -91,6 +110,14 @@ public class User implements Serializable {
 		this.adresseMail = adresseMail;
 	}
 
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
 	public Collection<Livre> getLivres() {
 		return livres;
 	}
@@ -106,6 +133,7 @@ public class User implements Serializable {
 	public void setPrets(Collection<Pret> prets) {
 		this.prets = prets;
 	}
+	
 	
 	
 	
