@@ -8,13 +8,16 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 
 
 @Entity
+@Table(name="utilisateur")
 public class User implements Serializable {
 	
 	@Id
@@ -26,9 +29,8 @@ public class User implements Serializable {
 	private String passwordConfirm;
 	private String adresseMail;
 	@ManyToOne
+	@JoinColumn(name="role_id")
     private Role role;
-	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
-	Collection<Livre> livres;
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	Collection<Pret> prets;
 	
@@ -36,6 +38,25 @@ public class User implements Serializable {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+
+	public User(String username, String adresseMail) {
+		super();
+		this.username = username;
+		this.adresseMail = adresseMail;
+	}
+
+
+
+	public User(String username, String adresseMail, Role role) {
+		super();
+		this.username = username;
+		this.adresseMail = adresseMail;
+		this.role = role;
+	}
+
+
 
 	public User(String username, String password, String passwordConfirm, String adresseMail,
 			Role role) {
@@ -57,8 +78,10 @@ public class User implements Serializable {
 		this.role = role;
 	}
 
-	public User(Long id, String username, String password, String passwordConfirm, String adresseMail,
-			Role role, Collection<Livre> livres, Collection<Pret> prets) {
+	
+
+	public User(Long id, String username, String password, String passwordConfirm, String adresseMail, Role role,
+			Collection<Pret> prets) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -66,7 +89,6 @@ public class User implements Serializable {
 		this.passwordConfirm = passwordConfirm;
 		this.adresseMail = adresseMail;
 		this.role = role;
-		this.livres = livres;
 		this.prets = prets;
 	}
 
@@ -118,13 +140,6 @@ public class User implements Serializable {
 		this.role = role;
 	}
 
-	public Collection<Livre> getLivres() {
-		return livres;
-	}
-
-	public void setLivres(Collection<Livre> livres) {
-		this.livres = livres;
-	}
 
 	public Collection<Pret> getPrets() {
 		return prets;

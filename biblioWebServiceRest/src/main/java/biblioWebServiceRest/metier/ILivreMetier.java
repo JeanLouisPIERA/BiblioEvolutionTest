@@ -11,10 +11,12 @@ import biblioWebServiceRest.entities.LivreStatut;
 
 public interface ILivreMetier {
 
-
-/*
- * Méthode pour la Lecture de l'enregistrement d'un Livre
- */
+	
+	/**
+	 * Méthode pour la Lecture de l'enregistrement d'un Livre
+	 * @param numLivre
+	 * @return
+	 */
 	Livre readLivre(long numLivre);
 
 

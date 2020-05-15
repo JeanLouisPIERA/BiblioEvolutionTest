@@ -66,8 +66,8 @@ public class LanceurDB implements CommandLineRunner {
 		userRepository.save(u3);
 		
 		Livre l1 = new Livre("La Légende des Siècles", "Victor Hugo", LivreStatut.DIS);
-		Livre l2 = new Livre("Guerre et Paix", "Léon Tolstoi", LivreStatut.NDIS, u1);
-		Livre l3 = new Livre("L'appel de la forêt", "Jack London", LivreStatut.NDIS, u2);
+		Livre l2 = new Livre("Guerre et Paix", "Léon Tolstoi", LivreStatut.NDIS);
+		Livre l3 = new Livre("L'appel de la forêt", "Jack London", LivreStatut.NDIS);
 		livreRepository.save(l1);
 		livreRepository.save(l2);
 		livreRepository.save(l3);

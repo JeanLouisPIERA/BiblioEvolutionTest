@@ -4,31 +4,30 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 
 
 @Entity
+@Table(name="livre")
 public class Livre implements Serializable{
-	@Id @GeneratedValue(strategy = GenerationType.TABLE)
+	@Id @GeneratedValue
 	private Long numLivre; 
 	private String titre; 
 	private String auteur; 
+	@Enumerated
 	private LivreStatut livreStatut;
-	@ManyToOne()
-	@JoinColumn(name="USER")
-	private User user;
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY)
 	private Collection<Pret> prets; 
 	
 	
-	
+
 	public Livre(String titre, String auteur, LivreStatut livreStatut) {
 		super();
 		this.titre = titre;
@@ -36,27 +35,19 @@ public class Livre implements Serializable{
 		this.livreStatut = livreStatut;
 	}
 
-	public Livre(String titre, String auteur, LivreStatut livreStatut, User user) {
-		super();
-		this.titre = titre;
-		this.auteur = auteur;
-		this.livreStatut = livreStatut;
-		this.user = user;
-	}
-
 	public Livre() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Livre(Long numLivre, String titre, String auteur, LivreStatut livreStatut, User user,
-			Collection<Pret> prets) {
+	
+
+	public Livre(Long numLivre, String titre, String auteur, LivreStatut livreStatut, Collection<Pret> prets) {
 		super();
 		this.numLivre = numLivre;
 		this.titre = titre;
 		this.auteur = auteur;
 		this.livreStatut = livreStatut;
-		this.user = user;
 		this.prets = prets;
 	}
 
@@ -92,13 +83,6 @@ public class Livre implements Serializable{
 		this.livreStatut = livreStatut;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 	public Collection<Pret> getPrets() {
 		return prets;

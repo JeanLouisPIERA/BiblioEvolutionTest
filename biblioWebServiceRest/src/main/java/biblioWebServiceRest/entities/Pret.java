@@ -3,35 +3,52 @@ package biblioWebServiceRest.entities;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 
 @Entity
+@Table(name="pret")
 public class Pret implements Serializable{
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE)
+	@GeneratedValue
 	private Long numPret;
 	private LocalDate datePret;
 	private LocalDate dateRetour;
+	@Enumerated
 	private PretStatut pretStatut;
-	@ManyToOne()
-	@JoinColumn(name="USER")
+	@ManyToOne
+	@JoinColumn(name="user_id")
 	private User user;
-	@ManyToOne()
-	@JoinColumn(name="LIVRE")
+	@ManyToOne
+	@JoinColumn(name="livre_num_livre")
 	private Livre livre;
 	
 	public Pret() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+
+	public Pret(LocalDate datePret, LocalDate dateRetour, PretStatut pretStatut) {
+		super();
+		this.datePret = datePret;
+		this.dateRetour = dateRetour;
+		this.pretStatut = pretStatut;
+	}
+
+
 
 	public Pret(LocalDate datePret, LocalDate dateRetour, PretStatut pretStatut, User user, Livre livre) {
 		super();
