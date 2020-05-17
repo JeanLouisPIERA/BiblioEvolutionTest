@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -21,33 +23,41 @@ public class Livre implements Serializable{
 	private Long numLivre; 
 	private String titre; 
 	private String auteur; 
+	private Integer nbExemplaires;
+	private Integer nbExemplairesDisponibles;
 	@Enumerated
 	private LivreStatut livreStatut;
+	@ManyToOne
+	@JoinColumn(name="num_categorie")
+	private Categorie categorie;
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY)
-	private Collection<Pret> prets; 
+	private Collection<Pret> prets;
 	
-	
+	public Livre() {
+		super();
+	}
 
-	public Livre(String titre, String auteur, LivreStatut livreStatut) {
+	public Livre(String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
+			LivreStatut livreStatut, Categorie categorie) {
 		super();
 		this.titre = titre;
 		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 		this.livreStatut = livreStatut;
+		this.categorie = categorie;
 	}
 
-	public Livre() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	
-
-	public Livre(Long numLivre, String titre, String auteur, LivreStatut livreStatut, Collection<Pret> prets) {
+	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
+			LivreStatut livreStatut, Categorie categorie, Collection<Pret> prets) {
 		super();
 		this.numLivre = numLivre;
 		this.titre = titre;
 		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 		this.livreStatut = livreStatut;
+		this.categorie = categorie;
 		this.prets = prets;
 	}
 
@@ -75,6 +85,22 @@ public class Livre implements Serializable{
 		this.auteur = auteur;
 	}
 
+	public Integer getNbExemplaires() {
+		return nbExemplaires;
+	}
+
+	public void setNbExemplaires(Integer nbExemplaires) {
+		this.nbExemplaires = nbExemplaires;
+	}
+
+	public Integer getNbExemplairesDisponibles() {
+		return nbExemplairesDisponibles;
+	}
+
+	public void setNbExemplairesDisponibles(Integer nbExemplairesDisponibles) {
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+	}
+
 	public LivreStatut getLivreStatut() {
 		return livreStatut;
 	}
@@ -83,6 +109,13 @@ public class Livre implements Serializable{
 		this.livreStatut = livreStatut;
 	}
 
+	public Categorie getCategorie() {
+		return categorie;
+	}
+
+	public void setCategorie(Categorie categorie) {
+		this.categorie = categorie;
+	}
 
 	public Collection<Pret> getPrets() {
 		return prets;
@@ -91,14 +124,6 @@ public class Livre implements Serializable{
 	public void setPrets(Collection<Pret> prets) {
 		this.prets = prets;
 	}
-
-	
-	
-	
-	
-	
-	
-	
 	
 
 }

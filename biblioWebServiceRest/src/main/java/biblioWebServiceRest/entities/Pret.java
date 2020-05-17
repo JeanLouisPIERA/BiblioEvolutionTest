@@ -24,7 +24,8 @@ public class Pret implements Serializable{
 	@GeneratedValue
 	private Long numPret;
 	private LocalDate datePret;
-	private LocalDate dateRetour;
+	private LocalDate dateRetourPrevue;
+	private LocalDate dateRetourEffectif; 
 	@Enumerated
 	private PretStatut pretStatut;
 	@ManyToOne
@@ -41,68 +42,94 @@ public class Pret implements Serializable{
 	
 	
 
-	public Pret(LocalDate datePret, LocalDate dateRetour, PretStatut pretStatut) {
+	
+
+
+
+	public Pret(LocalDate datePret, LocalDate dateRetourPrevue, PretStatut pretStatut, User user, Livre livre) {
 		super();
 		this.datePret = datePret;
-		this.dateRetour = dateRetour;
-		this.pretStatut = pretStatut;
-	}
-
-
-
-	public Pret(LocalDate datePret, LocalDate dateRetour, PretStatut pretStatut, User user, Livre livre) {
-		super();
-		this.datePret = datePret;
-		this.dateRetour = dateRetour;
+		this.dateRetourPrevue = dateRetourPrevue;
 		this.pretStatut = pretStatut;
 		this.user = user;
 		this.livre = livre;
 	}
-	public Pret(Long numPret, LocalDate datePret, LocalDate dateRetour, PretStatut pretStatut, User user, Livre livre) {
+
+
+
+
+
+
+
+	public Pret(LocalDate datePret, LocalDate dateRetourPrevue, LocalDate dateRetourEffectif, PretStatut pretStatut,
+			User user, Livre livre) {
 		super();
-		this.numPret = numPret;
 		this.datePret = datePret;
-		this.dateRetour = dateRetour;
+		this.dateRetourPrevue = dateRetourPrevue;
+		this.dateRetourEffectif = dateRetourEffectif;
 		this.pretStatut = pretStatut;
 		this.user = user;
 		this.livre = livre;
 	}
+
 	public Long getNumPret() {
 		return numPret;
 	}
+
 	public void setNumPret(Long numPret) {
 		this.numPret = numPret;
 	}
+
 	public LocalDate getDatePret() {
 		return datePret;
 	}
+
 	public void setDatePret(LocalDate datePret) {
 		this.datePret = datePret;
 	}
-	public LocalDate getDateRetour() {
-		return dateRetour;
+
+	public LocalDate getDateRetourPrevue() {
+		return dateRetourPrevue;
 	}
-	public void setDateRetour(LocalDate dateRetour) {
-		this.dateRetour = dateRetour;
+
+	public void setDateRetourPrevue(LocalDate dateRetourPrevue) {
+		this.dateRetourPrevue = dateRetourPrevue;
 	}
+
+	public LocalDate getDateRetourEffectif() {
+		return dateRetourEffectif;
+	}
+
+	public void setDateRetourEffectif(LocalDate dateRetourEffectif) {
+		this.dateRetourEffectif = dateRetourEffectif;
+	}
+
 	public PretStatut getPretStatut() {
 		return pretStatut;
 	}
+
 	public void setPretStatut(PretStatut pretStatut) {
 		this.pretStatut = pretStatut;
 	}
+
 	public User getUser() {
 		return user;
 	}
+
 	public void setUser(User user) {
 		this.user = user;
 	}
+
 	public Livre getLivre() {
 		return livre;
 	}
+
 	public void setLivre(Livre livre) {
 		this.livre = livre;
 	}
+	
+	
+
 	
 	
 

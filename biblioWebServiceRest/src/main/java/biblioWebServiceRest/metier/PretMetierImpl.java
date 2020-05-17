@@ -36,8 +36,8 @@ public class PretMetierImpl implements IPretMetier {
             input = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");
             prop.load(input);
             int dureePret = Integer.parseInt(prop.getProperty("dureePretByDefault"));    
-            LocalDate pretDateRetour = pret.getDatePret().plusDays(dureePret);
-            pret.setDateRetour(pretDateRetour);
+            LocalDate pretDateRetourPrevue = pret.getDatePret().plusDays(dureePret);
+            pret.setDateRetourPrevue(pretDateRetourPrevue);
         } catch (final IOException ex) { 
             if (input != null) {
                 try {
@@ -65,8 +65,8 @@ public class PretMetierImpl implements IPretMetier {
             input = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");
             prop.load(input);
             int dureeProlongation = Integer.parseInt(prop.getProperty("dureeProlongationByDefault"));    
-            LocalDate pretNouvelleDateRetour = pret.getDateRetour().plusDays(dureeProlongation);
-            pret.setDateRetour(pretNouvelleDateRetour);
+            LocalDate pretNouvelleDateRetour = pret.getDateRetourPrevue().plusDays(dureeProlongation);
+            pret.setDateRetourPrevue(pretNouvelleDateRetour);
         } catch (final IOException ex) { 
             if (input != null) {
                 try {
@@ -180,14 +180,14 @@ public class PretMetierImpl implements IPretMetier {
 		
 		List<Pret> lenc = displayPretsByStatutEncours(pretStatut);
 		for(Pret pret : lenc ) {
-			if(pret.getDateRetour().isBefore(LocalDate.now())) {
+			if(pret.getDateRetourEffectif().isBefore(LocalDate.now())) {
 			pret.setPretStatut(PretStatut.ECHU); 
 			}
 		}
 		
 		List<Pret> lprol = displayPretsByStatutProlonge(pretStatut);
 		for(Pret pret : lprol ) {
-			if(pret.getDateRetour().isBefore(LocalDate.now())) {
+			if(pret.getDateRetourEffectif().isBefore(LocalDate.now())) {
 			pret.setPretStatut(PretStatut.ECHU); 
 			}
 		}
