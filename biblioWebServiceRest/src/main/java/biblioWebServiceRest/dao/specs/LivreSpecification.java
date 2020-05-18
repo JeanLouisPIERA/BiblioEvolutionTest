@@ -74,5 +74,5 @@ public class LivreSpecification implements Specification<Livre> {
         return builder.and(predicates.toArray(new Predicate[0]));
     }
 
-
+    
 }

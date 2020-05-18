@@ -26,6 +26,7 @@ import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Role;
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
+import biblioWebServiceRest.metier.ILivreMetier;
 
 
 /*
@@ -37,6 +38,8 @@ public class LanceurDB implements CommandLineRunner {
 
 	@Autowired
 	private ILivreRepository livreRepository;
+	@Autowired
+	private ILivreMetier livreMetier;
 	@Autowired
 	private IPretRepository pretRepository;
 	@Autowired
@@ -119,6 +122,7 @@ public class LanceurDB implements CommandLineRunner {
                     new Livre("Asterix Le Gaulois", "Uderzo et Goscinny", 10, 10,LivreStatut.NDIS, categorie8),
                     new Livre("Metamorphose des cloportes", "Alphonse Boudard", 1, 1, LivreStatut.DIS, categorie9),
                     new Livre("San Antonio a de la memoire", "Frédéric Dard", 3, 1,LivreStatut.DIS, categorie9),
+                    new Livre("San Antonio fume les cloportes", "Frédéric Dard", 3, 1,LivreStatut.DIS, categorie9),
                     new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,LivreStatut.NDIS, categorie9),
                     new Livre("Tintin et le mystèrez de l'oreille cassée", "Hergé", 6,0, LivreStatut.NDIS, categorie8),
                     new Livre("Alcools", "Apollinaire", 1, 1,LivreStatut.DIS, categorie6)
@@ -176,7 +180,25 @@ public class LanceurDB implements CommandLineRunner {
             for (Livre livre : lsTitreNonCloportesList) {
             	System.out.println(livre.getTitre());
             }
-           
+            
+            List<Livre> Test1Metier1List = livreMetier.searchByTitreAndAuteurAndCategorie("cloportes", "Alphonse Boudard", categorie9);
+            System.out.println("***Livres dont le titre contient le mot cloportes, écrits par Alphonse Boudard et de la catégorie Polar***");
+            for (Livre livre : Test1Metier1List) {
+            	System.out.println(livre.getTitre());
+            }
+            
+            List<Livre> Test2Metier1List = livreMetier.searchByTitreAndAuteurAndCategorie("", "Frédéric Dard", categorie9);
+            System.out.println("***Livres écrits par Frédéric Dard et de la catégorie Polar***");
+            for (Livre livre : Test2Metier1List) {
+            	System.out.println(livre.getTitre());
+            }
+            
+            List<Livre> Test3Metier1List = livreMetier.searchByTitreAndAuteurAndCategorie("cloportes", "", categorie9);
+            System.out.println("***Livres dont le titre contient le mot cloportes et de la catégorie Polar***");
+            for (Livre livre : Test3Metier1List) {
+            	System.out.println(livre.getTitre());
+            }
+            
         };
     }
 }
