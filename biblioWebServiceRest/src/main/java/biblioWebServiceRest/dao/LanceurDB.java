@@ -20,13 +20,15 @@ import biblioWebServiceRest.dao.specs.SearchCriteria;
 import biblioWebServiceRest.dao.specs.SearchOperation;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
-import biblioWebServiceRest.entities.LivreStatut;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Role;
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
-import biblioWebServiceRest.metier.ILivreMetier;
+
+
+
+
 
 
 /*
@@ -38,8 +40,6 @@ public class LanceurDB implements CommandLineRunner {
 
 	@Autowired
 	private ILivreRepository livreRepository;
-	@Autowired
-	private ILivreMetier livreMetier;
 	@Autowired
 	private IPretRepository pretRepository;
 	@Autowired
@@ -83,9 +83,10 @@ public class LanceurDB implements CommandLineRunner {
 		categorieRepository.save(categorie2);
 		categorieRepository.save(categorie3);
 		
-		Livre livre1 = new Livre("Le Pere Goriot", "Honore de Balzac", 1,1, LivreStatut.DIS,categorie1);
-		Livre livre2 = new Livre("Comment je vois le monde", "Albert Einstein", 2,0, LivreStatut.NDIS, categorie2);
-		Livre livre3 = new Livre("Mathématiques au collège", "Collectif", 3, 0,LivreStatut.NDIS, categorie3);
+		
+		Livre livre1 = new Livre("Le Pere Goriot", "Honore de Balzac", 1,1,categorie1);
+		Livre livre2 = new Livre("Comment je vois le monde", "Albert Einstein", 2,0, categorie2);
+		Livre livre3 = new Livre("Mathématiques au collège", "Collectif", 3,2, categorie3);
 		livreRepository.save(livre1);
 		livreRepository.save(livre2);
 		livreRepository.save(livre3);
@@ -96,11 +97,12 @@ public class LanceurDB implements CommandLineRunner {
 		
 	}
 	
+	
 	@Bean
     public CommandLineRunner specificationsDemo(ILivreRepository livreRepository, ICategorieRepository categorieRepository) {
         return args -> {
 
-            // creation de nouveaux livres
+            // create new movies
         	
         	Categorie categorie4 = new Categorie("Theatre");
         	Categorie categorie5 = new Categorie("Memoire");
@@ -115,17 +117,17 @@ public class LanceurDB implements CommandLineRunner {
     		categorieRepository.save(categorie8);
     		categorieRepository.save(categorie9);
             livreRepository.saveAll(Arrays.asList(
-                    new Livre("La guerre de Troie n'aura pas lieu", "Jean Anouilh", 1, 1,LivreStatut.DIS, categorie4),
-                    new Livre("Memoire d'un clown", "Achille Zavatta", 2, 0, LivreStatut.NDIS, categorie5),
-                    new Livre("La Legende des Siecles", "Victor Hugo", 3, 2, LivreStatut.DIS, categorie6),
-                    new Livre("Le Seigneur de l'Anneau", "JRR Tolkien", 5, 5, LivreStatut.NDIS,categorie7),
-                    new Livre("Asterix Le Gaulois", "Uderzo et Goscinny", 10, 10,LivreStatut.NDIS, categorie8),
-                    new Livre("Metamorphose des cloportes", "Alphonse Boudard", 1, 1, LivreStatut.DIS, categorie9),
-                    new Livre("San Antonio a de la memoire", "Frédéric Dard", 3, 1,LivreStatut.DIS, categorie9),
-                    new Livre("San Antonio fume les cloportes", "Frédéric Dard", 3, 1,LivreStatut.DIS, categorie9),
-                    new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,LivreStatut.NDIS, categorie9),
-                    new Livre("Tintin et le mystèrez de l'oreille cassée", "Hergé", 6,0, LivreStatut.NDIS, categorie8),
-                    new Livre("Alcools", "Apollinaire", 1, 1,LivreStatut.DIS, categorie6)
+                    new Livre("La guerre de Troie n'aura pas lieu", "Jean Anouilh", 1, 1, categorie4),
+                    new Livre("Memoire d'un clown", "Achille Zavatta", 2, 0, categorie5),
+                    new Livre("La Legende des Siecles", "Victor Hugo", 3, 2, categorie6),
+                    new Livre("Le Seigneur de l'Anneau", "JRR Tolkien", 5, 5, categorie7),
+                    new Livre("Asterix Le Gaulois", "Uderzo et Goscinny", 10, 10,categorie8),
+                    new Livre("Metamorphose des cloportes", "Alphonse Boudard", 1, 1, categorie9),
+                    new Livre("San Antonio a de la memoire", "Frederic Dard", 3, 1,categorie9),
+                    new Livre("San Antonio fume les cloportes", "Frederic Dard", 1, 0,categorie9),
+                    new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,categorie9),
+                    new Livre("Tintin et le mystèrez de l'oreille cassée", "Hergé", 6,0, categorie8),
+                    new Livre("Alcools", "Apollinaire", 1, 1,categorie6)
                     
             ));
             
@@ -138,7 +140,7 @@ public class LanceurDB implements CommandLineRunner {
             for(Livre livre : lsCategorieList) {
             	System.out.println(livre.getTitre());
             }
-          
+           // lsCategorieList.forEach(System.out::println);
 
             // search livres by `titre` and `nbExemplaires` >
             LivreSpecification lsTitreNbExemplaires = new LivreSpecification();
@@ -149,7 +151,7 @@ public class LanceurDB implements CommandLineRunner {
             for(Livre livre : lsTitreNbExemplairesList) {
             	System.out.println(livre.getTitre());
             }
-           
+            //lsTitreNbExemplairesList.forEach(System.out::println);
             
          // search livres by `titre` and `nbExemplairesDisponibles` >
             LivreSpecification lsTitreNbExemplairesDisponibles = new LivreSpecification();
@@ -160,7 +162,8 @@ public class LanceurDB implements CommandLineRunner {
             for(Livre livre : lsTitreNbExemplairesDisponiblesList) {
             	System.out.println(livre.getTitre());
             }
-           
+            //lsTitreNbExemplairesList.forEach(System.out::println);
+
             // search livres by nbExemplaires >= 3 and sort by `titre`
             LivreSpecification lsNbExemplairesSup3 = new LivreSpecification();
             lsNbExemplairesSup3.add(new SearchCriteria("nbExemplaires", 3, SearchOperation.GREATER_THAN_EQUAL));
@@ -169,7 +172,7 @@ public class LanceurDB implements CommandLineRunner {
             for (Livre livre : lsNbExemplairesSup3List) {
             	System.out.println(livre.getTitre());
             }
-            
+            //lsNbExemplairesList.forEach.(System.out::println);
 
             // search livres by `titre` <> 'cloportes' and paginate results
             LivreSpecification lsTitreNonCloportes = new LivreSpecification();
@@ -180,25 +183,8 @@ public class LanceurDB implements CommandLineRunner {
             for (Livre livre : lsTitreNonCloportesList) {
             	System.out.println(livre.getTitre());
             }
-            
-            List<Livre> Test1Metier1List = livreMetier.searchByTitreAndAuteurAndCategorie("cloportes", "Alphonse Boudard", categorie9);
-            System.out.println("***Livres dont le titre contient le mot cloportes, écrits par Alphonse Boudard et de la catégorie Polar***");
-            for (Livre livre : Test1Metier1List) {
-            	System.out.println(livre.getTitre());
-            }
-            
-            List<Livre> Test2Metier1List = livreMetier.searchByTitreAndAuteurAndCategorie("", "Frédéric Dard", categorie9);
-            System.out.println("***Livres écrits par Frédéric Dard et de la catégorie Polar***");
-            for (Livre livre : Test2Metier1List) {
-            	System.out.println(livre.getTitre());
-            }
-            
-            List<Livre> Test3Metier1List = livreMetier.searchByTitreAndAuteurAndCategorie("cloportes", "", categorie9);
-            System.out.println("***Livres dont le titre contient le mot cloportes et de la catégorie Polar***");
-            for (Livre livre : Test3Metier1List) {
-            	System.out.println(livre.getTitre());
-            }
-            
+            //lsTitreList.forEach(System.out::println);
         };
     }
+
 }

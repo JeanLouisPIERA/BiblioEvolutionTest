@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="categorie")
 public class Categorie implements Serializable{
@@ -17,6 +19,7 @@ public class Categorie implements Serializable{
 	@GeneratedValue
 	private Long numCategorie;
 	private String nomCategorie;
+	@JsonIgnore
 	@OneToMany(mappedBy="categorie", fetch=FetchType.LAZY)
 	private Collection<Livre> livres;
 	

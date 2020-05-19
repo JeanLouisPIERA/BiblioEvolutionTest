@@ -14,6 +14,8 @@ import biblioWebServiceRest.entities.Livre;
 
 
 
+
+
 public class LivreSpecification implements Specification<Livre> {
 	
 	private List<SearchCriteria> list;

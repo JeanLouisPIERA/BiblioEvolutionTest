@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @Entity
@@ -25,11 +27,10 @@ public class Livre implements Serializable{
 	private String auteur; 
 	private Integer nbExemplaires;
 	private Integer nbExemplairesDisponibles;
-	@Enumerated
-	private LivreStatut livreStatut;
 	@ManyToOne
 	@JoinColumn(name="num_categorie")
 	private Categorie categorie;
+	@JsonIgnore
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY)
 	private Collection<Pret> prets;
 	
@@ -38,25 +39,23 @@ public class Livre implements Serializable{
 	}
 
 	public Livre(String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
-			LivreStatut livreStatut, Categorie categorie) {
+			Categorie categorie) {
 		super();
 		this.titre = titre;
 		this.auteur = auteur;
 		this.nbExemplaires = nbExemplaires;
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
-		this.livreStatut = livreStatut;
 		this.categorie = categorie;
 	}
 
 	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
-			LivreStatut livreStatut, Categorie categorie, Collection<Pret> prets) {
+			Categorie categorie, Collection<Pret> prets) {
 		super();
 		this.numLivre = numLivre;
 		this.titre = titre;
 		this.auteur = auteur;
 		this.nbExemplaires = nbExemplaires;
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
-		this.livreStatut = livreStatut;
 		this.categorie = categorie;
 		this.prets = prets;
 	}
@@ -101,14 +100,6 @@ public class Livre implements Serializable{
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 	}
 
-	public LivreStatut getLivreStatut() {
-		return livreStatut;
-	}
-
-	public void setLivreStatut(LivreStatut livreStatut) {
-		this.livreStatut = livreStatut;
-	}
-
 	public Categorie getCategorie() {
 		return categorie;
 	}
@@ -124,6 +115,8 @@ public class Livre implements Serializable{
 	public void setPrets(Collection<Pret> prets) {
 		this.prets = prets;
 	}
+
+	
 	
 
 }

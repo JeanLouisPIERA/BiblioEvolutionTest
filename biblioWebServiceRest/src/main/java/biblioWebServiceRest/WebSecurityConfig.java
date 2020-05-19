@@ -41,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/resources/**", "/registration", "/login", "/login?logout", "/", "/css/**", "/webjars/**", "/bootstrap/**").permitAll()
+                .antMatchers("/resources/**", "/livres/**","/registration", "/login", "/login?logout", "/", "/css/**", "/webjars/**", "/bootstrap/**").permitAll()
                 .antMatchers("/user/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
                 .antMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.toString())
                 .anyRequest().authenticated()
