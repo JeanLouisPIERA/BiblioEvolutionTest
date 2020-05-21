@@ -3,9 +3,8 @@ package biblioWebServiceRest.metier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
-import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.transaction.Transactional;
@@ -15,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
+import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
@@ -27,9 +28,34 @@ public class PretMetierImpl implements IPretMetier {
 	
 	@Autowired
 	private IPretRepository pretRepository;
+	@Autowired
+	private ILivreRepository livreRepository;
+	@Autowired
+	private IUserRepository userRepository;
 
-	@Override
-	public Pret createPret(Pret pret) {
+	/**
+	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
+	 * Messages d'erreurs en cas de titre ou d'emprunteur inexistants ou d'exemplaire non disponible
+	 * La date de prêt est la date système
+	 * La date de fin de prêt est calculé automatiquement à partir des paramètres saisis dans les properties 
+	 * @param pret
+	 * @return
+	 */
+	 @Override
+	public Boolean createPret(String titre, String username) {
+		Pret pret = new Pret();
+		LocalDate datePret = LocalDate.now();
+		pret.setDatePret(datePret);
+		if(!Optional.ofNullable(livreRepository.findByTitre(titre)).isPresent()) throw new RuntimeException("Le titre saisi est inexistant");
+		Livre livre = livreRepository.findByTitre(titre);
+		titre = livre.getTitre();
+		if(livre.getNbExemplairesDisponibles()==0) throw new RuntimeException("Il n'y a plus d'exemplaire disponible");
+		pret.setLivre(livreRepository.findByTitre(titre));
+		livre.setNbExemplairesDisponibles(livre.getNbExemplairesDisponibles()-1);
+		if(!Optional.ofNullable(userRepository.findByUsername(username)).isPresent()) throw new RuntimeException("Il n'existe aucun abonné de ce nom");
+		User user = userRepository.findByUsername(username);
+		username = user.getUsername();
+		pret.setUser(userRepository.findByUsername(username));
 		final Properties prop = new Properties();
 		InputStream input = null;
 		try {
@@ -47,184 +73,84 @@ public class PretMetierImpl implements IPretMetier {
             }
         }
 		pret.setPretStatut(PretStatut.ENCOURS);
-		return pretRepository.save(pret);
+		pretRepository.save(pret);
+		return true;
 	}
+	 
 
+	/**
+	 * @param numPret
+	 * @return
+	 */
 	@Override
 	public Pret readPret(long numPret) {
-		Pret p = pretRepository.findById(numPret).get();
-		if(p==null) throw new RuntimeException("Enregistrement Pret introuvable");
-		return p;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/**
+	 * @param pret
+	 * @return
+	 */
 	@Override
 	public Pret prolongerPret(Pret pret) {
-		final Properties prop = new Properties();
-		InputStream input = null;
-		try {
-            input = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");
-            prop.load(input);
-            int dureeProlongation = Integer.parseInt(prop.getProperty("dureeProlongationByDefault"));    
-            LocalDate pretNouvelleDateRetour = pret.getDateRetourPrevue().plusDays(dureeProlongation);
-            pret.setDateRetourPrevue(pretNouvelleDateRetour);
-        } catch (final IOException ex) { 
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (final IOException e) {
-                }
-            }
-        }
-		pret.setPretStatut(PretStatut.PROLONGE);
-		return pretRepository.save(pret);
-		
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/**
+	 * @param pret
+	 * @return
+	 */
 	@Override
 	public Pret cloturerPret(Pret pret) {
-		pret.setPretStatut(PretStatut.CLOTURE);
-		return pretRepository.save(pret);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/**
+	 * @return
+	 */
 	@Override
-	public List<Pret> displayAllPrets() {
-		List<Pret> l = pretRepository.findAll();
-		return l;
+	public List<Pret> searchAllPrets() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/**
+	 * @param pageable
+	 * @return
+	 */
 	@Override
-	public Page<Pret> displayAllPrets(Pageable pageable) {
-		Page<Pret> p = pretRepository.findAll(pageable);
-		return p;
+	public Page<Pret> searchAllPrets(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/**
+	 * @param dateRetour
+	 * @param pretStatut
+	 * @param user
+	 * @return
+	 */
 	@Override
-	public List<Pret> displayPretsByStatutEncours(PretStatut pretStatut) {
-		List<Pret> l = pretRepository.findByPretStatut(PretStatut.ENCOURS);
-		return l;
+	public List<Pret> searchPretsByStatutEncoursAndByUser(LocalDate dateRetour, PretStatut pretStatut, User user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/**
+	 * @param dateRetour
+	 * @param pretStatut
+	 * @param user
+	 * @param pageable
+	 * @return
+	 */
 	@Override
-	public Page<Pret> displayPretsByStatutEncours(PretStatut pretStatut, Pageable pageable) {
-		Page<Pret> p = pretRepository.findByPretStatut(PretStatut.ENCOURS, pageable); 
-		return p;
-	}
-
-	@Override
-	public List<Pret> displayPretsByStatutEncoursAndByUser(PretStatut pretStatut, User user) {
-		List<Pret> l = pretRepository.findByPretStatutAndUser(PretStatut.ENCOURS, user);
-		return l;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutEncoursAndByUser(PretStatut pretStatut, User user, Pageable pageable) {
-		Page<Pret> p = pretRepository.findByPretStatutAndUser(PretStatut.ENCOURS, user, pageable);
-		return p;
-	}
-
-	@Override
-	public List<Pret> displayPretsByStatutEncoursAndByTitreLivre(PretStatut pretStatut, Livre livre) {
-		List<Pret> l = pretRepository.findByPretStatutAndLivre(PretStatut.ENCOURS, livre);
-		return l;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutEncoursAndByTitreLivre(PretStatut pretStatut, Livre livre,
+	public Page<Pret> displayPretsByDateRetourAndStatutAndByUser(LocalDate dateRetour, PretStatut pretStatut, User user,
 			Pageable pageable) {
-		Page<Pret> p = pretRepository.findByPretStatutAndLivre(PretStatut.ENCOURS, livre, pageable);
-		return null;
-	}
-
-	
-	@Override
-	public List<Pret> displayPretsByStatutProlonge(PretStatut pretStatut) {
-		List<Pret> l = pretRepository.findByPretStatut(PretStatut.PROLONGE);
-		return l;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutProlonge(PretStatut pretStatut, Pageable pageable) {
-		Page<Pret> p = pretRepository.findByPretStatut(PretStatut.PROLONGE, pageable); 
-		return p;
-	}
-
-	@Override
-	public List<Pret> displayPretsByStatutProlongeAndByUser(PretStatut pretStatut, User user) {
-		List<Pret> l = pretRepository.findByPretStatutAndUser(PretStatut.PROLONGE, user);
-		return l;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutProlongeAndByUser(PretStatut pretStatut, User user, Pageable pageable) {
-		Page<Pret> p = pretRepository.findByPretStatutAndUser(PretStatut.PROLONGE, user, pageable);
-		return p;
-	}
-
-	@Override
-	public List<Pret> displayPretsByStatutProlongeAndByTitreLivre(PretStatut pretStatut, Livre livre) {
-		List<Pret> l = pretRepository.findByPretStatutAndLivre(PretStatut.PROLONGE, livre);
-		return l;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutProlongeAndByTitreLivre(PretStatut pretStatut, Livre livre,
-			Pageable pageable) {
-		Page<Pret> p = pretRepository.findByPretStatutAndLivre(PretStatut.PROLONGE, livre, pageable);
+		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	
-
-	@Override
-	public List<Pret> displayPretsByStatutEchu(PretStatut pretStatut) {
-		
-		List<Pret> lenc = displayPretsByStatutEncours(pretStatut);
-		for(Pret pret : lenc ) {
-			if(pret.getDateRetourEffectif().isBefore(LocalDate.now())) {
-			pret.setPretStatut(PretStatut.ECHU); 
-			}
-		}
-		
-		List<Pret> lprol = displayPretsByStatutProlonge(pretStatut);
-		for(Pret pret : lprol ) {
-			if(pret.getDateRetourEffectif().isBefore(LocalDate.now())) {
-			pret.setPretStatut(PretStatut.ECHU); 
-			}
-		}
-			
-		// code à terminer	
-			
-		return null;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutEchu(PretStatut pretStatut, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Pret> displayPretsByStatutEchuAndByUser(PretStatut pretStatut, User user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutEchuAndByUser(PretStatut pretStatut, User user, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Pret> displayPretsByStatutEchuAndByTitreLivre(PretStatut pretStatut, Livre livre) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Page<Pret> displayPretsByStatutEchuAndByTitreLivre(PretStatut pretStatut, Livre livre, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

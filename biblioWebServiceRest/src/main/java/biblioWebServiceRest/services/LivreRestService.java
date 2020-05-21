@@ -38,8 +38,8 @@ public class LivreRestService {
 	 * @return
 	 * @see biblioWebServiceRest.metier.ILivreMetier#searchByTitreAndAuteurAndCategorie(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	@GetMapping(value="/livres/{titre}/{auteur}/{nomCategorie}")	
-	public List<Livre> searchByTitreAndAuteurAndCategorie(@PathVariable String titre, @PathVariable String auteur, @PathVariable String nomCategorie) {
+	@GetMapping(value="/livres/{titre}/{nomCategorie}/{auteur}")	
+	public List<Livre> searchByTitreAndAuteurAndCategorie(@PathVariable String titre, @PathVariable String nomCategorie, @PathVariable String auteur)  {
 		return livreMetier.searchByTitreAndAuteurAndCategorie(titre, auteur, nomCategorie);
 	}
 	

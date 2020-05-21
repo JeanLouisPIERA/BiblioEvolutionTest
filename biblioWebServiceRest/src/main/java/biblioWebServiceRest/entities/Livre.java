@@ -13,13 +13,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
 @Entity
-@Table(name="livre")
+@Table(name="livre", 
+uniqueConstraints= {
+		@UniqueConstraint(columnNames="titre")
+})
 public class Livre implements Serializable{
 	@Id @GeneratedValue
 	private Long numLivre; 

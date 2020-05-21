@@ -2,6 +2,7 @@ package biblioWebServiceRest.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -119,6 +120,7 @@ public class Pret implements Serializable{
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
 
 	public Livre getLivre() {
 		return livre;
@@ -127,6 +129,9 @@ public class Pret implements Serializable{
 	public void setLivre(Livre livre) {
 		this.livre = livre;
 	}
+
+
+	
 	
 	
 

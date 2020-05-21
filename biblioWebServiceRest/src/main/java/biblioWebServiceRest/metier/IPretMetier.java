@@ -1,131 +1,80 @@
 package biblioWebServiceRest.metier;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import biblioWebServiceRest.entities.Livre;
+
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.User;
 
 public interface IPretMetier {
 	
-/*
- * Gérer les prêts CRUD : créer un nouveau prêt	
- */
-	Pret createPret(Pret pret);
+	/**
+	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
+	 * @param pret
+	 * @return
+	 */
+
+	Boolean createPret(String titre, String username);
 	
-/*
- * Gérer les prêts CRUD : consulter un prêt 
- * A l'issue statut du prêt = pretStatut.ENCOURS
- */
-	
+
+	/**
+	 * CRUD : READ consulter un prêt 
+	 * @param numPret
+	 * @return
+	 */
 	Pret readPret(long numPret);
 	
-/*
- * Gérer les prêts CRUD : update pour prolonger la durée d'un prêt 
- * A l'entrée : pretStatut.ENCOURS ou pretStatut.ECHU
- * A l'issue : pretStatut.POLONGE
- */
 
+	/**
+	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
+	 * @param pret
+	 * @return
+	 */
 	Pret prolongerPret(Pret pret);
 	
-/*
- * Gérer les prêts CRUD : update pour clôturer un prêt 
- * A l'entrée : pretStatutENCOURS ou pretStatutECHU ou pretStatutPROLONGE 
- * A l'issue : pretStatut.CLOTURE
- */
-	
+
+	/**
+	 * CRUD : UPDATE clôturer un prêt 
+	 * @return
+	 */
 	Pret cloturerPret(Pret pret);
 	
-/*
- * Afficher la liste de tous les prets 
- */
-	
-	List<Pret> displayAllPrets();
-	
-	Page<Pret> displayAllPrets(Pageable pageable);
-	
+
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
 	
-	/*
-	 * Afficher la liste de tous les prêts ENCOURS
-	 */
-		
-		List<Pret> displayPretsByStatutEncours(PretStatut pretStatut);
-		
-		Page<Pret> displayPretsByStatutEncours(PretStatut pretStatut, Pageable pageable);
-		
-	/*
-	 * Afficher la liste de tous les prêts ENCOURS par Utilisateur
-	 */
-		
-		List<Pret> displayPretsByStatutEncoursAndByUser(PretStatut pretStatut, User user);
-		
-		Page<Pret> displayPretsByStatutEncoursAndByUser(PretStatut pretStatut, User user, Pageable pageable);
-		
-	/*
-	 * Afficher la liste de tous les prêts ENCOURS pour un Ouvrage
-	 */
-		
-		List<Pret> displayPretsByStatutEncoursAndByTitreLivre(PretStatut pretStatut, Livre livre);
-		
-		Page<Pret> displayPretsByStatutEncoursAndByTitreLivre(PretStatut pretStatut, Livre livre, Pageable pageable);
-		
-// AFFICHER LES PRETS PROLONGES ***************************************************************************
 	
-	/*
-	 * Afficher la liste de tous les prêts PROLONGES
-	 */
+		/**
+		 * Afficher tous les prêts
+		 * @return
+		 */
+		List<Pret> searchAllPrets();
 		
-		List<Pret> displayPretsByStatutProlonge(PretStatut pretStatut);
+		/**
+		 * Afficher et paginer tous les prêts
+		 * @param pageable
+		 * @return
+		 */
 		
-		Page<Pret> displayPretsByStatutProlonge(PretStatut pretStatut, Pageable pageable);
+		Page<Pret> searchAllPrets(Pageable pageable);
 		
-	/*
-	 * Afficher la liste de tous les prêts PROLONGE par Utilisateur
-	 */
 		
-		List<Pret> displayPretsByStatutProlongeAndByUser(PretStatut pretStatut, User user);
+	
+		/**
+		 * Sélectionner les prêts par leur date de retour prévue, leur statut et l'emprunteur
+		 * @param pretStatut
+		 * @param user
+		 * @return
+		 */
+		List<Pret> searchPretsByStatutEncoursAndByUser(LocalDate dateRetour, PretStatut pretStatut, User user);
 		
-		Page<Pret> displayPretsByStatutProlongeAndByUser(PretStatut pretStatut, User user, Pageable pageable);
+		Page<Pret> displayPretsByDateRetourAndStatutAndByUser(LocalDate dateRetour, PretStatut pretStatut, User user, Pageable pageable);
 		
-	/*
-	 * Afficher la liste de tous les prêts PROLONGE pour un Ouvrage
-	 */
-		
-		List<Pret> displayPretsByStatutProlongeAndByTitreLivre(PretStatut pretStatut, Livre livre);
-		
-		Page<Pret> displayPretsByStatutProlongeAndByTitreLivre(PretStatut pretStatut, Livre livre, Pageable pageable);
-
-		
-// AFFICHER LES PRETS ECHUS NON RENDUS ***************************************************************************
-		
-	/*
-	 * Afficher la liste de tous les prêts ECHUS NON RENDUS
-	 */
-		
-		List<Pret> displayPretsByStatutEchu(PretStatut pretStatut);
-		
-		Page<Pret> displayPretsByStatutEchu(PretStatut pretStatut, Pageable pageable);
-		
-	/*
-	 * Afficher la liste de tous les prêts PROLONGE par Utilisateur
-	 */
-		
-		List<Pret> displayPretsByStatutEchuAndByUser(PretStatut pretStatut, User user);
-		
-		Page<Pret> displayPretsByStatutEchuAndByUser(PretStatut pretStatut, User user, Pageable pageable);
-		
-	/*
-	 * Afficher la liste de tous les prêts PROLONGE pour un Ouvrage
-	 */
-		
-		List<Pret> displayPretsByStatutEchuAndByTitreLivre(PretStatut pretStatut, Livre livre);
-		
-		Page<Pret> displayPretsByStatutEchuAndByTitreLivre(PretStatut pretStatut, Livre livre, Pageable pageable);
+	
 		
 		
 }

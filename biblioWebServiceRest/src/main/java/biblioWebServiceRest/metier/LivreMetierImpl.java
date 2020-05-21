@@ -1,7 +1,10 @@
 package biblioWebServiceRest.metier;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -45,9 +48,10 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @param auteur
 	 * @param categorie
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
 	@Override
-	public List<Livre> searchByTitreAndAuteurAndCategorie(String titre, String auteur, String nomCategorie) {
+	public List<Livre> searchByTitreAndAuteurAndCategorie(String titre, String auteur, String nomCategorie){
 		List<Livre> livresByTitreAuteurCategorieList = new ArrayList<>() ;
 		LivreSpecification lsTitre = new LivreSpecification(); 
 		lsTitre.add(new SearchCriteria("titre", titre, SearchOperation.MATCH));
@@ -63,13 +67,16 @@ public class LivreMetierImpl implements ILivreMetier{
 					lsCategorie.add(new SearchCriteria("categorie",categorie, SearchOperation.EQUAL));
 					livresByTitreAuteurCategorieList = livreRepository.findAll(Specification.where(lsTitre).and(lsAuteur).and(lsCategorie));
 					}
-					catch (Exception e) {
-					if(!nomCategorie.equals("All")) {
+				catch (Exception e){
+					if(nomCategorie.contains("%20")){
 						System.out.println("4"+nomCategorie);
+						System.out.println("5"+Optional.of(nomCategorie));
+						livresByTitreAuteurCategorieList = livreRepository.findAll(Specification.where(lsTitre).and(lsAuteur));
 					}else {
 					System.out.println("2"+"true");
-					livresByTitreAuteurCategorieList = livreRepository.findAll(Specification.where(lsTitre).and(lsAuteur));
-					}							
+					System.out.println("4"+nomCategorie);
+										}				
+						
 				}
 				return livresByTitreAuteurCategorieList;
 				}
