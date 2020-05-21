@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @Entity
@@ -24,13 +26,17 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String username;
+	@JsonIgnore
 	private String password;
 	@Transient
+	@JsonIgnore
 	private String passwordConfirm;
 	private String adresseMail;
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="role_id")
     private Role role;
+	@JsonIgnore
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	Collection<Pret> prets;
 	

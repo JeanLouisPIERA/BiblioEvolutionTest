@@ -52,15 +52,16 @@ public class PretMetierImpl implements IPretMetier {
 			System.out.println(livreRepository.findByTitre(titre));
 			titre = livre.getTitre();
 			System.out.println(titre);
-			if(livre.getNbExemplairesDisponibles()==0) throw new RuntimeException("Il n'y a plus d'exemplaire disponible");
-			pret.setLivre(livre);
-			livre.setNbExemplairesDisponibles(livre.getNbExemplairesDisponibles()-1);
-		} catch (Exception e1) {
+		}catch (Exception e1) {
 			if(titre.isEmpty()) {throw new RuntimeException("Il faut saisir le titre du livre à emprunter");
 			} else {
 			throw new RuntimeException("Le titre saisi n'existe pas");
 			}
 		}
+		System.out.println(livre.getNbExemplairesDisponibles());
+		if(livre.getNbExemplairesDisponibles() == 0) throw new RuntimeException ("Il n'y a plus d'exemplaire disponible");
+		livre.setNbExemplairesDisponibles(livre.getNbExemplairesDisponibles()-1);	
+		pret.setLivre(livre);
 		User user;
 		try {
 			user = userRepository.findByUsername(username);

@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @Entity
@@ -21,7 +23,7 @@ public class Role implements Serializable {
     private Long id;
     
     private RoleEnum name;
-    
+    @JsonIgnore
     @OneToMany(mappedBy="role", fetch=FetchType.LAZY)
     private Collection<User> users;
 
