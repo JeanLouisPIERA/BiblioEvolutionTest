@@ -17,7 +17,7 @@ public class UserMetierImpl implements IUserMetier{
 
 	@Override
 	public User findByUsername(String username) {
-		return userRepository.findByUsername(username);
+		return userRepository.findByUsername(username).get();
 	}
 	
 	

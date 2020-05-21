@@ -27,7 +27,18 @@ public interface IPretMetier {
 	 * @param numPret
 	 * @return
 	 */
+	/**
 	Pret readPret(long numPret);
+	**/
+	 
+	/**
+	 * CRUD : READ consulter un prêt 
+	 * @param titre
+	 * @param username
+	 * @param datePret
+	 * @return
+	 */
+	Pret readPret(String titre, String username, String datePret);
 	
 
 	/**
