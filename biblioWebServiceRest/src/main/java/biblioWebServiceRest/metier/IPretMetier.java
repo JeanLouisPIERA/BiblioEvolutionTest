@@ -19,7 +19,7 @@ public interface IPretMetier {
 	 * @return
 	 */
 
-	Boolean createPret(String titre, String username);
+	Pret createPret(String titre, String username);
 	
 
 	/**

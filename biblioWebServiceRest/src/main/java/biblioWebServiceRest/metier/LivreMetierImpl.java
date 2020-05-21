@@ -34,16 +34,11 @@ public class LivreMetierImpl implements ILivreMetier{
 	@Autowired
 	private ICategorieRepository categorieRepository;
 	
-	
-	@Override
-	public List<Livre> searchAllLivres() {
-		List<Livre> livres = livreRepository.findAll();
-		return livres;
-	}
-
-
 	/**
 	 * Cette méthode permet de sélectionner les livres en fonction de leur titre, du nom de leur auteur et de leur catégorie
+	 * Si aucun paramètre n'est renseigné, la méthode renvoie la liste de tous les livres enregistrés dans la base
+	 * Le titre et le nom de l'auteur doivent simplement matcher
+	 * Le nom de la catégorie doit être égal sinon la méthode catche une exception
 	 * @param titre
 	 * @param auteur
 	 * @param categorie
@@ -68,20 +63,15 @@ public class LivreMetierImpl implements ILivreMetier{
 					livresByTitreAuteurCategorieList = livreRepository.findAll(Specification.where(lsTitre).and(lsAuteur).and(lsCategorie));
 					}
 				catch (Exception e){
-					if(nomCategorie.contains("%20")){
-						System.out.println("4"+nomCategorie);
-						System.out.println("5"+Optional.of(nomCategorie));
+					if(nomCategorie.isEmpty()){
 						livresByTitreAuteurCategorieList = livreRepository.findAll(Specification.where(lsTitre).and(lsAuteur));
-					}else {
-					System.out.println("2"+"true");
-					System.out.println("4"+nomCategorie);
-										}				
-						
+					}else throw new RuntimeException("erreur sur la saisie du nom de catégorie");		
 				}
 				return livresByTitreAuteurCategorieList;
 				}
-			}
 
+
+}
 	
 	
 

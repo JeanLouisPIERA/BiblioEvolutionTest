@@ -42,20 +42,34 @@ public class PretMetierImpl implements IPretMetier {
 	 * @return
 	 */
 	 @Override
-	public Boolean createPret(String titre, String username) {
+	public Pret createPret(String titre, String username) {
 		Pret pret = new Pret();
 		LocalDate datePret = LocalDate.now();
 		pret.setDatePret(datePret);
-		if(!Optional.ofNullable(livreRepository.findByTitre(titre)).isPresent()) throw new RuntimeException("Le titre saisi est inexistant");
-		Livre livre = livreRepository.findByTitre(titre);
-		titre = livre.getTitre();
-		if(livre.getNbExemplairesDisponibles()==0) throw new RuntimeException("Il n'y a plus d'exemplaire disponible");
-		pret.setLivre(livreRepository.findByTitre(titre));
-		livre.setNbExemplairesDisponibles(livre.getNbExemplairesDisponibles()-1);
-		if(!Optional.ofNullable(userRepository.findByUsername(username)).isPresent()) throw new RuntimeException("Il n'existe aucun abonné de ce nom");
-		User user = userRepository.findByUsername(username);
-		username = user.getUsername();
-		pret.setUser(userRepository.findByUsername(username));
+		Livre livre;
+		try {
+			livre = livreRepository.findByTitre(titre);
+			System.out.println(livreRepository.findByTitre(titre));
+			titre = livre.getTitre();
+			System.out.println(titre);
+			if(livre.getNbExemplairesDisponibles()==0) throw new RuntimeException("Il n'y a plus d'exemplaire disponible");
+			pret.setLivre(livre);
+			livre.setNbExemplairesDisponibles(livre.getNbExemplairesDisponibles()-1);
+		} catch (Exception e1) {
+			if(titre.isEmpty()) {throw new RuntimeException("Il faut saisir le titre du livre à emprunter");
+			} else {
+			throw new RuntimeException("Le titre saisi n'existe pas");
+			}
+		}
+		User user;
+		try {
+			user = userRepository.findByUsername(username);
+			username = user.getUsername();
+			pret.setUser(user);
+		} catch (Exception e2) {
+			if(!Optional.ofNullable(username).isPresent()) throw new RuntimeException("Il n'existe aucun abonné de ce nom");
+			e2.printStackTrace();
+		}
 		final Properties prop = new Properties();
 		InputStream input = null;
 		try {
@@ -74,8 +88,9 @@ public class PretMetierImpl implements IPretMetier {
         }
 		pret.setPretStatut(PretStatut.ENCOURS);
 		pretRepository.save(pret);
-		return true;
+		return pret;
 	}
+
 	 
 
 	/**

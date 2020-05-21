@@ -87,9 +87,11 @@ public class LanceurDB implements CommandLineRunner {
 		Livre livre1 = new Livre("Le Pere Goriot", "Honore de Balzac", 1,1,categorie1);
 		Livre livre2 = new Livre("Comment je vois le monde", "Albert Einstein", 2,0, categorie2);
 		Livre livre3 = new Livre("Mathématiques au collège", "Collectif", 3,2, categorie3);
+		Livre livre4 = new Livre("Physiologie des cloportes", "Professeur Tryphon Tournesol", 1, 1,categorie2);
 		livreRepository.save(livre1);
 		livreRepository.save(livre2);
 		livreRepository.save(livre3);
+		livreRepository.save(livre4);
 		
 		pretRepository.save(new Pret(LocalDate.of(2020, Month.FEBRUARY, 5), LocalDate.of(2020, Month.MARCH, 5), PretStatut.ECHU, user1, livre1));
 		pretRepository.save(new Pret(LocalDate.of(2020, Month.MARCH, 20), LocalDate.of(2010, Month.MAY, 20), PretStatut.PROLONGE, user2, livre2));
@@ -128,6 +130,7 @@ public class LanceurDB implements CommandLineRunner {
                     new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,categorie9),
                     new Livre("Tintin et le mystèrez de l'oreille cassée", "Hergé", 6,0, categorie8),
                     new Livre("Alcools", "Apollinaire", 1, 1,categorie6)
+                    
                     
             ));
             
