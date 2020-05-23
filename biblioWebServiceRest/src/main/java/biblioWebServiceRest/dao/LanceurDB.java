@@ -133,8 +133,11 @@ public class LanceurDB implements CommandLineRunner {
                     
                     
             ));
-            
         
+	};
+}
+}
+            /**
             // search livres by `categorie`
             LivreSpecification lsCategorie = new LivreSpecification();
             lsCategorie.add(new SearchCriteria("categorie", categorie9, SearchOperation.EQUAL));
@@ -189,5 +192,5 @@ public class LanceurDB implements CommandLineRunner {
             //lsTitreList.forEach(System.out::println);
         };
     }
-
-}
+**/
+       

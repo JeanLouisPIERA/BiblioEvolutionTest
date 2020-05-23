@@ -18,19 +18,18 @@ public interface IPretMetier {
 	 * @param pret
 	 * @return
 	 */
-
-	Pret createPret(String titre, String username);
-	
-
 	/**
-	 * CRUD : READ consulter un prêt 
-	 * @param numPret
+	Pret createPret(String titre, String username);
+	**/ 
+	
+	/**
+	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
+	 * @param idUser
+	 * @param numLivre
 	 * @return
 	 */
-	/**
-	Pret readPret(long numPret);
-	**/
-	 
+	Pret createPret(Long idUser, Long numLivre) throws Exception;
+	
 	/**
 	 * CRUD : READ consulter un prêt 
 	 * @param titre
@@ -41,6 +40,15 @@ public interface IPretMetier {
 	Pret readPret(String titre, String username, String datePret);
 	
 
+	/**
+	 * CRUD : READ consulter un prêt 
+	 * @param numPret
+	 * @return
+	 */
+	/**
+	Pret readPret(long numPret);
+	**/
+	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
 	 * @param pret

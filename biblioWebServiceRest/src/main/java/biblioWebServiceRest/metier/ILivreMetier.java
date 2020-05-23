@@ -2,7 +2,10 @@ package biblioWebServiceRest.metier;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.entities.Livre;
 
 
@@ -18,7 +21,16 @@ public interface ILivreMetier {
 	 * @param categorie
 	 * @return
 	 */
+	/**
 	List<Livre> searchByTitreAndAuteurAndCategorie(String titre, String auteur, String nomCategorie);
+	**/
 	
-	
+	/**
+	 * 
+	 * @param livreCriteria
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	Page<Livre> searchByCriteria(@RequestBody LivreCriteria livreCriteria, int page, int size); 
 }

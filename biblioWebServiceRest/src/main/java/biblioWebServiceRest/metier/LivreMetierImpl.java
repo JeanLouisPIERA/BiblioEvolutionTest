@@ -9,9 +9,12 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
@@ -45,6 +48,7 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @return
 	 * @throws UnsupportedEncodingException 
 	 */
+	/**
 	@Override
 	public List<Livre> searchByTitreAndAuteurAndCategorie(String titre, String auteur, String nomCategorie){
 		List<Livre> livresByTitreAuteurCategorieList = new ArrayList<>() ;
@@ -69,6 +73,20 @@ public class LivreMetierImpl implements ILivreMetier{
 				}
 				return livresByTitreAuteurCategorieList;
 				}
+	**/
+
+	/**
+	 * @param livreCriteria
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	@Override
+	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, int page, int size) {
+		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
+		
+		return livreRepository.findAll(livreSpecification, PageRequest.of(page, size));
+	}
 
 
 }

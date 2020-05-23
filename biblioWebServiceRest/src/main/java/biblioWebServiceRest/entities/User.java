@@ -24,7 +24,7 @@ public class User implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long idUser;
 	private String username;
 	@JsonIgnore
 	private String password;
@@ -86,10 +86,10 @@ public class User implements Serializable {
 
 	
 
-	public User(Long id, String username, String password, String passwordConfirm, String adresseMail, Role role,
+	public User(Long idUser, String username, String password, String passwordConfirm, String adresseMail, Role role,
 			Collection<Pret> prets) {
 		super();
-		this.id = id;
+		this.idUser = idUser;
 		this.username = username;
 		this.password = password;
 		this.passwordConfirm = passwordConfirm;
@@ -99,11 +99,11 @@ public class User implements Serializable {
 	}
 
 	public Long getId() {
-		return id;
+		return idUser;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setId(Long idUser) {
+		this.idUser = idUser;
 	}
 
 	public String getUsername() {

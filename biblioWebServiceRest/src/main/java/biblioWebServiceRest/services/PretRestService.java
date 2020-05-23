@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,11 +37,12 @@ public class PretRestService {
 	 * @param titre
 	 * @param username
 	 * @return
+	 * @throws Exception 
 	 * @see biblioWebServiceRest.metier.IPretMetier#createPret(java.lang.String, java.lang.String)
 	 */
-	@PostMapping(value="/pret")
-	public Pret createPret(@RequestParam String titre, @RequestParam String username) {
-		return pretMetier.createPret(titre, username);
+	@PostMapping(value="/pret/{idUser}/livre/{numLivre}")
+	public Pret createPret(@PathVariable Long idUser,  @PathVariable Long numLivre ) throws Exception {
+		return pretMetier.createPret(idUser, numLivre);
 	}
 	
 	/**

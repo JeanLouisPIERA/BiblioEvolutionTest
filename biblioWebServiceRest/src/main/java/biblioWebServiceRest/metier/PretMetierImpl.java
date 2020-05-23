@@ -40,6 +40,53 @@ public class PretMetierImpl implements IPretMetier {
 	private ILivreRepository livreRepository;
 	@Autowired
 	private IUserRepository userRepository;
+	
+	/**
+	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
+	 * @param idUser
+	 * @param numLivre
+	 * @return
+	 * @throws Exception 
+	 */
+	@Override
+	public Pret createPret(Long idUser, Long numLivre) throws Exception {
+		Pret pret = new Pret();
+		
+		LocalDate datePret = LocalDate.now();
+		pret.setDatePret(datePret);
+		
+		if(numLivre == null) throw new Exception ("Il faut saisir le titre du livre à emprunter");
+		Optional<Livre> livre = livreRepository.findById(numLivre);
+		if(!livre.isPresent()) throw new Exception("Le titre saisi n'existe pas");
+		if(livre.get().getNbExemplairesDisponibles() == 0) throw new Exception ("Il n'y a plus d'exemplaire disponible");
+		livre.get().setNbExemplairesDisponibles(livre.get().getNbExemplairesDisponibles()-1);	
+		pret.setLivre(livre.get());
+		
+		Optional<User> user = userRepository.findById(idUser);
+		if(!user.isPresent()) throw new Exception("Cet abonné n'est pas enregistré");
+		pret.setUser(user.get());
+		
+		final Properties prop = new Properties();
+		InputStream input = null;
+		try {
+            input = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");
+            prop.load(input);
+            int dureePret = Integer.parseInt(prop.getProperty("dureePretByDefault"));    
+            LocalDate pretDateRetourPrevue = pret.getDatePret().plusDays(dureePret);
+            pret.setDateRetourPrevue(pretDateRetourPrevue);
+        } catch (final IOException ex) { 
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (final IOException e) {
+                }
+            }
+        }
+		
+		pret.setPretStatut(PretStatut.ENCOURS);
+		pretRepository.save(pret);
+		return pret;
+	}
 
 	/**
 	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
@@ -49,6 +96,7 @@ public class PretMetierImpl implements IPretMetier {
 	 * @param pret
 	 * @return
 	 */
+/**
 	 @Override
 	public Pret createPret(String titre, String username) {
 		Pret pret = new Pret();
@@ -70,20 +118,10 @@ public class PretMetierImpl implements IPretMetier {
 		if(livre.getNbExemplairesDisponibles() == 0) throw new RuntimeException ("Il n'y a plus d'exemplaire disponible");
 		livre.setNbExemplairesDisponibles(livre.getNbExemplairesDisponibles()-1);	
 		pret.setLivre(livre);
-		//User user;
 		if(!userRepository.findByUsername(username).isPresent()) throw new RuntimeException("Cet abonné n'est pas enregistré");
 		User user = userRepository.findByUsername(username).get();
 		username = user.getUsername();
 		pret.setUser(user);
-		
-		/**
-		try {
-			user = userRepository.findByUsername(username).get();
-			username = user.getUsername();
-			pret.setUser(user);
-		} catch (Exception e2) {
-			if(!Optional.ofNullable(username).isPresent()) throw new RuntimeException("Il n'existe aucun abonné de ce nom");
-		}**/
 		final Properties prop = new Properties();
 		InputStream input = null;
 		try {
@@ -104,21 +142,7 @@ public class PretMetierImpl implements IPretMetier {
 		pretRepository.save(pret);
 		return pret;
 	}
-
-	 
-
-	/**
-	 * @param numPret
-	 * @return
-	 */
-	 /**
-	@Override
-	public Pret readPret(long numPret) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	**/
-
+**/
 	 	/**
 	 	 * CRUD : READ consulter un prêt 
 		 * @param titre
@@ -165,6 +189,19 @@ public class PretMetierImpl implements IPretMetier {
 			
 			return readPret;
 		}
+		
+		
+		/**
+		 * @param numPret
+		 * @return
+		 */
+		 /**
+		@Override
+		public Pret readPret(long numPret) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		**/	
 	 
 	/**
 	 * @param pret
@@ -230,6 +267,9 @@ public class PretMetierImpl implements IPretMetier {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	
 
 
 
