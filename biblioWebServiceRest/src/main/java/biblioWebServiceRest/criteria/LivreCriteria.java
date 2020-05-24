@@ -61,7 +61,6 @@ public class LivreCriteria {
 	public void setAuteur(String auteur) {
 		this.auteur = auteur;
 	}
-	
 	/**
 	 * @return the categorie
 	 */
@@ -74,5 +73,7 @@ public class LivreCriteria {
 	public void setCategorie(Categorie categorie) {
 		this.categorie = categorie;
 	}
+	
+	
 
 }
