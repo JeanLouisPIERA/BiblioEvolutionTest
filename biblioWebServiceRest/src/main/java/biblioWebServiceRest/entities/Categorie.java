@@ -54,11 +54,11 @@ public class Categorie implements Serializable{
 	public void setNomCategorie(String nomCategorie) {
 		this.nomCategorie = nomCategorie;
 	}
-
+	@JsonIgnore
 	public Collection<Livre> getLivres() {
 		return livres;
 	}
-
+	@JsonIgnore
 	public void setLivres(Collection<Livre> livres) {
 		this.livres = livres;
 	}

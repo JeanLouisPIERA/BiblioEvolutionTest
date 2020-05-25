@@ -1,23 +1,20 @@
 /**
  * 
  */
-package biblioWebServiceRest.criteria;
+package biblioWebServiceRest.dto;
 
-
-
-import biblioWebServiceRest.entities.Categorie;
 
 
 /**
  * @author jeanl
  *
  */
-public class LivreCriteria {
-
+public class LivreDTO {
+	
 	private Long numLivre; 
 	private String titre; 
 	private String auteur;
-	private Categorie categorie;
+	private CategorieDTO categorie;
 	/**
 	 * @return the numLivre
 	 */
@@ -57,15 +54,16 @@ public class LivreCriteria {
 	/**
 	 * @return the categorie
 	 */
-	public Categorie getCategorie() {
+	public CategorieDTO getCategorie() {
 		return categorie;
 	}
 	/**
 	 * @param categorie the categorie to set
 	 */
-	public void setCategorie(Categorie categorie) {
+	public void setCategorie(CategorieDTO categorie) {
 		this.categorie = categorie;
 	}
+	
 	
 	
 

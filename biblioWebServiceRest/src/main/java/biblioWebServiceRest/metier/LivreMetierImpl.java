@@ -22,6 +22,7 @@ import biblioWebServiceRest.dao.specs.SearchCriteria;
 import biblioWebServiceRest.dao.specs.SearchOperation;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
+import biblioWebServiceRest.mapper.LivreMapper;
 
 
 
