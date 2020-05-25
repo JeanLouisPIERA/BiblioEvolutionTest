@@ -33,4 +33,13 @@ public interface ILivreMetier {
 	 * @return
 	 */
 	Page<Livre> searchByCriteria(@RequestBody LivreCriteria livreCriteria, int page, int size); 
+	
+	
+	
+	/**
+	 * 
+	 * @param livreCriteria
+	 * @return
+	 */
+	List<Livre> searchByCriteria(LivreCriteria livreCriteria);
 }

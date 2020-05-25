@@ -16,7 +16,7 @@ import biblioWebServiceRest.entities.Categorie;
 @Mapper(componentModel="spring")
 public interface CategorieMapper {
 	
-	CategorieMapper INSTANCE = Mappers.getMapper(CategorieMapper.class);
+	
 	CategorieDTO categorieToCategorieDTO(Categorie entity);
 	Categorie categorieDTOToCategorie(CategorieDTO dto);
 

@@ -13,6 +13,7 @@ public class CategorieDTO {
 	private String nomCategorie;
 	
 	
+	
 	/**
 	 * @return the numCategorie
 	 */

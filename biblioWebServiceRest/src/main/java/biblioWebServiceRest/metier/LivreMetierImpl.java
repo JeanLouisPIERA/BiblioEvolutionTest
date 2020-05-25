@@ -1,7 +1,6 @@
 package biblioWebServiceRest.metier;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +17,9 @@ import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
-import biblioWebServiceRest.dao.specs.SearchCriteria;
-import biblioWebServiceRest.dao.specs.SearchOperation;
-import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
-import biblioWebServiceRest.mapper.LivreMapper;
+
+
 
 
 
@@ -32,7 +29,10 @@ import biblioWebServiceRest.mapper.LivreMapper;
 @Service
 @Transactional
 public class LivreMetierImpl implements ILivreMetier{
+
+	//
 	
+
 	@Autowired
 	private ILivreRepository livreRepository;
 	@Autowired
@@ -82,12 +82,25 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @param size
 	 * @return
 	 */
+	
 	@Override
 	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, int page, int size) {
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		
 		return livreRepository.findAll(livreSpecification, PageRequest.of(page, size));
 	}
+
+	/**
+	 * @param livreCriteria
+	 * @return
+	 */
+	@Override
+	public List<Livre> searchByCriteria(LivreCriteria livreCriteria) {
+		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
+		return livreRepository.findAll(livreSpecification);
+	}
+
+	
 
 
 }

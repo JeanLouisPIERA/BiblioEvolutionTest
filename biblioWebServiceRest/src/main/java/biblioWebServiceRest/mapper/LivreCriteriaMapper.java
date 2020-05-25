@@ -3,28 +3,23 @@
  */
 package biblioWebServiceRest.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 
+import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dto.CategorieDTO;
-import biblioWebServiceRest.dto.LivreDTO;
+import biblioWebServiceRest.dto.LivreCriteriaDTO;
 import biblioWebServiceRest.entities.Categorie;
-import biblioWebServiceRest.entities.Livre;
 
 /**
  * @author jeanl
  *
  */
 @Mapper(componentModel="spring")
-public interface LivreMapper {
+public interface LivreCriteriaMapper {
 	
-	LivreDTO livreToLivreDTO(Livre entity);
-	Livre livreDTOToLivre(LivreDTO dto);
+	LivreCriteriaDTO livreCriteriaToLivreCriteriaDTO(LivreCriteria entity);
+	LivreCriteria livreCriteriaDTOToLivreCriteria(LivreCriteriaDTO dto);
 	
 	CategorieDTO categorieToCategorieDTO(Categorie entity);
 	Categorie categorieDTOToCategorie(CategorieDTO dto);
-	
-	List<LivreDTO> livresToLivresDTOs(List<Livre> livres);
-
 }
