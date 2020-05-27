@@ -13,6 +13,7 @@ import biblioWebServiceRest.entities.Categorie;
  * @author jeanl
  *
  */
+
 @Mapper(componentModel="spring")
 public interface CategorieMapper {
 	

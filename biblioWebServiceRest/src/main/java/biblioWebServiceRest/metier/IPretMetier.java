@@ -1,53 +1,22 @@
 package biblioWebServiceRest.metier;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-
+import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.entities.PretStatut;
-import biblioWebServiceRest.entities.User;
 
 public interface IPretMetier {
 	
-	/**
-	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
-	 * @param pret
-	 * @return
-	 */
-	/**
-	Pret createPret(String titre, String username);
-	**/ 
-	
+		
 	/**
 	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
 	 * @param idUser
 	 * @param numLivre
 	 * @return
 	 */
-	Pret createPret(Long idUser, Long numLivre) throws Exception;
+	Pret createPret(String titre, String Username) throws Exception;
 	
-	/**
-	 * CRUD : READ consulter un prêt 
-	 * @param titre
-	 * @param username
-	 * @param datePret
-	 * @return
-	 */
-	Pret readPret(String titre, String username, String datePret);
 	
-
-	/**
-	 * CRUD : READ consulter un prêt 
-	 * @param numPret
-	 * @return
-	 */
-	/**
-	Pret readPret(long numPret);
-	**/
 	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
@@ -67,33 +36,13 @@ public interface IPretMetier {
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
 	
 	
-		/**
-		 * Afficher tous les prêts
-		 * @return
-		 */
-		List<Pret> searchAllPrets();
-		
-		/**
-		 * Afficher et paginer tous les prêts
-		 * @param pageable
-		 * @return
-		 */
-		
-		Page<Pret> searchAllPrets(Pageable pageable);
-		
-		
-	
-		/**
-		 * Sélectionner les prêts par leur date de retour prévue, leur statut et l'emprunteur
-		 * @param pretStatut
-		 * @param user
-		 * @return
-		 */
-		List<Pret> searchPretsByStatutEncoursAndByUser(LocalDate dateRetour, PretStatut pretStatut, User user);
-		
-		Page<Pret> displayPretsByDateRetourAndStatutAndByUser(LocalDate dateRetour, PretStatut pretStatut, User user, Pageable pageable);
-		
-	
+	 /**
+	  * AFFICHER LES PRETS : recherche les prêts par PretCriteria
+	  * @param pretCriteria
+	  * @return
+	  */
+	 List<Pret> searchByCriteria(PretCriteria pretCriteria);
+	 
 		
 		
 }

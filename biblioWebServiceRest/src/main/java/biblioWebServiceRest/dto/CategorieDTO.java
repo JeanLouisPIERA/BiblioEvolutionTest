@@ -9,23 +9,12 @@ package biblioWebServiceRest.dto;
  */
 public class CategorieDTO {
 	
-	private Long numCategorie;
+	//private Long numCategorie;
 	private String nomCategorie;
 	
 	
 	
-	/**
-	 * @return the numCategorie
-	 */
-	public Long getNumCategorie() {
-		return numCategorie;
-	}
-	/**
-	 * @param numCategorie the numCategorie to set
-	 */
-	public void setNumCategorie(Long numCategorie) {
-		this.numCategorie = numCategorie;
-	}
+	
 	/**
 	 * @return the nomCategorie
 	 */

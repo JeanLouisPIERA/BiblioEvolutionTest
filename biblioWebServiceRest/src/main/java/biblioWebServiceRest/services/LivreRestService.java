@@ -22,8 +22,11 @@ import biblioWebServiceRest.metier.ICategorieMetier;
 import biblioWebServiceRest.metier.ILivreMetier;
 
 
+
+
 @RestController
 public class LivreRestService {
+	
 	
 	@Autowired
 	private ILivreMetier livreMetier;
@@ -37,7 +40,7 @@ public class LivreRestService {
 	@Autowired
 	private LivreCriteriaMapper livreCriteriaMapper;
 
-	
+
 	/**
 	 * Si aucun paramètre n'est renseigné, la méthode renvoie la liste de tous les livres enregistrés dans la base
 	 * Le titre et le nom de l'auteur doivent simplement matcher
@@ -49,7 +52,6 @@ public class LivreRestService {
 	 * @see biblioWebServiceRest.metier.ILivreMetier#searchByCriteria(biblioWebServiceRest.criteria.LivreCriteria, int, int)
 	 */
 	
-
 	@GetMapping(value="/livres")
 	public Page<LivreDTO> searchByLivreCriteriaDTO(@PathParam("searched by") LivreCriteriaDTO livreCriteriaDTO, @RequestParam int page, @RequestParam int size) {
 		LivreCriteria livreCriteria = livreCriteriaMapper.livreCriteriaDTOToLivreCriteria(livreCriteriaDTO);
@@ -59,7 +61,8 @@ public class LivreRestService {
 		Page<LivreDTO> pageLivreDTO = new PageImpl<LivreDTO>(livreDTOs.subList(page, end));
 	
 		return pageLivreDTO;
-	}						
+	}		
+		
 }
 	
 	

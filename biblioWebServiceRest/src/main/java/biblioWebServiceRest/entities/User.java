@@ -98,11 +98,11 @@ public class User implements Serializable {
 		this.prets = prets;
 	}
 
-	public Long getId() {
+	public Long getIdUser() {
 		return idUser;
 	}
 
-	public void setId(Long idUser) {
+	public void setIdUser(Long idUser) {
 		this.idUser = idUser;
 	}
 

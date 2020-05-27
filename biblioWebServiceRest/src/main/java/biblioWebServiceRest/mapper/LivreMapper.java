@@ -16,6 +16,7 @@ import biblioWebServiceRest.entities.Livre;
  * @author jeanl
  *
  */
+
 @Mapper(componentModel="spring")
 public interface LivreMapper {
 	

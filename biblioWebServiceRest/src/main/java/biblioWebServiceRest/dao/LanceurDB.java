@@ -4,20 +4,13 @@ package biblioWebServiceRest.dao;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import biblioWebServiceRest.dao.specs.LivreSpecification;
-import biblioWebServiceRest.dao.specs.SearchCriteria;
-import biblioWebServiceRest.dao.specs.SearchOperation;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
@@ -25,10 +18,6 @@ import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Role;
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
-
-
-
-
 
 
 /*
@@ -86,7 +75,7 @@ public class LanceurDB implements CommandLineRunner {
 		
 		Livre livre1 = new Livre("Le Pere Goriot", "Honore de Balzac", 1,1,categorie1);
 		Livre livre2 = new Livre("Comment je vois le monde", "Albert Einstein", 2,0, categorie2);
-		Livre livre3 = new Livre("Mathématiques au collège", "Collectif", 3,2, categorie3);
+		Livre livre3 = new Livre("Mathematiques au college", "Collectif", 3,2, categorie3);
 		Livre livre4 = new Livre("Physiologie des cloportes", "Professeur Tryphon Tournesol", 1, 1,categorie2);
 		livreRepository.save(livre1);
 		livreRepository.save(livre2);
@@ -128,69 +117,14 @@ public class LanceurDB implements CommandLineRunner {
                     new Livre("San Antonio a de la memoire", "Frederic Dard", 3, 1,categorie9),
                     new Livre("San Antonio fume les cloportes", "Frederic Dard", 1, 0,categorie9),
                     new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,categorie9),
-                    new Livre("Tintin et le mystèrez de l'oreille cassée", "Hergé", 6,0, categorie8),
+                    new Livre("Tintin et le mystèrez de l'oreille cassée", "Herge", 6,0, categorie8),
                     new Livre("Alcools", "Apollinaire", 1, 1,categorie6)
                     
                     
             ));
         
-	};
-}
-}
-            /**
-            // search livres by `categorie`
-            LivreSpecification lsCategorie = new LivreSpecification();
-            lsCategorie.add(new SearchCriteria("categorie", categorie9, SearchOperation.EQUAL));
-            List<Livre> lsCategorieList = livreRepository.findAll(lsCategorie);
-            System.out.println("***Livres de la catégorie " + categorie9.getNomCategorie()+"***");
-            for(Livre livre : lsCategorieList) {
-            	System.out.println(livre.getTitre());
-            }
-           // lsCategorieList.forEach(System.out::println);
-
-            // search livres by `titre` and `nbExemplaires` >
-            LivreSpecification lsTitreNbExemplaires = new LivreSpecification();
-            lsTitreNbExemplaires.add(new SearchCriteria("titre", "le", SearchOperation.MATCH));
-            lsTitreNbExemplaires.add(new SearchCriteria("nbExemplaires", 2, SearchOperation.GREATER_THAN));
-            List<Livre> lsTitreNbExemplairesList = livreRepository.findAll(lsTitreNbExemplaires);
-            System.out.println("***Livres dont le titre contient le mot le et dont le nb d'exemplaire est supérieur à 2***");
-            for(Livre livre : lsTitreNbExemplairesList) {
-            	System.out.println(livre.getTitre());
-            }
-            //lsTitreNbExemplairesList.forEach(System.out::println);
-            
-         // search livres by `titre` and `nbExemplairesDisponibles` >
-            LivreSpecification lsTitreNbExemplairesDisponibles = new LivreSpecification();
-            lsTitreNbExemplairesDisponibles.add(new SearchCriteria("titre", "clown", SearchOperation.MATCH));
-            lsTitreNbExemplairesDisponibles.add(new SearchCriteria("nbExemplairesDisponibles", 2, SearchOperation.GREATER_THAN));
-            List<Livre> lsTitreNbExemplairesDisponiblesList = livreRepository.findAll(lsTitreNbExemplairesDisponibles);
-            System.out.println("***Livres dont le titre est clown et dont le nb d'exemplaires disponibles est supérieur à 2***");
-            for(Livre livre : lsTitreNbExemplairesDisponiblesList) {
-            	System.out.println(livre.getTitre());
-            }
-            //lsTitreNbExemplairesList.forEach(System.out::println);
-
-            // search livres by nbExemplaires >= 3 and sort by `titre`
-            LivreSpecification lsNbExemplairesSup3 = new LivreSpecification();
-            lsNbExemplairesSup3.add(new SearchCriteria("nbExemplaires", 3, SearchOperation.GREATER_THAN_EQUAL));
-            List<Livre> lsNbExemplairesSup3List = livreRepository.findAll(lsNbExemplairesSup3, Sort.by("titre"));
-            System.out.println("***Livres dont le nb d'exemplaires est supérieur ou égal à 3 triés par titre***");
-            for (Livre livre : lsNbExemplairesSup3List) {
-            	System.out.println(livre.getTitre());
-            }
-            //lsNbExemplairesList.forEach.(System.out::println);
-
-            // search livres by `titre` <> 'cloportes' and paginate results
-            LivreSpecification lsTitreNonCloportes = new LivreSpecification();
-            lsTitreNonCloportes.add(new SearchCriteria("titre", "cloportes", SearchOperation.NOT_EQUAL));
-            Pageable pageable = PageRequest.of(0, 6, Sort.by("nbExemplaires").descending());
-            Page<Livre> lsTitreNonCloportesList = livreRepository.findAll(lsTitreNonCloportes, pageable);
-            System.out.println("***Livres dont le titre ne contient pas le mot cloportes affichés par page de 6***");
-            for (Livre livre : lsTitreNonCloportesList) {
-            	System.out.println(livre.getTitre());
-            }
-            //lsTitreList.forEach(System.out::println);
         };
-    }
-**/
+	}
+}
+            
        

@@ -1,7 +1,6 @@
 package biblioWebServiceRest.dao.specs;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -9,8 +8,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
-
+import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.entities.PretStatut;
+
 
 
 
@@ -20,63 +21,60 @@ import biblioWebServiceRest.entities.Pret;
 
 public class PretSpecification implements Specification<Pret> {
 	
-	private List<SearchCriteria> list;
+	private PretCriteria pretCriteria;
+	
+	public PretSpecification (PretCriteria pretCriteria) {
+		this.pretCriteria = pretCriteria;
+	}
 
-    public PretSpecification() {
-        this.list = new ArrayList<>();
-    }
-
-    public void add(SearchCriteria criteria) {
-        list.add(criteria);
-    }
-
-    @Override
-    public Predicate toPredicate(Root<Pret> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-
-        //create a new predicate list
-        List<Predicate> predicates = new ArrayList<>();
+	/**
+	 * @param root
+	 * @param query
+	 * @param criteriaBuilder
+	 * @return
+	 */
+	@Override
+	public Predicate toPredicate(Root<Pret> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+		//create a new predicate list
+        Predicate predicates = builder.conjunction();
 
         //add add criteria to predicates
-        for (SearchCriteria criteria : list) {
-            if (criteria.getOperation().equals(SearchOperation.GREATER_THAN)) {
-                predicates.add(builder.greaterThan(
-                        root.get(criteria.getKey()), criteria.getValue().toString()));
-            } else if (criteria.getOperation().equals(SearchOperation.LESS_THAN)) {
-                predicates.add(builder.lessThan(
-                        root.get(criteria.getKey()), criteria.getValue().toString()));
-            } else if (criteria.getOperation().equals(SearchOperation.GREATER_THAN_EQUAL)) {
-                predicates.add(builder.greaterThanOrEqualTo(
-                        root.get(criteria.getKey()), criteria.getValue().toString()));
-            } else if (criteria.getOperation().equals(SearchOperation.LESS_THAN_EQUAL)) {
-                predicates.add(builder.lessThanOrEqualTo(
-                        root.get(criteria.getKey()), criteria.getValue().toString()));
-            } else if (criteria.getOperation().equals(SearchOperation.NOT_EQUAL)) {
-                predicates.add(builder.notEqual(
-                        root.get(criteria.getKey()), criteria.getValue()));
-            } else if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
-                predicates.add(builder.equal(
-                        root.get(criteria.getKey()), criteria.getValue()));
-            } else if (criteria.getOperation().equals(SearchOperation.MATCH)) {
-                predicates.add(builder.like(
-                        builder.lower(root.get(criteria.getKey())),
-                        "%" + criteria.getValue().toString().toLowerCase() + "%"));
-            } else if (criteria.getOperation().equals(SearchOperation.MATCH_END)) {
-                predicates.add(builder.like(
-                        builder.lower(root.get(criteria.getKey())),
-                        criteria.getValue().toString().toLowerCase() + "%"));
-            } else if (criteria.getOperation().equals(SearchOperation.MATCH_START)) {
-                predicates.add(builder.like(
-                        builder.lower(root.get(criteria.getKey())),
-                        "%" + criteria.getValue().toString().toLowerCase()));
-            } else if (criteria.getOperation().equals(SearchOperation.IN)) {
-                predicates.add(builder.in(root.get(criteria.getKey())).value(criteria.getValue()));
-            } else if (criteria.getOperation().equals(SearchOperation.NOT_IN)) {
-                predicates.add(builder.not(root.get(criteria.getKey())).in(criteria.getValue()));
+	       
+	        if (pretCriteria.getNumPret()!= null) {
+	        	predicates.getExpressions().add(builder.equal(root.get("numPret"), pretCriteria.getNumPret()));			
+	        }
+        
+        	if (pretCriteria.getUser()!= null) {
+            	predicates.getExpressions().add(builder.like(root.get("user").get("username"), "%" + pretCriteria.getUser().getUsername()+ "%"));		
             }
-        }
-
-        return builder.and(predicates.toArray(new Predicate[0]));
-    }
-
-    
-}
+        	
+        	if(pretCriteria.getLivre()!=null) {
+	            if (pretCriteria.getLivre().getTitre()!= null) {
+	            	predicates.getExpressions().add(builder.like(root.get("livre").get("titre"), "%" + pretCriteria.getLivre().getTitre() + "%"));	  	            
+	            }
+	            
+	            if (pretCriteria.getLivre().getAuteur()!= null) {
+	            	predicates.getExpressions().add(builder.like(root.get("livre").get("auteur"), "%" + pretCriteria.getLivre().getAuteur() + "%"));	
+	            }
+	            
+	            if (pretCriteria.getLivre().getCategorie()!= null) {
+	            	predicates.getExpressions().add(builder.like(root.get("livre").get("categorie").get("nomCategorie"), "%" + pretCriteria.getLivre().getCategorie().getNomCategorie() + "%"));	
+	            }
+	            
+	            if (pretCriteria.getLivre().getNumLivre()!= null) {
+	            	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), pretCriteria.getLivre().getNumLivre()));	
+	            }
+        	}
+        	
+            if (pretCriteria.getPretStatut().getCode()!= null) {
+            	
+            	predicates.getExpressions().add(builder.equal(root.get("pretStatut").get("text"), pretCriteria.getPretStatut().getText()));			
+            	
+            }
+        
+        return builder.and(predicates);
+		
+	}
+	
+	
+	}
