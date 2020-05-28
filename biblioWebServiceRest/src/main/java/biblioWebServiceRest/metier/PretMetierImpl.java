@@ -69,24 +69,48 @@ public class PretMetierImpl implements IPretMetier {
 		return pretRepository.save(pret);
 	
 	}
+	
 	/**
-	 * @param pret
+	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
+	 * Cette méthode permet de prolonger la durée d'un pret et de mettre à jour son statut
+	 * La durée de prolongation est une constante déclarée dans application.properties et gérée dans le package Configurations 
+	 * Mise à jour des prets ENCOURS au statut ECHU selon la date de la demande
+	 * Exceptions gérées si le statut du prêt n'est pas ENCOURS 
+	 * @param numPret
 	 * @return
 	 */
 	@Override
-	public Pret prolongerPret(Pret pret) {
-		// TODO Auto-generated method stub
-		return null;
+	public Pret prolongerPret(Long numPret) throws Exception {
+		Optional<Pret> pret = pretRepository.findById(numPret);
+		if(!pret.isPresent()) throw new Exception ("Aucun prêt enregistré ne correspond à votre demande");
+		
+		LocalDate dateDemandeProlongation = LocalDate.now();
+		if(!pret.get().getPretStatut().equals(PretStatut.CLOTURE) & pret.get().getDateRetourPrevue().isBefore(dateDemandeProlongation)) 
+				{pret.get().setPretStatut(PretStatut.ECHU);}
+		if(!pret.get().getPretStatut().equals(PretStatut.ENCOURS)) throw new Exception ("Le statut de ce pret de livre ne permet pas sa prolongation");
+		
+		LocalDate datePretProlonge = pret.get().getDateRetourPrevue();
+		pret.get().setDatePret(datePretProlonge);
+		LocalDate dateRetourPrevuePretProlonge = datePretProlonge.plusDays(appProperties.getDureeProlongation());
+		pret.get().setDateRetourPrevue(dateRetourPrevuePretProlonge);
+		
+		pret.get().setPretStatut(PretStatut.PROLONGE);
+		
+		return pretRepository.save(pret.get());
 	}
+	
 	/**
-	 * @param pret
+	 * CRUD : UPDATE clôturer un prêt 
+	 * @param numPret
 	 * @return
+	 * @throws Exception
 	 */
 	@Override
-	public Pret cloturerPret(Pret pret) {
+	public Pret cloturerPret(Long numPret) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	/**
 	 * Recherche multi-critères des prets enregistrés 
 	 * @param pretCriteria
@@ -97,5 +121,8 @@ public class PretMetierImpl implements IPretMetier {
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
 		return pretRepository.findAll(pretSpecification);
 	}
+
+	
+
 	
 }

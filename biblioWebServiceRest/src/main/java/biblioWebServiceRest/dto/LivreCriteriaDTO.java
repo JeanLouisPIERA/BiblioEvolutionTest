@@ -11,7 +11,7 @@ package biblioWebServiceRest.dto;
 public class LivreCriteriaDTO {
 	
 	private Long numLivre; 
-	private String titre; 
+	private String nomLivre; 
 	private String auteur;
 	private CategorieDTO categorie;
 	/**
@@ -26,17 +26,18 @@ public class LivreCriteriaDTO {
 	public void setNumLivre(Long numLivre) {
 		this.numLivre = numLivre;
 	}
+	
 	/**
-	 * @return the titre
+	 * @return the nomLivre
 	 */
-	public String getTitre() {
-		return titre;
+	public String getNomLivre() {
+		return nomLivre;
 	}
 	/**
-	 * @param titre the titre to set
+	 * @param nomLivre the nomLivre to set
 	 */
-	public void setTitre(String titre) {
-		this.titre = titre;
+	public void setNomLivre(String nomLivre) {
+		this.nomLivre = nomLivre;
 	}
 	/**
 	 * @return the auteur

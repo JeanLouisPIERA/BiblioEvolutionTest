@@ -14,21 +14,22 @@ import biblioWebServiceRest.entities.PretStatut;
  */
 public class PretCriteriaDTO {
 
-	private Long numPret;
+	private Long refPret;
 	private PretStatut pretStatut;
 	private UserDTO user;
 	private LivreDTO livre;
+	
 	/**
-	 * @return the numPret
+	 * @return the refPret
 	 */
-	public Long getNumPret() {
-		return numPret;
+	public Long getRefPret() {
+		return refPret;
 	}
 	/**
-	 * @param numPret the numPret to set
+	 * @param refPret the refPret to set
 	 */
-	public void setNumPret(Long numPret) {
-		this.numPret = numPret;
+	public void setRefPret(Long refPret) {
+		this.refPret = refPret;
 	}
 	/**
 	 * @return the pretStatut

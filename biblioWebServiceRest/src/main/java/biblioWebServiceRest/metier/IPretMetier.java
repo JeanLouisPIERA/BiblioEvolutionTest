@@ -18,16 +18,18 @@ public interface IPretMetier {
 	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
-	 * @param pret
+	 * @param numPret
 	 * @return
 	 */
-	Pret prolongerPret(Pret pret);
+	Pret prolongerPret(Long numPret)throws Exception;
 
 	/**
 	 * CRUD : UPDATE clôturer un prêt 
+	 * @param numPret
 	 * @return
+	 * @throws Exception
 	 */
-	Pret cloturerPret(Pret pret);
+	Pret cloturerPret(Long numPret) throws Exception;
 	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************

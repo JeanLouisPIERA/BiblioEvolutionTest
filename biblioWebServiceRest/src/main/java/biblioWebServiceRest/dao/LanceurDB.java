@@ -83,8 +83,8 @@ public class LanceurDB implements CommandLineRunner {
 		livreRepository.save(livre4);
 		
 		pretRepository.save(new Pret(LocalDate.of(2020, Month.FEBRUARY, 5), LocalDate.of(2020, Month.MARCH, 5), PretStatut.ECHU, user1, livre1));
-		pretRepository.save(new Pret(LocalDate.of(2020, Month.MARCH, 20), LocalDate.of(2010, Month.MAY, 20), PretStatut.PROLONGE, user2, livre2));
-		pretRepository.save(new Pret(LocalDate.of(2020,  Month.APRIL, 20), LocalDate.of(2020,  Month.MAY, 20), PretStatut.ENCOURS, user3, livre3)); 
+		pretRepository.save(new Pret(LocalDate.of(2020, Month.MARCH, 29), LocalDate.of(2010, Month.MAY, 29), PretStatut.PROLONGE, user2, livre2));
+		pretRepository.save(new Pret(LocalDate.of(2020,  Month.APRIL, 29), LocalDate.of(2020,  Month.MAY, 29), PretStatut.ENCOURS, user3, livre3)); 
 		
 	}
 	

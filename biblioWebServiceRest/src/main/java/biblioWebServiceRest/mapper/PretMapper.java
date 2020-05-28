@@ -6,6 +6,7 @@ package biblioWebServiceRest.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
 
 import biblioWebServiceRest.dto.CategorieDTO;
@@ -32,7 +33,9 @@ public interface PretMapper {
 	    @ValueMapping(source = "PretStatut.ECHU", target = "PretStatut.ECHU")
 	    @ValueMapping(source = "PretStatut.PROLONGE", target = "PretStatut.PROLONGE")
 	    @ValueMapping(source = "PretStatut.CLOTURE", target = "PretStatut.CLOTURE")
+		@Mapping(source="numPret", target="refPret")
 		PretDTO pretToPretDTO(Pret entity);
+		@Mapping(source="refPret", target="numPret")
 		Pret pretDTOToPret(PretDTO dto);
 		
 		LivreDTO livreToLivreDTO(Livre entity);

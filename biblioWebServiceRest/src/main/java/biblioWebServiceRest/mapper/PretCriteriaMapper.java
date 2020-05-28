@@ -4,6 +4,7 @@
 package biblioWebServiceRest.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
 
 import biblioWebServiceRest.criteria.PretCriteria;
@@ -27,11 +28,13 @@ import biblioWebServiceRest.entities.User;
 public interface PretCriteriaMapper {
 	
 	
-        @ValueMapping(source = "PretStatut.ENCOURS", target = "PretStatut.ENCOURS")
-        @ValueMapping(source = "PretStatut.ECHU", target = "PretStatut.ECHU")
-        @ValueMapping(source = "PretStatut.PROLONGE", target = "PretStatut.PROLONGE")
-        @ValueMapping(source = "PretStatut.CLOTURE", target = "PretStatut.CLOTURE")
+    @ValueMapping(source = "PretStatut.ENCOURS", target = "PretStatut.ENCOURS")
+    @ValueMapping(source = "PretStatut.ECHU", target = "PretStatut.ECHU")
+    @ValueMapping(source = "PretStatut.PROLONGE", target = "PretStatut.PROLONGE")
+    @ValueMapping(source = "PretStatut.CLOTURE", target = "PretStatut.CLOTURE")
+    @Mapping(source="numPret", target="refPret")
 	PretCriteriaDTO pretCriteriaToPretCriteriaDTO(PretCriteria entity);
+    @Mapping(source="refPret", target="numPret")
 	PretCriteria pretCriteriaDTOToPretCriteria(PretCriteriaDTO dto);
 	
 	LivreDTO livreToLivreDTO(Livre entity);
