@@ -5,14 +5,19 @@ package biblioWebServiceRest.dto;
 
 import java.time.LocalDate;
 
-import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.PretStatut;
-import biblioWebServiceRest.entities.User;
+
+/**
+import biblioWebServiceRest.entities.PretStatut;
+**/
+
 
 /**
  * @author jeanl
  *
  */
+
+
 public class PretDTO {
 	
 	private Long numPret;
@@ -70,8 +75,6 @@ public class PretDTO {
 	public void setDateRetourEffectif(LocalDate dateRetourEffectif) {
 		this.dateRetourEffectif = dateRetourEffectif;
 	}
-	
-	
 	/**
 	 * @return the pretStatut
 	 */
@@ -108,6 +111,12 @@ public class PretDTO {
 	public void setLivre(LivreDTO livre) {
 		this.livre = livre;
 	}
+
+	
+	
+	
+	
+	
 	
 	
 	

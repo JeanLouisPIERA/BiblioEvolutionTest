@@ -155,9 +155,5 @@ public class User implements Serializable {
 		this.prets = prets;
 	}
 	
-	
-	
-	
-	
 
 }

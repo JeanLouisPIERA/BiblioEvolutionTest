@@ -4,7 +4,6 @@
 package biblioWebServiceRest.criteria;
 
 
-
 import biblioWebServiceRest.entities.Categorie;
 
 
@@ -18,6 +17,7 @@ public class LivreCriteria {
 	private String titre; 
 	private String auteur;
 	private Categorie categorie;
+	
 	/**
 	 * @return the numLivre
 	 */

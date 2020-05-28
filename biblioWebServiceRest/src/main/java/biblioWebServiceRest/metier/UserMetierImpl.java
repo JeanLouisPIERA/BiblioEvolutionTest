@@ -20,6 +20,4 @@ public class UserMetierImpl implements IUserMetier{
 		return userRepository.findByUsername(username).get();
 	}
 	
-	
-
 }

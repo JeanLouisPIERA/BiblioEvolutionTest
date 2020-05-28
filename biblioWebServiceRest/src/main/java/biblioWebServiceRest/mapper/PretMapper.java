@@ -3,9 +3,7 @@
  */
 package biblioWebServiceRest.mapper;
 
-
 import java.util.List;
-
 
 import org.mapstruct.Mapper;
 import org.mapstruct.ValueMapping;
@@ -19,12 +17,15 @@ import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.User;
 
+
+
 /**
  * @author jeanl
  *
  */
 
 @Mapper(componentModel="spring")
+
 public interface PretMapper {
 	
 		@ValueMapping(source = "PretStatut.ENCOURS", target = "PretStatut.ENCOURS")
@@ -45,6 +46,5 @@ public interface PretMapper {
 		
 		
 		List<PretDTO> pretsToPretsDTOs(List<Pret> prets);
-		
 		
 }

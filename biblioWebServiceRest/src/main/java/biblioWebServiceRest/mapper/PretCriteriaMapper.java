@@ -15,11 +15,15 @@ import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.User;
 
+
+
 /**
  * @author jeanl
  *
  */
+
 @Mapper(componentModel="spring")
+
 public interface PretCriteriaMapper {
 	
 	
@@ -38,5 +42,6 @@ public interface PretCriteriaMapper {
 
 	UserDTO userToUserDTO(User entity);
 	User userDTOToUser(UserDTO dto);
+
 			
 	}

@@ -3,18 +3,17 @@
  */
 package biblioWebServiceRest.dto;
 
-import java.time.LocalDate;
 
-import biblioWebServiceRest.entities.Livre;
+
 import biblioWebServiceRest.entities.PretStatut;
-import biblioWebServiceRest.entities.User;
+
 
 /**
  * @author jeanl
  *
  */
 public class PretCriteriaDTO {
-	
+
 	private Long numPret;
 	private PretStatut pretStatut;
 	private UserDTO user;
@@ -31,7 +30,6 @@ public class PretCriteriaDTO {
 	public void setNumPret(Long numPret) {
 		this.numPret = numPret;
 	}
-	
 	/**
 	 * @return the pretStatut
 	 */
@@ -68,11 +66,6 @@ public class PretCriteriaDTO {
 	public void setLivre(LivreDTO livre) {
 		this.livre = livre;
 	}
-	
-	
-	
-	
-	
 	
 	
 	

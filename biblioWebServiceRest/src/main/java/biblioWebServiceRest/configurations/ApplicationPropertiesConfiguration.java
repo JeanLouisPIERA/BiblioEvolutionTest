@@ -1,5 +1,5 @@
 /**
- * 
+ * Cette classe permet de charger les paramètres de durée initiale et de prolongation du prêt depuis le fichier application.properties
  */
 package biblioWebServiceRest.configurations;
 

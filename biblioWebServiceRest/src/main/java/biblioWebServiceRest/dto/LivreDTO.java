@@ -12,8 +12,10 @@ package biblioWebServiceRest.dto;
 public class LivreDTO {
 	
 	private Long numLivre; 
-	private String titre; 
+	public String nomLivre; 
 	private String auteur;
+	private Integer nbExemplaires;
+	private Integer nbExemplairesDisponibles;
 	private CategorieDTO categorie;
 	/**
 	 * @return the numLivre
@@ -27,17 +29,18 @@ public class LivreDTO {
 	public void setNumLivre(Long numLivre) {
 		this.numLivre = numLivre;
 	}
+	
 	/**
-	 * @return the titre
+	 * @return the nomLivre
 	 */
-	public String getTitre() {
-		return titre;
+	public String getNomLivre() {
+		return nomLivre;
 	}
 	/**
-	 * @param titre the titre to set
+	 * @param nomLivre the nomLivre to set
 	 */
-	public void setTitre(String titre) {
-		this.titre = titre;
+	public void setNomLivre(String nomLivre) {
+		this.nomLivre = nomLivre;
 	}
 	/**
 	 * @return the auteur
@@ -62,6 +65,30 @@ public class LivreDTO {
 	 */
 	public void setCategorie(CategorieDTO categorie) {
 		this.categorie = categorie;
+	}
+	/**
+	 * @return the nbExemplaires
+	 */
+	public Integer getNbExemplaires() {
+		return nbExemplaires;
+	}
+	/**
+	 * @param nbExemplaires the nbExemplaires to set
+	 */
+	public void setNbExemplaires(Integer nbExemplaires) {
+		this.nbExemplaires = nbExemplaires;
+	}
+	/**
+	 * @return the nbExemplairesDisponibles
+	 */
+	public Integer getNbExemplairesDisponibles() {
+		return nbExemplairesDisponibles;
+	}
+	/**
+	 * @param nbExemplairesDisponibles the nbExemplairesDisponibles to set
+	 */
+	public void setNbExemplairesDisponibles(Integer nbExemplairesDisponibles) {
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 	}
 	
 	

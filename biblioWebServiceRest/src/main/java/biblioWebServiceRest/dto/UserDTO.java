@@ -11,23 +11,39 @@ package biblioWebServiceRest.dto;
  */
 public class UserDTO {
 	
-	//private Long idUser;
-	private String username;
-
+	
+	private String nomEmprunteur;
+	private String adresseMail;
 
 	/**
-	 * @return the username
+	 * @return the adresseMail
 	 */
-	public String getUsername() {
-		return username;
+	public String getAdresseMail() {
+		return adresseMail;
 	}
 
 	/**
-	 * @param username the username to set
+	 * @param adresseMail the adresseMail to set
 	 */
-	public void setUsername(String username) {
-		this.username = username;
+	public void setAdresseMail(String adresseMail) {
+		this.adresseMail = adresseMail;
 	}
+
+	/**
+	 * @return the nomEmprunteur
+	 */
+	public String getNomEmprunteur() {
+		return nomEmprunteur;
+	}
+
+	/**
+	 * @param nomEmprunteur the nomEmprunteur to set
+	 */
+	public void setNomEmprunteur(String nomEmprunteur) {
+		this.nomEmprunteur = nomEmprunteur;
+	}
+
+
 	
 	
 	

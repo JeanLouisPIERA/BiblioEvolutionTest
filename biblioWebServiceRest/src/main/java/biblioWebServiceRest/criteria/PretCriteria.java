@@ -3,8 +3,6 @@
  */
 package biblioWebServiceRest.criteria;
 
-import java.time.LocalDate;
-
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.User;

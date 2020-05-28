@@ -39,8 +39,10 @@ public class PretMetierImpl implements IPretMetier {
 	
 	
 	/**
-	 * @param idUser
-	 * @param numLivre
+	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
+	 * Exception levée si aucun titre ou aucun nom utilisateur correspondant ou si nombre d'exemplaire nul
+	 * @param titre
+	 * @param username
 	 * @return
 	 * @throws Exception
 	 */
@@ -49,13 +51,13 @@ public class PretMetierImpl implements IPretMetier {
 		Pret pret = new Pret();
 		
 		Optional<Livre> livre = livreRepository.findByTitre(titre);
-		if(!livre.isPresent()) throw new Exception ("Le livre demandé n'existe pas");
-		if(livre.get().getNbExemplairesDisponibles() ==0) throw new Exception ("Il n'y a plus d'exmplaires disponibles de ce livre");
+		if(!livre.isPresent()) throw new Exception ("Aucun titre de livre ne correspond à votre demande");
+		if(livre.get().getNbExemplairesDisponibles() ==0) throw new Exception ("Il n'y a plus d'exemplaire disponible de ce livre");
 		pret.setLivre(livre.get());
 		pret.getLivre().setNbExemplairesDisponibles(pret.getLivre().getNbExemplairesDisponibles()-1);
 		
 		Optional<User> user = userRepository.findByUsername(username);
-		if(!user.isPresent()) throw new Exception ("L'emprunteur n'existe pas");
+		if(!user.isPresent()) throw new Exception ("Aucun nom d'emprunteur ne correspond à votre demande ");
 		pret.setUser(user.get());
 		
 		LocalDate datePret = LocalDate.now();
@@ -86,6 +88,7 @@ public class PretMetierImpl implements IPretMetier {
 		return null;
 	}
 	/**
+	 * Recherche multi-critères des prets enregistrés 
 	 * @param pretCriteria
 	 * @return
 	 */
@@ -94,14 +97,5 @@ public class PretMetierImpl implements IPretMetier {
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
 		return pretRepository.findAll(pretSpecification);
 	}
-	
-	
-
-
-	
-
-
-
-	
 	
 }

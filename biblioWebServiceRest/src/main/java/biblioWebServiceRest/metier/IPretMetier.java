@@ -6,17 +6,15 @@ import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.entities.Pret;
 
 public interface IPretMetier {
-	
 		
 	/**
 	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
-	 * @param idUser
-	 * @param numLivre
+	 * @param titre
+	 * @param username
 	 * @return
+	 * @throws Exception
 	 */
-	Pret createPret(String titre, String Username) throws Exception;
-	
-	
+	Pret createPret(String titre, String username) throws Exception;
 	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
@@ -24,7 +22,6 @@ public interface IPretMetier {
 	 * @return
 	 */
 	Pret prolongerPret(Pret pret);
-	
 
 	/**
 	 * CRUD : UPDATE clôturer un prêt 
@@ -34,7 +31,6 @@ public interface IPretMetier {
 	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
-	
 	
 	 /**
 	  * AFFICHER LES PRETS : recherche les prêts par PretCriteria

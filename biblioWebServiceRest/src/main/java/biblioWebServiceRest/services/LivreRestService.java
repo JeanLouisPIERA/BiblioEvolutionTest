@@ -1,6 +1,5 @@
 package biblioWebServiceRest.services;
 
-
 import java.util.List;
 
 import javax.websocket.server.PathParam;
@@ -18,10 +17,7 @@ import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.mapper.LivreCriteriaMapper;
 import biblioWebServiceRest.mapper.LivreMapper;
-import biblioWebServiceRest.metier.ICategorieMetier;
 import biblioWebServiceRest.metier.ILivreMetier;
-
-
 
 
 @RestController
@@ -32,26 +28,23 @@ public class LivreRestService {
 	private ILivreMetier livreMetier;
 	
 	@Autowired
-	private ICategorieMetier categorieMetier;
-	
-	@Autowired
 	private LivreMapper livreMapper;
 	
 	@Autowired
 	private LivreCriteriaMapper livreCriteriaMapper;
 
-
+	
 	/**
 	 * Si aucun paramètre n'est renseigné, la méthode renvoie la liste de tous les livres enregistrés dans la base
 	 * Le titre et le nom de l'auteur doivent simplement matcher
 	 * Le nom de la catégorie doit être égal sinon la méthode Méthode catche une exception
-	 * @param livreCriteria
+	 * Gestion de la serialization DTO
+	 * @param livreCriteriaDTO
 	 * @param page
 	 * @param size
 	 * @return
 	 * @see biblioWebServiceRest.metier.ILivreMetier#searchByCriteria(biblioWebServiceRest.criteria.LivreCriteria, int, int)
 	 */
-	
 	@GetMapping(value="/livres")
 	public Page<LivreDTO> searchByLivreCriteriaDTO(@PathParam("searched by") LivreCriteriaDTO livreCriteriaDTO, @RequestParam int page, @RequestParam int size) {
 		LivreCriteria livreCriteria = livreCriteriaMapper.livreCriteriaDTOToLivreCriteria(livreCriteriaDTO);

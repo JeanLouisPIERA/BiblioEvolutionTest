@@ -2,18 +2,13 @@ package biblioWebServiceRest.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Optional;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -41,12 +36,6 @@ public class Pret implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 	
-	
-
-	
-
-
-
 	public Pret(LocalDate datePret, LocalDate dateRetourPrevue, PretStatut pretStatut, User user, Livre livre) {
 		super();
 		this.datePret = datePret;
@@ -55,12 +44,6 @@ public class Pret implements Serializable{
 		this.user = user;
 		this.livre = livre;
 	}
-
-
-
-
-
-
 
 	public Pret(LocalDate datePret, LocalDate dateRetourPrevue, LocalDate dateRetourEffectif, PretStatut pretStatut,
 			User user, Livre livre) {
@@ -129,14 +112,6 @@ public class Pret implements Serializable{
 	public void setLivre(Livre livre) {
 		this.livre = livre;
 	}
-
-
-	
-	
-	
-
-	
-	
 
 }
 
