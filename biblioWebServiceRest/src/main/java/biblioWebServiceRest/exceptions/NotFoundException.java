@@ -1,9 +1,10 @@
 /**
- * 
+ * Ce package permet une gestion globale des exceptions
  */
 package biblioWebServiceRest.exceptions;
 
 /**
+ * Cette classe permet de gérer les exceptions clients de type 404
  * @author jeanl
  *
  */
