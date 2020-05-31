@@ -22,6 +22,8 @@ import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.User;
+import biblioWebServiceRest.exceptions.InternalServerErrorException;
+import biblioWebServiceRest.exceptions.NotFoundException;
 
 
 @Service
@@ -51,13 +53,13 @@ public class PretMetierImpl implements IPretMetier {
 		Pret pret = new Pret();
 		
 		Optional<Livre> livre = livreRepository.findByTitre(titre);
-		if(!livre.isPresent()) throw new Exception ("Aucun titre de livre ne correspond à votre demande");
-		if(livre.get().getNbExemplairesDisponibles() ==0) throw new Exception ("Il n'y a plus d'exemplaire disponible de ce livre");
+		if(!livre.isPresent()) throw new NotFoundException ("Aucun titre de livre ne correspond à votre demande");
+		if(livre.get().getNbExemplairesDisponibles() ==0) throw new InternalServerErrorException ("Il n'y a plus d'exemplaire disponible de ce livre");
 		pret.setLivre(livre.get());
 		pret.getLivre().setNbExemplairesDisponibles(pret.getLivre().getNbExemplairesDisponibles()-1);
 		
 		Optional<User> user = userRepository.findByUsername(username);
-		if(!user.isPresent()) throw new Exception ("Aucun nom d'emprunteur ne correspond à votre demande ");
+		if(!user.isPresent()) throw new NotFoundException ("Aucun nom d'emprunteur ne correspond à votre demande ");
 		pret.setUser(user.get());
 		
 		LocalDate datePret = LocalDate.now();
@@ -82,12 +84,12 @@ public class PretMetierImpl implements IPretMetier {
 	@Override
 	public Pret prolongerPret(Long numPret) throws Exception {
 		Optional<Pret> pret = pretRepository.findById(numPret);
-		if(!pret.isPresent()) throw new Exception ("Aucun prêt enregistré ne correspond à votre demande");
+		if(!pret.isPresent()) throw new NotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 		
 		LocalDate dateDemandeProlongation = LocalDate.now();
 		if(!pret.get().getPretStatut().equals(PretStatut.CLOTURE) & pret.get().getDateRetourPrevue().isBefore(dateDemandeProlongation)) 
 				{pret.get().setPretStatut(PretStatut.ECHU);}
-		if(!pret.get().getPretStatut().equals(PretStatut.ENCOURS)) throw new Exception ("Le statut de ce pret de livre ne permet pas sa prolongation");
+		if(!pret.get().getPretStatut().equals(PretStatut.ENCOURS)) throw new InternalServerErrorException ("Le statut de ce pret de livre ne permet pas sa prolongation");
 		
 		LocalDate datePretProlonge = pret.get().getDateRetourPrevue();
 		pret.get().setDatePret(datePretProlonge);
