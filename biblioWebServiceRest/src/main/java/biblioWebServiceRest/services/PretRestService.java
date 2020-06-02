@@ -68,7 +68,7 @@ public class PretRestService {
 	 * @return
 	 * @throws Exception
 	 */
-	@PostMapping(value="/pret/livre/{nomLivre}/user/{nomEmprunteur}")
+	@PostMapping(value="/prets/livre/{nomLivre}/user/{nomEmprunteur}")
 	public PretDTO createPret(@PathVariable String nomLivre, @PathVariable String nomEmprunteur ) throws Exception {
 		String titre = nomLivre;
 		String username = nomEmprunteur;
@@ -99,7 +99,7 @@ public class PretRestService {
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.IPretMetier#prolongerPret(java.lang.Long)
 	 */
-	@PutMapping(value="/pret/prolongation/{refPret}")
+	@PutMapping(value="/prets/prolongation/{refPret}")
 	public PretDTO prolongerPret(@PathVariable Long refPret) throws Exception {
 		Long numPret = refPret;
 		

@@ -60,7 +60,7 @@ public class LanceurDB implements CommandLineRunner {
 		
 		User user1 = new User("Jean-Charles", "password", "jeannot@yahoo.fr", user);
 		User user2 = new User("Charlemagne", "password", "charlot@gmail.com", user);
-		User user3 = new User("Alexandre", "password", "alex@hotmail.com", user);
+		User user3 = new User("Alexandre", "Alexandre", "alex@hotmail.com", user);
 		userRepository.save(user1);
 		userRepository.save(user2);
 		userRepository.save(user3);

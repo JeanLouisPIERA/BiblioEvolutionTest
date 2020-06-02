@@ -50,6 +50,12 @@
 		    <artifactId>springfox-swagger-ui</artifactId>
 		    <version>2.9.2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
+			<dependency>
+			    <groupId>org.springframework.security.oauth</groupId>
+			    <artifactId>spring-security-oauth2</artifactId>
+			    <version>2.5.0.RELEASE</version>
+			</dependency>
 		<!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
 			<dependency>
 			    <groupId>org.mapstruct</groupId>
