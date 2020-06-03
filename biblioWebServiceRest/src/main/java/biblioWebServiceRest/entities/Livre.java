@@ -15,6 +15,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModelProperty;
+
 
 
 @Entity
@@ -24,10 +26,15 @@ uniqueConstraints= {
 })
 public class Livre implements Serializable{
 	@Id @GeneratedValue
+	@ApiModelProperty(notes = "ID du livre generee dans la base de donnees")
 	private Long numLivre; 
+	@ApiModelProperty(notes= "Nom du livre")
 	private String titre; 
+	@ApiModelProperty(notes= "Nom de l'auteur du livre")
 	private String auteur; 
+	@ApiModelProperty(notes= "Nombre d'exemplaires total de l'ouvrage que possède la bibliotheque")
 	private Integer nbExemplaires;
+	@ApiModelProperty(notes= "Nombre d'exemplaires de l'ouvrage actuellement disponibles au pret")
 	private Integer nbExemplairesDisponibles;
 	@ManyToOne
 	@JoinColumn(name="num_categorie")

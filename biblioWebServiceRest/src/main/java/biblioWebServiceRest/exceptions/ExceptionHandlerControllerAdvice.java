@@ -6,6 +6,7 @@ package biblioWebServiceRest.exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -23,6 +24,7 @@ public class ExceptionHandlerControllerAdvice {
 	 */
 	@ExceptionHandler(NotFoundException.class)
 	@ResponseBody
+	@ResponseStatus(code = HttpStatus.NOT_FOUND)
 	public ExceptionReponse handleCustomException(NotFoundException ex) {
 		ExceptionReponse exceptionReponse = new ExceptionReponse();
 		exceptionReponse.setMessageErreur(ex.getMessage());
@@ -37,6 +39,7 @@ public class ExceptionHandlerControllerAdvice {
 	 */
 	@ExceptionHandler(InternalServerErrorException.class)
 	@ResponseBody
+	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ExceptionReponse handleCustomException(InternalServerErrorException ex1) {
 		ExceptionReponse exceptionReponse = new ExceptionReponse();
 		exceptionReponse.setMessageErreur(ex1.getMessage());

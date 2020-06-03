@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import io.swagger.annotations.ApiModelProperty;
+
 
 @Entity
 @Table(name="pret")
@@ -18,11 +20,16 @@ public class Pret implements Serializable{
 	
 	@Id
 	@GeneratedValue
+	@ApiModelProperty(notes = "ID du pret generee dans la base de donnees")
 	private Long numPret;
+	@ApiModelProperty(notes= "Date du prêt initial ou date de renouvellement du pret lorsqu'il y a prolongation")
 	private LocalDate datePret;
+	@ApiModelProperty(notes= "Date de fin du prêt initial ou prolonge calculee automatiquement en fonction de la constante parametree dans l'application ")
 	private LocalDate dateRetourPrevue;
+	@ApiModelProperty(notes= "Date enregistree au moment de la restitution à la bibliotheque de l'ouvrage emprunte")
 	private LocalDate dateRetourEffectif; 
 	@Enumerated
+	@ApiModelProperty(notes= "Statut du pret qui peut être EN COURS, ECHU si la date de retour est dépassée sans restitution, PROLONGE ou RESTITUE si le livre est restitue")
 	private PretStatut pretStatut;
 	@ManyToOne
 	@JoinColumn(name="user_id")

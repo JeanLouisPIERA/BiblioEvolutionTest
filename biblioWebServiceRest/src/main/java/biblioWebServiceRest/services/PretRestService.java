@@ -10,6 +10,8 @@ import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,14 +34,17 @@ import biblioWebServiceRest.mapper.UserMapper;
 import biblioWebServiceRest.metier.ILivreMetier;
 import biblioWebServiceRest.metier.IPretMetier;
 import biblioWebServiceRest.metier.IUserMetier;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiResponse;
 /**
  * @author jeanl
  *
  */
 
 @RestController
-
+@Api(value="Gestion des prêts de livres")
 public class PretRestService {
 	
 	@Autowired
@@ -68,8 +73,16 @@ public class PretRestService {
 	 * @return
 	 * @throws Exception
 	 */
-	@PostMapping(value="/prets/livre/{nomLivre}/user/{nomEmprunteur}")
-	public PretDTO createPret(@PathVariable String nomLivre, @PathVariable String nomEmprunteur ) throws Exception {
+	@ApiOperation(value = "Enregistrement d'un nouveau prêt", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 201, message = "Le prêt a été créé"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@PostMapping(value="/prets/livre/{nomLivre}/user/{nomEmprunteur}", produces = "application/json")
+	public ResponseEntity<PretDTO> createPret(@PathVariable String nomLivre, @PathVariable String nomEmprunteur ) throws Exception {
 		String titre = nomLivre;
 		String username = nomEmprunteur;
 		
@@ -84,7 +97,7 @@ public class PretRestService {
 		newPretDTO.setLivre(livreNewPretDTO);
 		newPretDTO.setUser(usernewPretDTO);
 		
-		return newPretDTO;
+		return new ResponseEntity<PretDTO>(newPretDTO, HttpStatus.CREATED);
 	}
 	
 	
@@ -99,8 +112,17 @@ public class PretRestService {
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.IPretMetier#prolongerPret(java.lang.Long)
 	 */
-	@PutMapping(value="/prets/prolongation/{refPret}")
-	public PretDTO prolongerPret(@PathVariable Long refPret) throws Exception {
+	@ApiOperation(value = "Prolongation de la durée d'un nouveau prêt", response = Pret.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 202, message = "Le prêt a été prolongé"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@PutMapping(value="/prets/{refPret}/prolongation", produces="application/json")
+	public ResponseEntity<PretDTO> prolongerPret(@PathVariable Long refPret) throws Exception {
 		Long numPret = refPret;
 		
 		Pret pretProlonge = pretMetier.prolongerPret(numPret);
@@ -115,7 +137,7 @@ public class PretRestService {
 		pretProlongeDTO.setLivre(livrePretProlongeDTO);
 		pretProlongeDTO.setUser(userPretProlongeDTO);
 		
-		return pretProlongeDTO ;
+		return new ResponseEntity<PretDTO>(pretProlongeDTO, HttpStatus.ACCEPTED) ;
 	}
 
 	/**
@@ -126,14 +148,23 @@ public class PretRestService {
 	 * @param size
 	 * @return
 	 */
-	@GetMapping(value="/prets")
-	public Page<PretDTO> searchByPretCriteriaDTO(@PathParam("searched by")PretCriteriaDTO pretCriteriaDTO, @RequestParam int page, @RequestParam int size ) {
+	@ApiOperation(value = "Recherche multi-critères d'un ou plusieurs prets", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@GetMapping(value="/prets", produces="application/json")
+	public ResponseEntity<Page<PretDTO>> searchByPretCriteriaDTO(@PathParam("searched by")PretCriteriaDTO pretCriteriaDTO, @RequestParam int page, @RequestParam int size ) {
 		PretCriteria pretCriteria = pretCriteriaMapper.pretCriteriaDTOToPretCriteria(pretCriteriaDTO);
 		List<Pret> prets = pretMetier.searchByCriteria(pretCriteria);
 		List<PretDTO> pretDTOs = pretMapper.pretsToPretsDTOs(prets);
 		int end = (page + size > prets.size() ? prets.size() :(page + size));
 		Page<PretDTO> pagePretDTO = new PageImpl<PretDTO>(pretDTOs.subList(page, end));
-		return pagePretDTO;
+		return new ResponseEntity<Page<PretDTO>>(pagePretDTO, HttpStatus.OK);
 	}
 
 }

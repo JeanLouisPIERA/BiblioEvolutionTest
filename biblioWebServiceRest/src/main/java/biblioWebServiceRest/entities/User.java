@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModelProperty;
+
 
 
 @Entity
@@ -24,13 +26,16 @@ public class User implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty(notes = "ID de l'utilisateur generee dans la base de donnees")
 	private Long idUser;
+	@ApiModelProperty(notes= "Nom de l'utilisateur")
 	private String username;
 	@JsonIgnore
 	private String password;
 	@Transient
 	@JsonIgnore
 	private String passwordConfirm;
+	@ApiModelProperty(notes= "Adresse mail de l'utilisateur")
 	private String adresseMail;
 	@JsonIgnore
 	@ManyToOne

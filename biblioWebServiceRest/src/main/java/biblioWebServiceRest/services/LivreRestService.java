@@ -15,9 +15,13 @@ import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dto.LivreCriteriaDTO;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Livre;
+import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.mapper.LivreCriteriaMapper;
 import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.metier.ILivreMetier;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 
 @RestController
@@ -45,7 +49,16 @@ public class LivreRestService {
 	 * @return
 	 * @see biblioWebServiceRest.metier.ILivreMetier#searchByCriteria(biblioWebServiceRest.criteria.LivreCriteria, int, int)
 	 */
-	@GetMapping(value="/livres")
+	@ApiOperation(value = "Recherche multi-critères d'un ou plusieurs livres", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@GetMapping(value="/livres", produces = "application/json")
 	public Page<LivreDTO> searchByLivreCriteriaDTO(@PathParam("searched by") LivreCriteriaDTO livreCriteriaDTO, @RequestParam int page, @RequestParam int size) {
 		LivreCriteria livreCriteria = livreCriteriaMapper.livreCriteriaDTOToLivreCriteria(livreCriteriaDTO);
 		List<Livre> livres = livreMetier.searchByCriteria(livreCriteria);

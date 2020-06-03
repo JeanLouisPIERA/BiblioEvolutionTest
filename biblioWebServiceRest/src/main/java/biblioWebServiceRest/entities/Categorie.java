@@ -12,12 +12,16 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name="categorie")
 public class Categorie implements Serializable{
 	@Id
 	@GeneratedValue
+	@ApiModelProperty(notes = "ID de la categorie generee dans la base de donnees")
 	private Long numCategorie;
+	@ApiModelProperty(notes= "Nom de la categorie")
 	private String nomCategorie;
 	@JsonIgnore
 	@OneToMany(mappedBy="categorie", fetch=FetchType.LAZY)
