@@ -19,12 +19,14 @@ import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.mapper.LivreCriteriaMapper;
 import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.metier.ILivreMetier;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 
 @RestController
+@Api(value="Gestion des livres en referencement dans la Bibliotheque")
 public class LivreRestService {
 	
 	

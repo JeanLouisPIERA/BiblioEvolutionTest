@@ -2,24 +2,36 @@ package biblioWebServiceRest.metier;
 
 import java.util.List;
 
+import biblioWebServiceRest.criteria.CategorieCriteria;
 import biblioWebServiceRest.entities.Categorie;
 
 public interface ICategorieMetier {
 	
 	
 	/**
-	 * Méthode pour sélectionner toutes les catégories
+	 * Méthode pour identifier toutes les categories de livres en referencement 
 	 * @return
 	 */
-	public List<Categorie> searchAllCategories();
+	public List<Categorie> searchByCriteria(CategorieCriteria categorieCriteria);
+	
+	
 	
 	/**
-	 * Méthode pour sélection les catégories par leur nom
+	 * Methode pour creer une nouvelle categorie 
 	 * @param nomCategorie
 	 * @return
+	 * @throws Exception
 	 */
-	public Categorie searchByNomCategorie(String nomCategorie);
-
+	public Categorie createCategorie(String nomCategorie) throws Exception;
+	
+	
+	/**
+	 * Methode pour supprimer une categorie
+	 * @param numCategorie
+	 * @throws Exception
+	 */
+	public void deleteCategorie(Long numCategorie) throws Exception; 
+	
 }
 
 

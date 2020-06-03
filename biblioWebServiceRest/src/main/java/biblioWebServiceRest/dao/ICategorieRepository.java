@@ -1,5 +1,7 @@
 package biblioWebServiceRest.dao;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +14,8 @@ import biblioWebServiceRest.entities.Categorie;
 public interface ICategorieRepository extends JpaRepository<Categorie, Long>, JpaSpecificationExecutor<Categorie> {
 
 	@Query("select c from Categorie c where c.nomCategorie like %?1")
-	Categorie findByNomCategorie(String nomCategorie);
+	Optional<Categorie> findByNomCategorie(String nomCategorie);
+	
+	
 	
 }
