@@ -9,15 +9,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dto.LivreCriteriaDTO;
 import biblioWebServiceRest.dto.LivreDTO;
+import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.mapper.LivreCriteriaMapper;
@@ -37,6 +40,8 @@ public class LivreRestService {
 	@Autowired
 	private ILivreMetier livreMetier;
 	
+	
+
 	@Autowired
 	private LivreMapper livreMapper;
 	
@@ -98,9 +103,99 @@ public class LivreRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@PostMapping(value="/livres/titre/{titre}/auteur/{auteur}/categorie/{numCategorie}", produces = "application/json")
+	@PostMapping(value="/livres/titre/{titre}/auteur/{auteur}/categorie/{numCategorie}/creation", produces = "application/json")
 	public ResponseEntity<Livre> createLivre(@PathVariable String titre, @PathVariable String auteur, @PathVariable Long numCategorie) throws Exception {
 		return new ResponseEntity<Livre>(livreMetier.createLivre(titre, auteur, numCategorie), HttpStatus.CREATED);
+	}
+
+	/**
+	 * Enregistrement d'un ou plusieurs nouveaux exemplaires pour une reference de livre déjà enregistree
+	 * @param numLivre
+	 * @param nombreNouveauxExemplaires
+	 * @return
+	 * @throws Exception
+	 * @see biblioWebServiceRest.metier.ILivreMetier#createExemplaire(java.lang.Long, java.lang.Integer)
+	 */
+	@ApiOperation(value = "Enregistrement d'un ou plusieurs nouveaux exemplaires pour une réference de livre déjà enregistrée", response = Livre.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 202, message = "Le nombre d'exemplaires a été modifié"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@PutMapping(value="/prets/livre/{numLivre}/nbSupprimer/{nombreNouveauxExemplaires}/update", produces="application/json")
+	public ResponseEntity<Livre> createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception {
+		return new ResponseEntity<Livre>(livreMetier.createExemplaire(numLivre, nombreNouveauxExemplaires), HttpStatus.ACCEPTED);
+	}
+
+
+	/**
+	 * Suppression d'un ou plusieurs exemplaires pour une reference de livre déjà enregistrée
+	 * @param numLivre
+	 * @param nombreExemplairesASupprimer
+	 * @return
+	 * @throws Exception
+	 * @see biblioWebServiceRest.metier.ILivreMetier#deleteExemplaire(java.lang.Long, java.lang.Integer)
+	 */
+	@ApiOperation(value = "Suppression d'un ou plusieurs exemplaires pour une réference de livre déjà enregistrée", response = Livre.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 202, message = "Le nombre d'exemplaires a été modifié"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@PutMapping(value="/prets/livre/{numLivre}/nbSupprimer/{nombreExemplairesASupprimer}/update", produces="application/json")
+	public ResponseEntity<Livre> deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer) throws Exception {
+		return new ResponseEntity<Livre>(livreMetier.deleteExemplaire(numLivre, nombreExemplairesASupprimer), HttpStatus.ACCEPTED);
+	}
+
+
+	/**
+	 * Cette méthode permet de changer un livre de categorie en cas de modification de l'organisation des categories de livres
+	 * Par exemple suppression d'une categorie ou nouvelle categorie plus adaptee
+	 * @param numLivre
+	 * @param numCategorie
+	 * @return
+	 * @throws Exception
+	 * @see biblioWebServiceRest.metier.ILivreMetier#changeCategorie(java.lang.Long, java.lang.Long)
+	 */
+	@ApiOperation(value = "Changement de categorie pour une réference de livre déjà enregistrée", response = Livre.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 202, message = "Le changement de categorie a été effectué"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@PutMapping(value="/prets/livre/{numLivre}/categorie/{numCategorie}/update", produces="application/json")
+	public ResponseEntity<Livre> changeCategorie(Long numLivre, Long numCategorie) throws Exception {
+		return new ResponseEntity<Livre>(livreMetier.changeCategorie(numLivre, numCategorie), HttpStatus.ACCEPTED);
+	}
+
+
+	/**
+	 * Suppression d'une reference de livre 
+	 * @param numLivre
+	 * @throws Exception
+	 * @see biblioWebServiceRest.metier.ILivreMetier#deleteLivre(java.lang.Long)
+	 */
+	@ApiOperation(value = "Suppression d'une référence de livre", response = Livre.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@DeleteMapping(value="/livres/{numlivre}/suppression", produces = "application/text")
+	public ResponseEntity<String> deleteLivre(Long numLivre) throws Exception{
+		livreMetier.deleteLivre(numLivre);
+		return new ResponseEntity<String>("Le livre de cette référence a été supprimé", HttpStatus.OK);
 	}		
 		
 }

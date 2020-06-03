@@ -33,7 +33,7 @@ public interface ILivreMetier {
 	 * @param nombreNouveauxExemplaires
 	 * @return
 	 */
-	Livre createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires);
+	Livre createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception;
 	
 	/**
 	 * Suppression d'un ou plusieurs exemplaires pour une reference de livre déjà enregistrée
@@ -41,7 +41,7 @@ public interface ILivreMetier {
 	 * @param nombreExemplairesASupprimer
 	 * @return
 	 */
-	Livre deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer);
+	Livre deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer)throws Exception;
 	
 	/**
 	 * Cette méthode permet de changer un livre de categorie en cas de modification de l'organisation des categories de livres
@@ -50,12 +50,12 @@ public interface ILivreMetier {
 	 * @param nomCategorie
 	 * @return
 	 */
-	Livre changeCategorie(Long numLivre, String nomCategorie);
+	Livre changeCategorie(Long numLivre, Long numCategorie) throws Exception;
 	
 	/**
 	 * Suppression d'une reference de livre 
 	 * @param numLivre
 	 */
-	void deleteLivre(Long numLivre); 
+	void deleteLivre(Long numLivre) throws Exception; 
 	
 }

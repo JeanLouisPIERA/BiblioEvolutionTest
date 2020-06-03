@@ -35,7 +35,8 @@ public class CategorieMetierImpl implements ICategorieMetier{
 		@Override
 		public Categorie createCategorie(String nomCategorie) throws Exception {
 			Optional<Categorie> testNewCategorie = categorieRepository.findByNomCategorie(nomCategorie);
-			if(testNewCategorie.isPresent()) throw new InternalServerErrorException("La categorie que vous souhaitez creer existe deja");
+			if(testNewCategorie.isPresent()) 
+				throw new InternalServerErrorException("La categorie que vous souhaitez creer existe deja");
 			Categorie newCategorie = new Categorie();
 			newCategorie.setNomCategorie(nomCategorie);
 			return categorieRepository.save(newCategorie);
@@ -51,8 +52,10 @@ public class CategorieMetierImpl implements ICategorieMetier{
 		@Override
 		public void deleteCategorie(Long numCategorie) throws Exception {
 			Optional<Categorie> categorieToDelete = categorieRepository.findById(numCategorie);
-			if(!categorieToDelete.isPresent()) throw new NotFoundException("La categorie que vous voulez supprimer n'existe pas"); 
-			if(!categorieToDelete.get().getLivres().isEmpty()) throw new InternalServerErrorException("Vous ne pouvez pas supprimer cette categorie qui contient des livres"); 
+			if(!categorieToDelete.isPresent()) 
+				throw new NotFoundException("La categorie que vous voulez supprimer n'existe pas"); 
+			if(!categorieToDelete.get().getLivres().isEmpty()) 
+				throw new InternalServerErrorException("Vous ne pouvez pas supprimer cette categorie qui contient des livres"); 
 			categorieRepository.deleteById(numCategorie);
 		}
 		/**
