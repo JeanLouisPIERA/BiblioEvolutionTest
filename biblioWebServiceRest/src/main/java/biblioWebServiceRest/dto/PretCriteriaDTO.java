@@ -1,5 +1,5 @@
 /**
- * 
+ * Classe de sérialization des critères de recherche des prêts pour le Mapping DTO 
  */
 package biblioWebServiceRest.dto;
 
@@ -17,7 +17,7 @@ public class PretCriteriaDTO {
 	private Long refPret;
 	private PretStatut pretStatut;
 	private UserDTO user;
-	private LivreDTO livre;
+	private LivreCriteriaDTO livre;
 	
 	/**
 	 * @return the refPret
@@ -58,13 +58,13 @@ public class PretCriteriaDTO {
 	/**
 	 * @return the livre
 	 */
-	public LivreDTO getLivre() {
+	public LivreCriteriaDTO getLivre() {
 		return livre;
 	}
 	/**
 	 * @param livre the livre to set
 	 */
-	public void setLivre(LivreDTO livre) {
+	public void setLivre(LivreCriteriaDTO livre) {
 		this.livre = livre;
 	}
 	

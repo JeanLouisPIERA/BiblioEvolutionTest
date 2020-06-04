@@ -1,22 +1,29 @@
 /**
- * 
+ * Classe qui gère les requêtes URI sur les catégories de livres en référencement (création, consultation 
+ * et suppression)
  */
 package biblioWebServiceRest.services;
 
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import biblioWebServiceRest.criteria.CategorieCriteria;
+import biblioWebServiceRest.dto.CategorieDTO;
 import biblioWebServiceRest.entities.Categorie;
-import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.mapper.CategorieMapper;
 import biblioWebServiceRest.metier.ICategorieMetier;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,8 +42,9 @@ public class CategorieRestService {
 	
 	@Autowired
 	private ICategorieMetier categorieMetier;
-
-
+	@Autowired
+	private CategorieMapper categorieMapper;
+	
 
 	/**
 	 * Méthode pour identifier toutes les categories de livres en referencement 
@@ -54,8 +62,13 @@ public class CategorieRestService {
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@GetMapping(value="/categories", produces = "application/json")
-	public List<Categorie> searchByCriteria(CategorieCriteria categorieCriteria) {
-		return categorieMetier.searchByCriteria(categorieCriteria);
+	public Page<Categorie> searchByCriteria(@PathParam("searched by") CategorieCriteria categorieCriteria, @RequestParam int page, @RequestParam int size) {
+
+		List<CategorieDTO> categorieDTOs = categorieMetier.searchByCriteria(categorieCriteria);
+		List<Categorie> categories = categorieMapper.categorieDTOsToCategories(categorieDTOs);
+		int end = (page + size > categories.size() ? categories.size() : (page + size));
+		Page<Categorie> categoriesByPage = new PageImpl<Categorie>(categories.subList(page, end));		
+		return categoriesByPage;
 	}
 
 
@@ -76,7 +89,9 @@ public class CategorieRestService {
 	})
 	@PostMapping(value="/categories/{nomCategorie}/creation", produces = "application/json")
 	public ResponseEntity<Categorie> createCategorie(@PathVariable String nomCategorie) throws Exception {
-		return new ResponseEntity<Categorie>(categorieMetier.createCategorie(nomCategorie), HttpStatus.CREATED);
+		CategorieDTO newCategorieDTO = categorieMetier.createCategorie(nomCategorie);
+		Categorie newCategorie = categorieMapper.categorieDTOToCategorie(newCategorieDTO);
+		return new ResponseEntity<Categorie>(newCategorie, HttpStatus.CREATED);
 	}
 	
 

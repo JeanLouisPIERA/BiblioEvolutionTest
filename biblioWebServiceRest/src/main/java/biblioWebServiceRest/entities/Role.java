@@ -1,3 +1,6 @@
+/**
+ * L'entité Role permet d'identifier les profils d'autorisation des utilisateurs
+ */
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;

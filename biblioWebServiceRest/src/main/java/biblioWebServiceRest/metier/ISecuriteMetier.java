@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package biblioWebServiceRest.metier;
 
 import biblioWebServiceRest.entities.User;

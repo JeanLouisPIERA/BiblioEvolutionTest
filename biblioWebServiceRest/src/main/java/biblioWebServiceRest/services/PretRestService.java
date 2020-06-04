@@ -1,5 +1,6 @@
 /**
- * 
+ * Classe service REST qui gère les requêtes URI sur les prêts de livres (création, prolongation, archivage,
+ * affichage et recherche multicritères) 
  */
 package biblioWebServiceRest.services;
 
@@ -19,21 +20,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import biblioWebServiceRest.criteria.PretCriteria;
-import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.dto.PretCriteriaDTO;
 import biblioWebServiceRest.dto.PretDTO;
-import biblioWebServiceRest.dto.UserDTO;
-import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.entities.User;
-import biblioWebServiceRest.mapper.LivreMapper;
-import biblioWebServiceRest.mapper.PretCriteriaMapper;
 import biblioWebServiceRest.mapper.PretMapper;
-import biblioWebServiceRest.mapper.UserMapper;
-import biblioWebServiceRest.metier.ILivreMetier;
 import biblioWebServiceRest.metier.IPretMetier;
-import biblioWebServiceRest.metier.IUserMetier;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
@@ -50,18 +41,8 @@ public class PretRestService {
 	@Autowired
 	IPretMetier pretMetier;
 	@Autowired
-	ILivreMetier livreMetier;
-	@Autowired
-	IUserMetier userMetier;
-	@Autowired
-	PretMapper pretMapper; 
-	@Autowired
-	PretCriteriaMapper pretCriteriaMapper;
-	@Autowired
-	LivreMapper livreMapper;
-	@Autowired
-	UserMapper userMapper;
-
+	PretMapper pretMapper;
+	
 	
 	/**
 	 * Cette Requête permet de créer un prêt 
@@ -81,23 +62,11 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@PostMapping(value="/prets/livre/{nomLivre}/user/{nomEmprunteur}", produces = "application/json")
-	public ResponseEntity<PretDTO> createPret(@PathVariable String nomLivre, @PathVariable String nomEmprunteur ) throws Exception {
-		String titre = nomLivre;
-		String username = nomEmprunteur;
-		
-		Pret newPret = pretMetier.createPret(titre, username);
-		Livre livreNewPret = newPret.getLivre();
-		User userNewPret = newPret.getUser();
-		
-		LivreDTO livreNewPretDTO = livreMapper.livreToLivreDTO(livreNewPret);
-		UserDTO usernewPretDTO = userMapper.userTouserDTO(userNewPret);
-		PretDTO newPretDTO = pretMapper.pretToPretDTO(newPret);
-		
-		newPretDTO.setLivre(livreNewPretDTO);
-		newPretDTO.setUser(usernewPretDTO);
-		
-		return new ResponseEntity<PretDTO>(newPretDTO, HttpStatus.CREATED);
+	@PostMapping(value="/prets/livre/{numLivre}/user/{idUser}", produces = "application/json")
+	public ResponseEntity<Pret> createPret(@PathVariable Long numLivre, @PathVariable Long idUser ) throws Exception {
+		PretDTO newPretDTO = pretMetier.createPret(numLivre, idUser);
+		Pret newPret = pretMapper.pretDTOToPret(newPretDTO); 
+		return new ResponseEntity<Pret>(newPret, HttpStatus.CREATED);
 	}
 	
 	
@@ -120,24 +89,15 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@PutMapping(value="/prets/{refPret}/prolongation", produces="application/json")
-	public ResponseEntity<PretDTO> prolongerPret(@PathVariable Long refPret) throws Exception {
-		Long numPret = refPret;
+	@PutMapping(value="/prets/{numPret}/prolongation", produces="application/json")
+	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws Exception {
 		
-		Pret pretProlonge = pretMetier.prolongerPret(numPret);
-		Livre livrePretProlonge = pretProlonge.getLivre();
-		User userPretProlonge = pretProlonge.getUser();
-		
-		
-		UserDTO userPretProlongeDTO = userMapper.userTouserDTO(userPretProlonge);
-		LivreDTO livrePretProlongeDTO = livreMapper.livreToLivreDTO(livrePretProlonge);
-		PretDTO pretProlongeDTO = pretMapper.pretToPretDTO(pretProlonge);
-		
-		pretProlongeDTO.setLivre(livrePretProlongeDTO);
-		pretProlongeDTO.setUser(userPretProlongeDTO);
-		
-		return new ResponseEntity<PretDTO>(pretProlongeDTO, HttpStatus.ACCEPTED) ;
+		PretDTO prolongationPretDTO = pretMetier.prolongerPret(numPret);
+		Pret prolongationPret = pretMapper.pretDTOToPret(prolongationPretDTO); 
+		return new ResponseEntity<Pret>(prolongationPret, HttpStatus.ACCEPTED);
+	
 	}
+	
 	
 	
 	/**
@@ -160,7 +120,11 @@ public class PretRestService {
 	})
 	@PutMapping(value="/prets/{numPret}/cloture", produces="application/json")
 	public ResponseEntity<Pret> cloturerPret(Long numPret) throws Exception {
-		return new ResponseEntity<Pret>(pretMetier.cloturerPret(numPret), HttpStatus.ACCEPTED);
+		
+		PretDTO cloturePretDTO = pretMetier.cloturerPret(numPret);
+		Pret cloturePret = pretMapper.pretDTOToPret(cloturePretDTO); 
+		return new ResponseEntity<Pret>(cloturePret, HttpStatus.ACCEPTED);
+		
 	}
 	
 	
@@ -182,13 +146,12 @@ public class PretRestService {
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@GetMapping(value="/prets", produces="application/json")
-	public ResponseEntity<Page<PretDTO>> searchByPretCriteriaDTO(@PathParam("searched by")PretCriteriaDTO pretCriteriaDTO, @RequestParam int page, @RequestParam int size ) {
-		PretCriteria pretCriteria = pretCriteriaMapper.pretCriteriaDTOToPretCriteria(pretCriteriaDTO);
-		List<Pret> prets = pretMetier.searchByCriteria(pretCriteria);
-		List<PretDTO> pretDTOs = pretMapper.pretsToPretsDTOs(prets);
+	public ResponseEntity<Page<Pret>> searchByPretCriteriaDTO(@PathParam("searched by")PretCriteriaDTO pretCriteriaDTO, @RequestParam int page, @RequestParam int size ) {
+		List<PretDTO> pretDTOs = pretMetier.searchByCriteria(pretCriteriaDTO);
+		List<Pret> prets = pretMapper.pretDTOsToPret(pretDTOs);
 		int end = (page + size > prets.size() ? prets.size() :(page + size));
-		Page<PretDTO> pagePretDTO = new PageImpl<PretDTO>(pretDTOs.subList(page, end));
-		return new ResponseEntity<Page<PretDTO>>(pagePretDTO, HttpStatus.OK);
+		Page<Pret> pretsByPage = new PageImpl<Pret>(prets.subList(page, end));
+		return new ResponseEntity<Page<Pret>>(pretsByPage, HttpStatus.OK);
 	}
 
 }

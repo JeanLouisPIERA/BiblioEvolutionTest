@@ -1,5 +1,5 @@
 /**
- * 
+ * Cette classe permet de paramétrer SWAGGER et de documenter l'API
  */
 package biblioWebServiceRest;
 

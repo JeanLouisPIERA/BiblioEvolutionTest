@@ -1,3 +1,6 @@
+/**
+ * Classe d'implémentation des méthodes Métier pour l'entité User
+ */
 package biblioWebServiceRest.metier;
 
 import javax.transaction.Transactional;

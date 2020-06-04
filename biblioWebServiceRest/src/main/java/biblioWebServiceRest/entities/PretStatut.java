@@ -1,3 +1,6 @@
+/**
+ * L'enumération PretStatut permet de gérer une propriété de l'entité Livre et identifie 4 statuts selon la situation du pret
+ */
 package biblioWebServiceRest.entities;
 
 public enum PretStatut {

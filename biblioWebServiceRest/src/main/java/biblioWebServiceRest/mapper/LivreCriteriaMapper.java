@@ -1,6 +1,7 @@
 /**
- * 
+ * Interface pour la gestion du mapping MapStruct entre le critère de recherche Livre et son DTO
  */
+ 
 package biblioWebServiceRest.mapper;
 
 import org.mapstruct.Mapper;

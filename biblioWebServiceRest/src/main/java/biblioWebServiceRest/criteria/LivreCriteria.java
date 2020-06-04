@@ -1,5 +1,5 @@
 /**
- * 
+ * Cette classe permet de réaliser ne recherche multicritères sur les livres en referencement en sélectionnant certaines propriétés 
  */
 package biblioWebServiceRest.criteria;
 

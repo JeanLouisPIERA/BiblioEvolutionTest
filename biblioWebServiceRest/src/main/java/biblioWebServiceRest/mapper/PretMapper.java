@@ -1,5 +1,5 @@
 /**
- * 
+ * Interface pour la gestion du mapping MapStruct entre l'entité Pret et son DTO
  */
 package biblioWebServiceRest.mapper;
 
@@ -33,9 +33,8 @@ public interface PretMapper {
 	    @ValueMapping(source = "PretStatut.ECHU", target = "PretStatut.ECHU")
 	    @ValueMapping(source = "PretStatut.PROLONGE", target = "PretStatut.PROLONGE")
 	    @ValueMapping(source = "PretStatut.CLOTURE", target = "PretStatut.CLOTURE")
-		@Mapping(source="numPret", target="refPret")
 		PretDTO pretToPretDTO(Pret entity);
-		@Mapping(source="refPret", target="numPret")
+		
 		Pret pretDTOToPret(PretDTO dto);
 		
 		LivreDTO livreToLivreDTO(Livre entity);
@@ -49,5 +48,6 @@ public interface PretMapper {
 		
 		
 		List<PretDTO> pretsToPretsDTOs(List<Pret> prets);
+		List<Pret> pretDTOsToPret(List<PretDTO> pretDTOs);
 		
 }

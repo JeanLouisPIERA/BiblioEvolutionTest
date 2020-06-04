@@ -1,3 +1,6 @@
+/**
+ * L'entité Categorie gère une propriété de l'entité Livre
+ */
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;

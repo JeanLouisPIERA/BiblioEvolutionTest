@@ -1,3 +1,6 @@
+/**
+ * Classe d'implémentation des méthodes Métier pour l'entité Catégorie
+ */
 package biblioWebServiceRest.metier;
 
 import java.util.List;
@@ -12,9 +15,11 @@ import org.springframework.stereotype.Service;
 import biblioWebServiceRest.criteria.CategorieCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.specs.CategorieSpecification;
+import biblioWebServiceRest.dto.CategorieDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.exceptions.InternalServerErrorException;
 import biblioWebServiceRest.exceptions.NotFoundException;
+import biblioWebServiceRest.mapper.CategorieMapper;
 
 
 @Service
@@ -23,6 +28,8 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	
 	@Autowired
 	private ICategorieRepository categorieRepository;
+	@Autowired
+	private CategorieMapper categorieMapper;
 
 		
 		/**
@@ -33,13 +40,18 @@ public class CategorieMetierImpl implements ICategorieMetier{
 		 * @throws Exception
 		 */
 		@Override
-		public Categorie createCategorie(String nomCategorie) throws Exception {
+		public CategorieDTO createCategorie(String nomCategorie) throws Exception {
+				
 			Optional<Categorie> testNewCategorie = categorieRepository.findByNomCategorie(nomCategorie);
 			if(testNewCategorie.isPresent()) 
 				throw new InternalServerErrorException("La categorie que vous souhaitez creer existe deja");
 			Categorie newCategorie = new Categorie();
 			newCategorie.setNomCategorie(nomCategorie);
-			return categorieRepository.save(newCategorie);
+			categorieRepository.save(newCategorie);
+			CategorieDTO newCategorieDTO = categorieMapper.categorieToCategorieDTO(newCategorie);
+			return newCategorieDTO;
+			
+			
 		}
 		/**
 		 * Méthode pour supprimer une catégorie 
@@ -64,9 +76,16 @@ public class CategorieMetierImpl implements ICategorieMetier{
 		 * @return
 		 */
 		@Override
-		public List<Categorie> searchByCriteria(CategorieCriteria categorieCriteria) {
+		public List<CategorieDTO> searchByCriteria(CategorieCriteria categorieCriteria) {
+			
 			Specification<Categorie> categorieSpecification = new CategorieSpecification(categorieCriteria);
-			return categorieRepository.findAll(categorieSpecification);
+			List<Categorie> categories = categorieRepository.findAll(categorieSpecification);
+			List<CategorieDTO> categorieDTOs = categorieMapper.
+					categoriesToCategorieDTOs(categories);
+			return categorieDTOs;
+			
+			//Specification<Categorie> categorieSpecification = new CategorieSpecification(categorieCriteria);
+			//return categorieRepository.findAll(categorieSpecification);
 		
 		}
 		

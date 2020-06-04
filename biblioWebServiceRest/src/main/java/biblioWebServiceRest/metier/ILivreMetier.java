@@ -1,8 +1,13 @@
+/**
+  * Interface de définition des méthodes Métier pour l'entité Livre
+ */
 package biblioWebServiceRest.metier;
 
 import java.util.List;
 
 import biblioWebServiceRest.criteria.LivreCriteria;
+import biblioWebServiceRest.dto.LivreCriteriaDTO;
+import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Livre;
 
 
@@ -13,7 +18,7 @@ public interface ILivreMetier {
 	 * @param livreCriteria
 	 * @return
 	 */
-	List<Livre> searchByCriteria(LivreCriteria livreCriteria);
+	List<LivreDTO> searchByCriteria(LivreCriteriaDTO livreCriteriaDTO);
 	
 	/**
 	 * Creation d'un nouveau livre à referencer 
@@ -25,7 +30,7 @@ public interface ILivreMetier {
 	 * @return
 	 * @throws Exception
 	 */
-	Livre createLivre(String titre, String auteur, Long numCategorie) throws Exception;
+	LivreDTO createLivre(String titre, String auteur, Long numCategorie) throws Exception;
 	
 	/**
 	 * Enregistrement d'un ou plusieurs nouveaux exemplaires pour une reference de livre déjà enregistree
@@ -33,7 +38,7 @@ public interface ILivreMetier {
 	 * @param nombreNouveauxExemplaires
 	 * @return
 	 */
-	Livre createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception;
+	LivreDTO createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception;
 	
 	/**
 	 * Suppression d'un ou plusieurs exemplaires pour une reference de livre déjà enregistrée
@@ -41,7 +46,7 @@ public interface ILivreMetier {
 	 * @param nombreExemplairesASupprimer
 	 * @return
 	 */
-	Livre deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer)throws Exception;
+	LivreDTO deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer)throws Exception;
 	
 	/**
 	 * Cette méthode permet de changer un livre de categorie en cas de modification de l'organisation des categories de livres
@@ -50,7 +55,7 @@ public interface ILivreMetier {
 	 * @param nomCategorie
 	 * @return
 	 */
-	Livre changeCategorie(Long numLivre, Long numCategorie) throws Exception;
+	LivreDTO changeCategorie(Long numLivre, Long numCategorie) throws Exception;
 	
 	/**
 	 * Suppression d'une reference de livre 

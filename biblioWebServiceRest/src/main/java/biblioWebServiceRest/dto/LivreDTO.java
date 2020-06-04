@@ -1,6 +1,7 @@
 /**
- * 
+ * Classe de sérialization des livres pour le Mapping DTO 
  */
+
 package biblioWebServiceRest.dto;
 
 
@@ -12,7 +13,7 @@ package biblioWebServiceRest.dto;
 public class LivreDTO {
 	
 	private Long numLivre; 
-	public String nomLivre; 
+	public String titre; 
 	private String auteur;
 	private Integer nbExemplaires;
 	private Integer nbExemplairesDisponibles;
@@ -30,17 +31,18 @@ public class LivreDTO {
 		this.numLivre = numLivre;
 	}
 	
+	
 	/**
-	 * @return the nomLivre
+	 * @return the titre
 	 */
-	public String getNomLivre() {
-		return nomLivre;
+	public String getTitre() {
+		return titre;
 	}
 	/**
-	 * @param nomLivre the nomLivre to set
+	 * @param titre the titre to set
 	 */
-	public void setNomLivre(String nomLivre) {
-		this.nomLivre = nomLivre;
+	public void setTitre(String titre) {
+		this.titre = titre;
 	}
 	/**
 	 * @return the auteur

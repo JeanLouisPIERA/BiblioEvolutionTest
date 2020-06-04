@@ -1,5 +1,5 @@
 /**
- * 
+ * Classe de sérialization des utilisateurs pour le Mapping DTO 
  */
 package biblioWebServiceRest.dto;
 
@@ -11,38 +11,49 @@ package biblioWebServiceRest.dto;
  */
 public class UserDTO {
 	
-	
-	private String nomEmprunteur;
+	private Long idUser;
+	private String username;
 	private String adresseMail;
-
+	/**
+	 * @return the idUser
+	 */
+	public Long getIdUser() {
+		return idUser;
+	}
+	/**
+	 * @param idUser the idUser to set
+	 */
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
+	}
 	/**
 	 * @return the adresseMail
 	 */
 	public String getAdresseMail() {
 		return adresseMail;
 	}
-
 	/**
 	 * @param adresseMail the adresseMail to set
 	 */
 	public void setAdresseMail(String adresseMail) {
 		this.adresseMail = adresseMail;
 	}
-
 	/**
-	 * @return the nomEmprunteur
+	 * @return the username
 	 */
-	public String getNomEmprunteur() {
-		return nomEmprunteur;
+	public String getUsername() {
+		return username;
 	}
-
 	/**
-	 * @param nomEmprunteur the nomEmprunteur to set
+	 * @param username the username to set
 	 */
-	public void setNomEmprunteur(String nomEmprunteur) {
-		this.nomEmprunteur = nomEmprunteur;
+	public void setUsername(String username) {
+		this.username = username;
 	}
-
+	
+	
+	
+	
 
 	
 	

@@ -1,6 +1,7 @@
-/**
- * 
+ /**
+ * Interface pour la gestion du mapping MapStruct entre l'entité Livre et son DTO
  */
+
 package biblioWebServiceRest.mapper;
 
 import java.util.List;
@@ -21,14 +22,16 @@ import biblioWebServiceRest.entities.Livre;
 @Mapper(componentModel="spring")
 public interface LivreMapper {
 	
-	@Mapping(source="titre", target="nomLivre")
+	
 	LivreDTO livreToLivreDTO(Livre entity);
-	@Mapping(source="nomLivre", target="titre")
+	
 	Livre livreDTOToLivre(LivreDTO dto);
 	
 	CategorieDTO categorieToCategorieDTO(Categorie entity);
 	Categorie categorieDTOToCategorie(CategorieDTO dto);
 	
 	List<LivreDTO> livresToLivresDTOs(List<Livre> livres);
+	List<Livre> livreDTOsToLivres(List<LivreDTO> livreDTOs);
+	
 
 }

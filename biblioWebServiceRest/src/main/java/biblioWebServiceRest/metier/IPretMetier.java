@@ -1,8 +1,13 @@
+/**
+ * Interface de définition des méthodes Métier pour l'entité Pret
+ */
 package biblioWebServiceRest.metier;
 
 import java.util.List;
 
 import biblioWebServiceRest.criteria.PretCriteria;
+import biblioWebServiceRest.dto.PretCriteriaDTO;
+import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Pret;
 
 public interface IPretMetier {
@@ -14,14 +19,14 @@ public interface IPretMetier {
 	 * @return
 	 * @throws Exception
 	 */
-	Pret createPret(String titre, String username) throws Exception;
+	PretDTO createPret(Long numLivre, Long idUser) throws Exception;
 	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
 	 * @param numPret
 	 * @return
 	 */
-	Pret prolongerPret(Long numPret)throws Exception;
+	PretDTO prolongerPret(Long numPret)throws Exception;
 
 	/**
 	 * CRUD : UPDATE clôturer un prêt 
@@ -29,7 +34,7 @@ public interface IPretMetier {
 	 * @return
 	 * @throws Exception
 	 */
-	Pret cloturerPret(Long numPret) throws Exception;
+	PretDTO cloturerPret(Long numPret) throws Exception;
 	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
@@ -39,7 +44,7 @@ public interface IPretMetier {
 	  * @param pretCriteria
 	  * @return
 	  */
-	 List<Pret> searchByCriteria(PretCriteria pretCriteria);
+	 List<PretDTO> searchByCriteria(PretCriteriaDTO pretCriteriaDTO);
 	 
 		
 		

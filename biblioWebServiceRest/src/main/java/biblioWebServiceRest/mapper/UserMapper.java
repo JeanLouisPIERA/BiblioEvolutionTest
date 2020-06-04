@@ -1,5 +1,5 @@
 /**
- * 
+ * Interface pour la gestion du mapping MapStruct entre l'entité User et son DTO
  */
 package biblioWebServiceRest.mapper;
 
@@ -17,9 +17,9 @@ import biblioWebServiceRest.entities.User;
 @Mapper(componentModel="spring")
 public interface UserMapper {
 	
-	@Mapping(source="username", target="nomEmprunteur")
+	
 	UserDTO userTouserDTO(User entity);
-	@Mapping(source="nomEmprunteur", target="username")
+	
 	User userDTOToUser(UserDTO dto);
 
 }

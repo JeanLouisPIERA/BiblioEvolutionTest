@@ -1,3 +1,6 @@
+/**
+ * Classe d'instanciation du jeu de données au lancement de l'application
+ */
 package biblioWebServiceRest.dao;
 
 

@@ -1,6 +1,7 @@
 /**
- * 
+ * Interface pour la gestion du mapping MapStruct entre les critères de recherche Pret et son DTO
  */
+ 
 package biblioWebServiceRest.mapper;
 
 import org.mapstruct.Mapper;

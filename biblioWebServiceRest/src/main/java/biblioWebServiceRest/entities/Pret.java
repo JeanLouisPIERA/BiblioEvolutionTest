@@ -1,3 +1,6 @@
+/**
+ * L'entité Pret gère le prêt d'un livre à un utilisateur, sa date de retour prévue et l'archivage de la confirmation de sa restitution
+ */
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;

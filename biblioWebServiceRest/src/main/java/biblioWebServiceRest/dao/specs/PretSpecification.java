@@ -1,3 +1,6 @@
+/**
+ * Cette classe permet de créer les specifications necessaires à la recherche par Criteria 
+ */
 package biblioWebServiceRest.dao.specs;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -33,11 +36,11 @@ public class PretSpecification implements Specification<Pret> {
 	        if (pretCriteria.getNumPret()!= null) {
 	        	predicates.getExpressions().add(builder.equal(root.get("numPret"), pretCriteria.getNumPret()));			
 	        }
-        
+        /**
         	if (pretCriteria.getUser()!= null) {
             	predicates.getExpressions().add(builder.like(root.get("user").get("username"), "%" + pretCriteria.getUser().getUsername()+ "%"));		
             }
-        	
+        	**/
         	if(pretCriteria.getLivre()!=null) {
 	            if (pretCriteria.getLivre().getTitre()!= null) {
 	            	predicates.getExpressions().add(builder.like(root.get("livre").get("titre"), "%" + pretCriteria.getLivre().getTitre() + "%"));	  	            

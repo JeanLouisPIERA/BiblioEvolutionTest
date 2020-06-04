@@ -1,3 +1,6 @@
+/**
+ * L'entité Livre permet d'instancier un objet unique référencé dans la bibliothèque et de gérer plusieurs exemplaires 
+ */
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;

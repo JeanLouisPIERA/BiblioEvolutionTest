@@ -1,5 +1,5 @@
-/**
- * Cette classe permet de rechercher par son nom une catégorie de livres en referencement pour vérifier si elle existe 
+/** 
+* Cette classe permet de rechercher par son nom une catégorie de livres en referencement pour vérifier si elle existe 
  */
 package biblioWebServiceRest.criteria;
 

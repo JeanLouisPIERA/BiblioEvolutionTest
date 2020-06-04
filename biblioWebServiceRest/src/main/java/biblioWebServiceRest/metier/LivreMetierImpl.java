@@ -1,3 +1,7 @@
+/**
+  * Classe d'implémentation des méthodes Métier pour l'entité Livre
+ */
+
 package biblioWebServiceRest.metier;
 
 
@@ -14,10 +18,14 @@ import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
+import biblioWebServiceRest.dto.LivreCriteriaDTO;
+import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.exceptions.InternalServerErrorException;
 import biblioWebServiceRest.exceptions.NotFoundException;
+import biblioWebServiceRest.mapper.LivreCriteriaMapper;
+import biblioWebServiceRest.mapper.LivreMapper;
 
 @Service
 @Transactional
@@ -27,6 +35,10 @@ public class LivreMetierImpl implements ILivreMetier{
 	private ILivreRepository livreRepository;
 	@Autowired
 	private ICategorieRepository categorieRepository; 
+	@Autowired
+	private LivreMapper livreMapper;
+	@Autowired
+	private LivreCriteriaMapper livreCriteriaMapper;
 	
 	
 	/**
@@ -35,9 +47,12 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @return
 	 */
 	@Override
-	public List<Livre> searchByCriteria(LivreCriteria livreCriteria) {
+	public List<LivreDTO> searchByCriteria(LivreCriteriaDTO livreCriteriaDTO) {
+		LivreCriteria livreCriteria = livreCriteriaMapper.livreCriteriaDTOToLivreCriteria(livreCriteriaDTO);
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
-		return livreRepository.findAll(livreSpecification);
+		List<Livre> livres = livreRepository.findAll(livreSpecification);
+		List<LivreDTO> livreDTOs = livreMapper.livresToLivresDTOs(livres);
+		return livreDTOs;
 	}
 
 
@@ -54,11 +69,12 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @throws Exception
 	 */
 	@Override
-	public Livre createLivre(String titre, String auteur, Long numCategorie) throws Exception {
+	public LivreDTO createLivre(String titre, String auteur, Long numCategorie) throws Exception {
 		LivreCriteria livreCriteria = new LivreCriteria(); 
 		livreCriteria.setTitre(titre);
 		livreCriteria.setAuteur(auteur);
-		List<Livre> livreCriteriaList = this.searchByCriteria(livreCriteria);
+		LivreCriteriaDTO livreCriteriaDTO = livreCriteriaMapper.livreCriteriaToLivreCriteriaDTO(livreCriteria);
+		List<LivreDTO> livreCriteriaList = this.searchByCriteria(livreCriteriaDTO);
 		if(!livreCriteriaList.isEmpty()) 
 			throw new InternalServerErrorException("Ce livre a déjà été référencé");
 		
@@ -73,7 +89,13 @@ public class LivreMetierImpl implements ILivreMetier{
 		newLivre.setNbExemplaires(1);
 		newLivre.setNbExemplairesDisponibles(1);
 		
-		return livreRepository.save(newLivre);
+		
+		livreRepository.save(newLivre);
+		
+		LivreDTO newLivreDTO = livreMapper.livreToLivreDTO(newLivre);
+		
+		return newLivreDTO;
+		
 	}
 
 
@@ -84,13 +106,19 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @return
 	 */
 	@Override
-	public Livre createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception {
+	public LivreDTO createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception {
 		Optional<Livre> livreUpdate = livreRepository.findById(numLivre);
 		if(!livreUpdate.isPresent()) 
 			throw new NotFoundException("La référence de livre saisie n'existe pas");
 		livreUpdate.get().setNbExemplaires(livreUpdate.get().getNbExemplaires() + nombreNouveauxExemplaires);
 		livreUpdate.get().setNbExemplairesDisponibles(livreUpdate.get().getNbExemplairesDisponibles() + nombreNouveauxExemplaires);
-		return livreUpdate.get();
+			
+		livreRepository.save(livreUpdate.get());
+		
+		LivreDTO livreUpdateDTO = livreMapper.livreToLivreDTO(livreUpdate.get());
+		
+		return livreUpdateDTO;
+
 	}
 
 
@@ -100,7 +128,7 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @return
 	 */
 	@Override
-	public Livre deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer) throws Exception {
+	public LivreDTO deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer) throws Exception {
 		Optional<Livre> livreUpdate = livreRepository.findById(numLivre);
 		if(!livreUpdate.isPresent()) 
 			throw new NotFoundException("La référence de livre saisie n'existe pas");
@@ -110,7 +138,14 @@ public class LivreMetierImpl implements ILivreMetier{
 			throw new InternalServerErrorException("Transaction impossible : le nombre d'exemplaires à supprimer est supérieur au nombre total d'exemplaires disponibles pour cet ouvrage");
 		livreUpdate.get().setNbExemplaires(livreUpdate.get().getNbExemplaires() - nombreExemplairesASupprimer);
 		livreUpdate.get().setNbExemplairesDisponibles(livreUpdate.get().getNbExemplairesDisponibles() - nombreExemplairesASupprimer);
-		return livreUpdate.get();
+		
+		livreRepository.save(livreUpdate.get());
+		
+		LivreDTO livreUpdateDTO = livreMapper.livreToLivreDTO(livreUpdate.get());
+		
+		return livreUpdateDTO;
+		
+		
 	}
 
 
@@ -122,7 +157,7 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @return
 	 */
 	@Override
-	public Livre changeCategorie(Long numLivre, Long numCategorie) throws Exception {
+	public LivreDTO changeCategorie(Long numLivre, Long numCategorie) throws Exception {
 		Optional<Livre> livreUpdate = livreRepository.findById(numLivre);
 		if(!livreUpdate.isPresent()) 
 			throw new NotFoundException("La référence de livre saisie n'existe pas");
@@ -132,7 +167,12 @@ public class LivreMetierImpl implements ILivreMetier{
 			throw new NotFoundException("Le livre ne peut pas etre enregistre car la categorie saisie n'existe pas");
 		
 		livreUpdate.get().setCategorie(newCategorie.get());
-		return livreUpdate.get();
+		
+		livreRepository.save(livreUpdate.get());
+		
+		LivreDTO livreUpdateDTO = livreMapper.livreToLivreDTO(livreUpdate.get());
+		
+		return livreUpdateDTO;
 	}
 
 

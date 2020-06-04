@@ -1,3 +1,6 @@
+/**
+ * Classe de sérialization JPA des catégories pour le Mapping ORM avec une extension Specification de l'API Criteria
+ */
 package biblioWebServiceRest.dao;
 
 import java.util.Optional;

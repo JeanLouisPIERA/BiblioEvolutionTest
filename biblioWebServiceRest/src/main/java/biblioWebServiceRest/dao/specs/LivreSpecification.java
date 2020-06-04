@@ -1,3 +1,6 @@
+/**
+ * Cette classe permet de créer les specifications necessaires à la recherche par Criteria 
+ */
 package biblioWebServiceRest.dao.specs;
 
 import javax.persistence.criteria.CriteriaBuilder;

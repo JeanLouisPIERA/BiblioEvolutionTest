@@ -1,5 +1,5 @@
 /**
- * 
+ * Classe de sérialization des prets pour le Mapping DTO 
  */
 package biblioWebServiceRest.dto;
 
@@ -7,9 +7,6 @@ import java.time.LocalDate;
 
 import biblioWebServiceRest.entities.PretStatut;
 
-/**
-import biblioWebServiceRest.entities.PretStatut;
-**/
 
 
 /**
@@ -20,7 +17,7 @@ import biblioWebServiceRest.entities.PretStatut;
 
 public class PretDTO {
 	
-	private Long refPret;
+	private Long numPret;
 	private LocalDate datePret;
 	private LocalDate dateRetourPrevue;
 	private LocalDate dateRetourEffectif; 
@@ -30,17 +27,18 @@ public class PretDTO {
 	
 	
 	
+	
 	/**
-	 * @return the refPret
+	 * @return the numPret
 	 */
-	public Long getRefPret() {
-		return refPret;
+	public Long getNumPret() {
+		return numPret;
 	}
 	/**
-	 * @param refPret the refPret to set
+	 * @param numPret the numPret to set
 	 */
-	public void setRefPret(Long refPret) {
-		this.refPret = refPret;
+	public void setNumPret(Long numPret) {
+		this.numPret = numPret;
 	}
 	/**
 	 * @return the datePret

@@ -1,5 +1,5 @@
 /**
- * 
+ * Classe de sérialization des critères de recherche pour les livres pour le Mapping DTO 
  */
 package biblioWebServiceRest.dto;
 

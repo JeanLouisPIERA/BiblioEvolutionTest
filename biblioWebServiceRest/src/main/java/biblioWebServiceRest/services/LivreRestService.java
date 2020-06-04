@@ -1,3 +1,7 @@
+/**
+ * Classe REST Service qui gère les requêtes URI sur les livres en référencement (création, gestion du nombre 
+ * d'exemplaires, de la catégorie, suppression de la référence, affichage et recherche multicritères)
+ */
 package biblioWebServiceRest.services;
 
 import java.util.List;
@@ -17,13 +21,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dto.LivreCriteriaDTO;
 import biblioWebServiceRest.dto.LivreDTO;
-import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.mapper.LivreCriteriaMapper;
 import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.metier.ILivreMetier;
 import io.swagger.annotations.Api;
@@ -39,14 +40,11 @@ public class LivreRestService {
 	
 	@Autowired
 	private ILivreMetier livreMetier;
-	
-	
 
 	@Autowired
 	private LivreMapper livreMapper;
 	
-	@Autowired
-	private LivreCriteriaMapper livreCriteriaMapper;
+	
 
 	
 	/**
@@ -70,14 +68,14 @@ public class LivreRestService {
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@GetMapping(value="/livres", produces = "application/json")
-	public Page<LivreDTO> searchByLivreCriteriaDTO(@PathParam("searched by") LivreCriteriaDTO livreCriteriaDTO, @RequestParam int page, @RequestParam int size) {
-		LivreCriteria livreCriteria = livreCriteriaMapper.livreCriteriaDTOToLivreCriteria(livreCriteriaDTO);
-		List<Livre> livres = livreMetier.searchByCriteria(livreCriteria);
-		List<LivreDTO> livreDTOs = livreMapper.livresToLivresDTOs(livres);
+	public Page<Livre> searchByLivreCriteriaDTO(@PathParam("searched by") LivreCriteriaDTO livreCriteriaDTO, @RequestParam int page, @RequestParam int size) {
+		List<LivreDTO> livreDTOs = livreMetier.searchByCriteria(livreCriteriaDTO);
+		List<Livre> livres = livreMapper.livreDTOsToLivres(livreDTOs);
 		int end = (page + size > livres.size() ? livres.size() : (page + size));
-		Page<LivreDTO> pageLivreDTO = new PageImpl<LivreDTO>(livreDTOs.subList(page, end));
+		Page<Livre> livresByPage = new PageImpl<Livre>(livres.subList(page, end));
 	
-		return pageLivreDTO;
+		return livresByPage;
+		
 	}
 
 
@@ -105,7 +103,11 @@ public class LivreRestService {
 	})
 	@PostMapping(value="/livres/titre/{titre}/auteur/{auteur}/categorie/{numCategorie}/creation", produces = "application/json")
 	public ResponseEntity<Livre> createLivre(@PathVariable String titre, @PathVariable String auteur, @PathVariable Long numCategorie) throws Exception {
-		return new ResponseEntity<Livre>(livreMetier.createLivre(titre, auteur, numCategorie), HttpStatus.CREATED);
+		
+		LivreDTO newLivreDTO = livreMetier.createLivre(titre, auteur, numCategorie);
+		Livre newLivre = livreMapper.livreDTOToLivre(newLivreDTO);
+		return new ResponseEntity<Livre>(newLivre, HttpStatus.CREATED);
+		
 	}
 
 	/**
@@ -127,7 +129,9 @@ public class LivreRestService {
 	})
 	@PutMapping(value="/prets/livre/{numLivre}/nbSupprimer/{nombreNouveauxExemplaires}/update", produces="application/json")
 	public ResponseEntity<Livre> createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception {
-		return new ResponseEntity<Livre>(livreMetier.createExemplaire(numLivre, nombreNouveauxExemplaires), HttpStatus.ACCEPTED);
+		LivreDTO newExLivreDTO = livreMetier.createExemplaire(numLivre, nombreNouveauxExemplaires);
+		Livre newExLivre = livreMapper.livreDTOToLivre(newExLivreDTO);
+		return new ResponseEntity<Livre>(newExLivre, HttpStatus.ACCEPTED);
 	}
 
 
@@ -150,7 +154,9 @@ public class LivreRestService {
 	})
 	@PutMapping(value="/prets/livre/{numLivre}/nbSupprimer/{nombreExemplairesASupprimer}/update", produces="application/json")
 	public ResponseEntity<Livre> deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer) throws Exception {
-		return new ResponseEntity<Livre>(livreMetier.deleteExemplaire(numLivre, nombreExemplairesASupprimer), HttpStatus.ACCEPTED);
+		LivreDTO delExLivreDTO = livreMetier.deleteExemplaire(numLivre, nombreExemplairesASupprimer);
+		Livre delExLivre = livreMapper.livreDTOToLivre(delExLivreDTO);
+		return new ResponseEntity<Livre>(delExLivre, HttpStatus.ACCEPTED);
 	}
 
 
@@ -174,7 +180,9 @@ public class LivreRestService {
 	})
 	@PutMapping(value="/prets/livre/{numLivre}/categorie/{numCategorie}/update", produces="application/json")
 	public ResponseEntity<Livre> changeCategorie(Long numLivre, Long numCategorie) throws Exception {
-		return new ResponseEntity<Livre>(livreMetier.changeCategorie(numLivre, numCategorie), HttpStatus.ACCEPTED);
+		LivreDTO newCatLivreDTO = livreMetier.changeCategorie(numLivre, numCategorie);
+		Livre newCatLivre = livreMapper.livreDTOToLivre(newCatLivreDTO);
+		return new ResponseEntity<Livre>(newCatLivre, HttpStatus.ACCEPTED);
 	}
 
 

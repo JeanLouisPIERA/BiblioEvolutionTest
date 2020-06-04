@@ -1,9 +1,13 @@
+/**
+ * Interface de définition des méthodes Métier pour l'entité Catégorie
+ */
 package biblioWebServiceRest.metier;
 
 import java.util.List;
 
 import biblioWebServiceRest.criteria.CategorieCriteria;
-import biblioWebServiceRest.entities.Categorie;
+import biblioWebServiceRest.dto.CategorieDTO;
+
 
 public interface ICategorieMetier {
 	
@@ -12,7 +16,7 @@ public interface ICategorieMetier {
 	 * Méthode pour identifier toutes les categories de livres en referencement 
 	 * @return
 	 */
-	public List<Categorie> searchByCriteria(CategorieCriteria categorieCriteria);
+	public List<CategorieDTO> searchByCriteria(CategorieCriteria categorieCriteria);
 	
 	
 	
@@ -22,7 +26,7 @@ public interface ICategorieMetier {
 	 * @return
 	 * @throws Exception
 	 */
-	public Categorie createCategorie(String nomCategorie) throws Exception;
+	public CategorieDTO createCategorie(String nomCategorie) throws Exception;
 	
 	
 	/**

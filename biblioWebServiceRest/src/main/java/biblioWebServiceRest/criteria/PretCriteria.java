@@ -1,8 +1,9 @@
 /**
- * 
+ * Cette classe permet de réaliser ne recherche multicritères sur les prets en sélectionnant certaines propriétés 
  */
 package biblioWebServiceRest.criteria;
 
+import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.User;
@@ -24,6 +25,18 @@ public class PretCriteria {
 		return numPret;
 	}
 	/**
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}
+	/**
 	 * @param numPret the numPret to set
 	 */
 	public void setNumPret(Long numPret) {
@@ -42,18 +55,7 @@ public class PretCriteria {
 	public void setPretStatut(PretStatut pretStatut) {
 		this.pretStatut = pretStatut;
 	}
-	/**
-	 * @return the user
-	 */
-	public User getUser() {
-		return user;
-	}
-	/**
-	 * @param user the user to set
-	 */
-	public void setUser(User user) {
-		this.user = user;
-	}
+	
 	/**
 	 * @return the livre
 	 */
