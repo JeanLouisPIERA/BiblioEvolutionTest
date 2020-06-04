@@ -95,7 +95,7 @@ public class LivreRestService {
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.ILivreMetier#createLivre(java.lang.String, java.lang.String, java.lang.Long)
 	 */
-	@ApiOperation(value = "Enregistrement d'un nouveau livre. Pour les références qui ont plusieurs tomes, enregistrer SVP la référence du tome dans le titre (exp : Fantomas Tome 1)", response = Livre.class)
+	@ApiOperation(value = "Enregistrement d'une nouvelle référence de livre (1 exemplaire seulement). Si un même titre compte plusieurs tomes, enregistrer la référence du volume dans le titre. Exemple : Fantomas Tome 1)", response = Livre.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le livre a été créé"),
 	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),

@@ -53,13 +53,15 @@ public class PretMetierImpl implements IPretMetier {
 		Pret pret = new Pret();
 		
 		Optional<Livre> livre = livreRepository.findByTitre(titre);
-		if(!livre.isPresent()) throw new NotFoundException ("Aucun titre de livre ne correspond à votre demande");
+		if(!livre.isPresent()) 
+			throw new NotFoundException ("Aucun titre de livre ne correspond à votre demande");
 		if(livre.get().getNbExemplairesDisponibles() ==0) throw new InternalServerErrorException ("Il n'y a plus d'exemplaire disponible de ce livre");
 		pret.setLivre(livre.get());
 		pret.getLivre().setNbExemplairesDisponibles(pret.getLivre().getNbExemplairesDisponibles()-1);
 		
 		Optional<User> user = userRepository.findByUsername(username);
-		if(!user.isPresent()) throw new NotFoundException ("Aucun nom d'emprunteur ne correspond à votre demande ");
+		if(!user.isPresent()) 
+			throw new NotFoundException ("Aucun nom d'emprunteur ne correspond à votre demande ");
 		pret.setUser(user.get());
 		
 		LocalDate datePret = LocalDate.now();
@@ -84,12 +86,12 @@ public class PretMetierImpl implements IPretMetier {
 	@Override
 	public Pret prolongerPret(Long numPret) throws Exception {
 		Optional<Pret> pret = pretRepository.findById(numPret);
-		if(!pret.isPresent()) throw new NotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+		if(!pret.isPresent()) 
+			throw new NotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 		
 		LocalDate dateDemandeProlongation = LocalDate.now();
-		if(!pret.get().getPretStatut().equals(PretStatut.CLOTURE) & pret.get().getDateRetourPrevue().isBefore(dateDemandeProlongation)) 
-				{pret.get().setPretStatut(PretStatut.ECHU);}
-		if(!pret.get().getPretStatut().equals(PretStatut.ENCOURS)) throw new InternalServerErrorException ("Le statut de ce pret de livre ne permet pas sa prolongation");
+		if(!pret.get().getPretStatut().equals(PretStatut.ENCOURS)) 
+			throw new InternalServerErrorException ("Le statut de ce pret de livre ne permet pas sa prolongation");
 		
 		LocalDate datePretProlonge = pret.get().getDateRetourPrevue();
 		pret.get().setDatePret(datePretProlonge);
@@ -102,15 +104,26 @@ public class PretMetierImpl implements IPretMetier {
 	}
 	
 	/**
-	 * CRUD : UPDATE clôturer un prêt 
+	 * CRUD : UPDATE clôturer un prêt à la date de transaction
+	 * Le pret passe en statut CLOTURE mais n'est pas supprimé en base de données
 	 * @param numPret
 	 * @return
 	 * @throws Exception
 	 */
 	@Override
 	public Pret cloturerPret(Long numPret) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<Pret> pretACloturer = pretRepository.findById(numPret);
+		if(!pretACloturer.isPresent()) 
+			throw new NotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+		
+		pretACloturer.get().setDateRetourEffectif(LocalDate.now());
+		pretACloturer.get().setPretStatut(PretStatut.CLOTURE);
+		
+		Integer nbExemplairesDisponiblesAvantTransaction = pretACloturer.get().getLivre().getNbExemplairesDisponibles();
+		pretACloturer.get().getLivre().setNbExemplairesDisponibles(nbExemplairesDisponiblesAvantTransaction + 1);
+		
+		return pretRepository.save(pretACloturer.get());
+		
 	}
 	
 	/**

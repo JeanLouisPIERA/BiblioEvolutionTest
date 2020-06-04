@@ -104,7 +104,6 @@ public class PretRestService {
 	/**
 	 * Cette méthode permet de prolonger la durée d'un pret et de mettre à jour son statut
 	 * La durée de prolongation est une constante déclarée dans application.properties et gérée dans le package Configurations 
-	 * Mise à jour des prets ENCOURS au statut ECHU selon la date de la demande
 	 * Exceptions gérées si le statut du prêt n'est pas ENCOURS 
 	 * Gestion DTO
 	 * @param numPret
@@ -112,7 +111,7 @@ public class PretRestService {
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.IPretMetier#prolongerPret(java.lang.Long)
 	 */
-	@ApiOperation(value = "Prolongation de la durée d'un nouveau prêt", response = Pret.class)
+	@ApiOperation(value = "Prolongation de la durée d'un prêt en cours (exclusion des prets déjà prolongés ou échus non prolongés)", response = Pret.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
 	        @ApiResponse(code = 202, message = "Le prêt a été prolongé"),
@@ -139,7 +138,32 @@ public class PretRestService {
 		
 		return new ResponseEntity<PretDTO>(pretProlongeDTO, HttpStatus.ACCEPTED) ;
 	}
-
+	
+	
+	/**
+	 * CRUD : UPDATE clôturer un prêt à la date de transaction de restitution de l'ouvrage 
+	 * Le pret passe en statut CLOTURE mais n'est pas supprimé en base de données
+	 * Le nombre d'exemplaires de l'ouvrage disponibles au pret est augmenté de +1 
+	 * @param numPret
+	 * @return
+	 * @throws Exception
+	 * @see biblioWebServiceRest.metier.IPretMetier#cloturerPret(java.lang.Long)
+	 */
+	@ApiOperation(value = "Cloture d'un prêt à la restitution de l'ouvrage", response = Pret.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
+	        @ApiResponse(code = 202, message = "Le prêt a été cloturé"),
+	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
+	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	})
+	@PutMapping(value="/prets/{numPret}/cloture", produces="application/json")
+	public ResponseEntity<Pret> cloturerPret(Long numPret) throws Exception {
+		return new ResponseEntity<Pret>(pretMetier.cloturerPret(numPret), HttpStatus.ACCEPTED);
+	}
+	
+	
 	/**
 	 * Recherche Multicritères des prêts enregistrés 
 	 * Gestion de la serialization DTO 
