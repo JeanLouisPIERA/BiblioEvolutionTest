@@ -5,18 +5,26 @@ package biblioWebServiceRest.metier;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import biblioWebServiceRest.criteria.CategorieCriteria;
 import biblioWebServiceRest.dto.CategorieDTO;
+import biblioWebServiceRest.entities.Categorie;
+import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
+import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
 
 
 public interface ICategorieMetier {
+	
 	
 	
 	/**
 	 * Méthode pour identifier toutes les categories de livres en referencement 
 	 * @return
 	 */
-	public List<CategorieDTO> searchByCriteria(CategorieCriteria categorieCriteria);
+	public Page<Categorie> searchByCriteria(CategorieCriteria categorieCriteria, Pageable pageable);
 	
 	
 	
@@ -26,15 +34,16 @@ public interface ICategorieMetier {
 	 * @return
 	 * @throws Exception
 	 */
-	public CategorieDTO createCategorie(String nomCategorie) throws Exception;
+	public Categorie createCategorie(CategorieDTO categorieDTO) throws EntityAlreadyExistsException;
 	
 	
 	/**
 	 * Methode pour supprimer une categorie
-	 * @param numCategorie
-	 * @throws Exception
+	 * @param categorieDTO
+	 * @throws EntityNotFoundException
+	 * @throws EntityNotDeletableException
 	 */
-	public void deleteCategorie(Long numCategorie) throws Exception; 
+	public void deleteCategorie(Long numCategorie) throws EntityNotFoundException, EntityNotDeletableException; 
 	
 }
 

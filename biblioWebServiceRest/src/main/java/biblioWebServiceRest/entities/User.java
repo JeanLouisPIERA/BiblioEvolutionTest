@@ -7,6 +7,7 @@ package biblioWebServiceRest.entities;
 import java.io.Serializable;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -46,7 +47,7 @@ public class User implements Serializable {
 	@JoinColumn(name="role_id")
     private Role role;
 	@JsonIgnore
-	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	Collection<Pret> prets;
 	
 	public User() {

@@ -13,7 +13,7 @@ public class LivreCriteriaDTO {
 	private Long numLivre; 
 	private String nomLivre; 
 	private String auteur;
-	private CategorieDTO categorie;
+	private Integer numCategorie;
 	/**
 	 * @return the numLivre
 	 */
@@ -52,17 +52,19 @@ public class LivreCriteriaDTO {
 		this.auteur = auteur;
 	}
 	/**
-	 * @return the categorie
+	 * @return the numCategorie
 	 */
-	public CategorieDTO getCategorie() {
-		return categorie;
+	public Integer getNumCategorie() {
+		return numCategorie;
 	}
 	/**
-	 * @param categorie the categorie to set
+	 * @param numCategorie the numCategorie to set
 	 */
-	public void setCategorie(CategorieDTO categorie) {
-		this.categorie = categorie;
+	public void setNumCategorie(Integer numCategorie) {
+		this.numCategorie = numCategorie;
 	}
+	
+	
 	
 	
 	

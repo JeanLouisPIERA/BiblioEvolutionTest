@@ -3,6 +3,8 @@
  */
 package biblioWebServiceRest.exceptions;
 
+import java.time.LocalDate;
+
 /**
  * Cette classe permet de personnaliser l'affichage des messages d'erreurs 
  * @author jeanl
@@ -10,11 +12,26 @@ package biblioWebServiceRest.exceptions;
  */
 public class ExceptionReponse {
 	
+	private LocalDate localDate; 
 	private String messageErreur;
 	private int statusCode;
  
 	
  
+	/**
+	 * @return the localDate
+	 */
+	public LocalDate getLocalDate() {
+		return localDate;
+	}
+
+	/**
+	 * @param localDate the localDate to set
+	 */
+	public void setLocalDate(LocalDate localDate) {
+		this.localDate = localDate;
+	}
+
 	/**
 	 * @return messageErreur
 	 */

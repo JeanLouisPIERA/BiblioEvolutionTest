@@ -3,12 +3,23 @@
  */
 package biblioWebServiceRest.metier;
 
+import java.util.InputMismatchException;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dto.LivreCriteriaDTO;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Livre;
+import biblioWebServiceRest.exceptions.BadRequestException;
+import biblioWebServiceRest.exceptions.BiblioException;
+import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
+import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
 
 
 public interface ILivreMetier {
@@ -18,49 +29,40 @@ public interface ILivreMetier {
 	 * @param livreCriteria
 	 * @return
 	 */
-	List<LivreDTO> searchByCriteria(LivreCriteriaDTO livreCriteriaDTO);
+	Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable);
 	
 	/**
 	 * Creation d'un nouveau livre à referencer 
 	 * La creation d'une référence se fait sur la base d'un seul exemplaire
 	 * L'enregistrement de plusieurs exemplaires présent à la création se fait par simple mise à jour en suivant
-	 * @param titre
-	 * @param auteur
+	 * @param livreDTO
 	 * @param numCategorie
 	 * @return
+	 * @throws EntityAlreadyExistsException 
+	 * @throws EntityNotFoundException 
+	 * @throws WrongNumberException 
 	 * @throws Exception
 	 */
-	LivreDTO createLivre(String titre, String auteur, Long numCategorie) throws Exception;
+	Livre createLivre(LivreDTO livreDTO) throws EntityAlreadyExistsException, EntityNotFoundException, WrongNumberException;
 	
 	/**
-	 * Enregistrement d'un ou plusieurs nouveaux exemplaires pour une reference de livre déjà enregistree
+	 * Mise à jour des attributs d'un livre déjà référencé
 	 * @param numLivre
-	 * @param nombreNouveauxExemplaires
+	 * @param livreDTO
 	 * @return
+	 * @throws EntityNotFoundException 
+	 * @throws EntityAlreadyExistsException 
+	 * @throws WrongNumberException 
 	 */
-	LivreDTO createExemplaire(Long numLivre, Integer nombreNouveauxExemplaires) throws Exception;
+	Livre updateLivre(Long numLivre, LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException, WrongNumberException;
 	
-	/**
-	 * Suppression d'un ou plusieurs exemplaires pour une reference de livre déjà enregistrée
-	 * @param numLivre
-	 * @param nombreExemplairesASupprimer
-	 * @return
-	 */
-	LivreDTO deleteExemplaire(Long numLivre, Integer nombreExemplairesASupprimer)throws Exception;
-	
-	/**
-	 * Cette méthode permet de changer un livre de categorie en cas de modification de l'organisation des categories de livres
-	 * Par exemple suppression d'une categorie ou nouvelle categorie plus adaptee
-	 * @param numLivre
-	 * @param nomCategorie
-	 * @return
-	 */
-	LivreDTO changeCategorie(Long numLivre, Long numCategorie) throws Exception;
 	
 	/**
 	 * Suppression d'une reference de livre 
 	 * @param numLivre
+	 * @throws EntityNotDeletableException 
+	 * @throws EntityNotFoundException 
 	 */
-	void deleteLivre(Long numLivre) throws Exception; 
+	void deleteLivre(Long numLivre) throws EntityNotFoundException, EntityNotDeletableException; 
 	
 }

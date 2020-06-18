@@ -39,8 +39,8 @@ public class LivreSpecification implements Specification<Livre> {
             	predicates.getExpressions().add(builder.equal(root.get("numLivre"), livreCriteria.getNumLivre()));			
             }
             
-            if (livreCriteria.getCategorie()!= null) {
-            	predicates.getExpressions().add(builder.like(root.get("categorie").get("nomCategorie"), "%" + livreCriteria.getCategorie().getNomCategorie() + "%"));	
+            if (livreCriteria.getNomCategorie()!= null) {
+            	predicates.getExpressions().add(builder.like(root.get("categorie").get("nomCategorie"), "%" + livreCriteria.getNomCategorie() + "%"));	
             }
         
         return builder.and(predicates);

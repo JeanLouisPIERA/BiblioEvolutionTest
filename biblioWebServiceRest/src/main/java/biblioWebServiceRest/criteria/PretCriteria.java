@@ -3,10 +3,8 @@
  */
 package biblioWebServiceRest.criteria;
 
-import biblioWebServiceRest.dto.UserDTO;
-import biblioWebServiceRest.entities.Livre;
-import biblioWebServiceRest.entities.PretStatut;
-import biblioWebServiceRest.entities.User;
+
+
 
 /**
  * @author jeanl
@@ -15,27 +13,20 @@ import biblioWebServiceRest.entities.User;
 public class PretCriteria {
 	
 	private Long numPret;
-	private PretStatut pretStatut;
-	private User user;
-	private Livre livre;
+	private String pretStatut;
+	private String username;
+	private Long userId; 
+	private Long numLivre; 
+	private String titre; 
+	private String auteur;
+	private String nomCategorieLivre;
 	/**
 	 * @return the numPret
 	 */
 	public Long getNumPret() {
 		return numPret;
 	}
-	/**
-	 * @return the user
-	 */
-	public User getUser() {
-		return user;
-	}
-	/**
-	 * @param user the user to set
-	 */
-	public void setUser(User user) {
-		this.user = user;
-	}
+	
 	/**
 	 * @param numPret the numPret to set
 	 */
@@ -46,28 +37,104 @@ public class PretCriteria {
 	/**
 	 * @return the pretStatut
 	 */
-	public PretStatut getPretStatut() {
+	public String getPretStatut() {
 		return pretStatut;
 	}
+
 	/**
 	 * @param pretStatut the pretStatut to set
 	 */
-	public void setPretStatut(PretStatut pretStatut) {
+	public void setPretStatut(String pretStatut) {
 		this.pretStatut = pretStatut;
 	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	/**
+	 * @return the userId
+	 */
+	public Long getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * @return the numLivre
+	 */
+	public Long getNumLivre() {
+		return numLivre;
+	}
+
+	/**
+	 * @param numLivre the numLivre to set
+	 */
+	public void setNumLivre(Long numLivre) {
+		this.numLivre = numLivre;
+	}
+
+	/**
+	 * @return the titre
+	 */
+	public String getTitre() {
+		return titre;
+	}
+
+	/**
+	 * @param titre the titre to set
+	 */
+	public void setTitre(String titre) {
+		this.titre = titre;
+	}
+
+	/**
+	 * @return the auteur
+	 */
+	public String getAuteur() {
+		return auteur;
+	}
+
+	/**
+	 * @param auteur the auteur to set
+	 */
+	public void setAuteur(String auteur) {
+		this.auteur = auteur;
+	}
+
+	/**
+	 * @return the nomCategorieLivre
+	 */
+	public String getNomCategorieLivre() {
+		return nomCategorieLivre;
+	}
+
+	/**
+	 * @param nomCategorieLivre the nomCategorieLivre to set
+	 */
+	public void setNomCategorieLivre(String nomCategorieLivre) {
+		this.nomCategorieLivre = nomCategorieLivre;
+	}
 	
-	/**
-	 * @return the livre
-	 */
-	public Livre getLivre() {
-		return livre;
-	}
-	/**
-	 * @param livre the livre to set
-	 */
-	public void setLivre(Livre livre) {
-		this.livre = livre;
-	}
+	
+	
+	
 
 	
 	

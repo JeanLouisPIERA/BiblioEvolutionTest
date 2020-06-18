@@ -11,24 +11,32 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import biblioWebServiceRest.configurations.ApplicationPropertiesConfiguration;
+import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.IUserRepository;
-
+import biblioWebServiceRest.dao.specs.LivreSpecification;
 import biblioWebServiceRest.dao.specs.PretSpecification;
+import biblioWebServiceRest.dto.CategorieDTO;
+import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.dto.PretCriteriaDTO;
 import biblioWebServiceRest.dto.PretDTO;
+import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.User;
-import biblioWebServiceRest.exceptions.InternalServerErrorException;
-import biblioWebServiceRest.exceptions.NotFoundException;
+import biblioWebServiceRest.exceptions.BadRequestException;
+import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.mapper.PretCriteriaMapper;
 import biblioWebServiceRest.mapper.PretMapper;
 
@@ -49,6 +57,8 @@ public class PretMetierImpl implements IPretMetier {
 	PretMapper pretMapper;
 	@Autowired
 	PretCriteriaMapper pretCriteriaMapper;
+	@Autowired
+	LivreMapper livreMapper; 
 	
 	
 	/**
@@ -57,38 +67,44 @@ public class PretMetierImpl implements IPretMetier {
 	 * @param titre
 	 * @param username
 	 * @return
-	 * @throws Exception
+	 * @throws BadRequestException 
+	 * @throws BookNotAvailableException 
+	 * @throws EntityNotFoundException 
 	 */
 	@Override
-	public PretDTO createPret(Long numLivre, Long idUser) throws Exception {
+	public Pret createPret(PretDTO pretDTO) throws BadRequestException, EntityNotFoundException, BookNotAvailableException {
+	
+	 if(pretDTO.getNumLivre() == null)
+			throw new BadRequestException("Pour créer le prêt, le livre à emprunter doit être au minimum identifié par le nom d'auteur et le titre ou par son numéro d'identifiant");
+	 if(pretDTO.getIdUser() == null)
+			throw new BadRequestException("Pour créer le prêt, l'emprunteur doit être au minimum identifié par le nom d'utilisateur et son adresse mail ou par son numéro d'identifiant");
+
+	Optional<Livre> livreToRent = livreRepository.findById(pretDTO.getNumLivre());
+	if(!livreToRent.isPresent()) 
+		throw new EntityNotFoundException ("Aucun enregistrement de livre ne correspond à votre demande");
+	if(livreToRent.get().getNbExemplairesDisponibles() ==0) 
+		throw new BookNotAvailableException ("Il n'y a plus d'exemplaire disponible de ce livre");
 		
-		Optional<Livre> livre = livreRepository.findById(numLivre);
-		if(!livre.isPresent()) 
-			throw new NotFoundException ("Aucun enregistrement de livre ne correspond à votre demande");
-		if(livre.get().getNbExemplairesDisponibles() ==0) 
-			throw new InternalServerErrorException ("Il n'y a plus d'exemplaire disponible de ce livre");
+	Optional<User> emprunteur = userRepository.findById(pretDTO.getIdUser());
+	if(!emprunteur.isPresent()) 
+		throw new EntityNotFoundException ("Aucun utlisateur ne correspond à votre identification de l'emprunteur ");
 		
-		Optional<User> user = userRepository.findById(idUser);
-		if(!user.isPresent()) 
-			throw new NotFoundException ("Aucun utlisateur ne correspond à votre demande ");
+		Pret newPret = new Pret();
 		
-		Pret pret = new Pret();
-		
-		pret.setLivre(livre.get());
-		pret.getLivre().setNbExemplairesDisponibles(pret.getLivre().getNbExemplairesDisponibles()-1);
-		pret.setUser(user.get());
+		newPret.setLivre(livreToRent.get());
+		newPret.getLivre().setNbExemplairesDisponibles(newPret.getLivre().getNbExemplairesDisponibles()-1);
+		newPret.setUser(emprunteur.get());
 		
 		LocalDate datePret = LocalDate.now();
-		pret.setDatePret(datePret);
+		newPret.setDatePret(datePret);
 		LocalDate dateRetourPrevue = datePret.plusDays(appProperties.getDureePret());
-		pret.setDateRetourPrevue(dateRetourPrevue);
-		pret.setPretStatut(PretStatut.ENCOURS);
+		newPret.setDateRetourPrevue(dateRetourPrevue);
+		newPret.setPretStatut(PretStatut.ENCOURS);
 		
-		pretRepository.save(pret);
+		pretRepository.save(newPret);
 		
-		PretDTO pretDTO = pretMapper.pretToPretDTO(pret);
 		
-		return pretDTO;
+		return newPret;
 		
 	}
 	
@@ -100,28 +116,28 @@ public class PretMetierImpl implements IPretMetier {
 	 * Exceptions gérées si le statut du prêt n'est pas ENCOURS 
 	 * @param numPret
 	 * @return
+	 * @throws EntityNotFoundException 
+	 * @throws BookNotAvailableException 
 	 */
 	@Override
-	public PretDTO prolongerPret(Long numPret) throws Exception {
-		Optional<Pret> pret = pretRepository.findById(numPret);
-		if(!pret.isPresent()) 
-			throw new NotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+	public Pret prolongerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException {
+		Optional<Pret> pretAProlonger = pretRepository.findById(numPret);
+		if(!pretAProlonger.isPresent()) 
+			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 		
-		if(!pret.get().getPretStatut().equals(PretStatut.ENCOURS)) 
-			throw new InternalServerErrorException ("Le statut de ce pret de livre ne permet pas sa prolongation");
+		if(!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)) 
+			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
 		
-		LocalDate datePretProlonge = pret.get().getDateRetourPrevue();
-		pret.get().setDatePret(datePretProlonge);
+		LocalDate datePretProlonge = pretAProlonger.get().getDateRetourPrevue();
+		pretAProlonger.get().setDatePret(datePretProlonge);
 		LocalDate dateRetourPrevuePretProlonge = datePretProlonge.plusDays(appProperties.getDureeProlongation());
-		pret.get().setDateRetourPrevue(dateRetourPrevuePretProlonge);
+		pretAProlonger.get().setDateRetourPrevue(dateRetourPrevuePretProlonge);
 		
-		pret.get().setPretStatut(PretStatut.PROLONGE);
+		pretAProlonger.get().setPretStatut(PretStatut.PROLONGE);
 		
-		pretRepository.save(pret.get());
+		pretRepository.save(pretAProlonger.get());
 		
-		PretDTO prolongationPretDTO = pretMapper.pretToPretDTO(pret.get());
-		
-		return prolongationPretDTO;
+		return pretAProlonger.get();
 		
 	}
 	
@@ -130,13 +146,14 @@ public class PretMetierImpl implements IPretMetier {
 	 * Le pret passe en statut CLOTURE mais n'est pas supprimé en base de données
 	 * @param numPret
 	 * @return
+	 * @throws EntityNotFoundException 
 	 * @throws Exception
 	 */
 	@Override
-	public PretDTO cloturerPret(Long numPret) throws Exception {
+	public Pret cloturerPret(Long numPret) throws EntityNotFoundException {
 		Optional<Pret> pretACloturer = pretRepository.findById(numPret);
 		if(!pretACloturer.isPresent()) 
-			throw new NotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 		
 		pretACloturer.get().setDateRetourEffectif(LocalDate.now());
 		pretACloturer.get().setPretStatut(PretStatut.CLOTURE);
@@ -146,9 +163,7 @@ public class PretMetierImpl implements IPretMetier {
 		
 		pretRepository.save(pretACloturer.get());
 		
-		PretDTO cloturePretDTO = pretMapper.pretToPretDTO(pretACloturer.get());
-		
-		return cloturePretDTO;
+		return pretACloturer.get();
 		
 	}
 	
@@ -158,19 +173,11 @@ public class PretMetierImpl implements IPretMetier {
 	 * @return
 	 */
 	@Override
-	public List<PretDTO> searchByCriteria(PretCriteriaDTO pretCriteriaDTO) {
-		/**
-		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
-		List<Livre> livres = livreRepository.findAll(livreSpecification);
-		List<LivreDTO> livreDTOs = livreMapper.livresToLivresDTOs(livres);
-		return livreDTOs;
-		**/
-		PretCriteria pretCriteria = pretCriteriaMapper.pretCriteriaDTOToPretCriteria(pretCriteriaDTO);
-		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
-		List<Pret> prets = pretRepository.findAll(pretSpecification);
-		List<PretDTO> pretDTOs = pretMapper.pretsToPretsDTOs(prets);
+	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		
-		return pretDTOs;
+		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
+		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
+		return prets;
 	}
 
 	

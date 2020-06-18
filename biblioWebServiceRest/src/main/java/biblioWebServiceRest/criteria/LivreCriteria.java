@@ -16,7 +16,7 @@ public class LivreCriteria {
 	private Long numLivre; 
 	private String titre; 
 	private String auteur;
-	private Categorie categorie;
+	private String nomCategorie;
 	
 	/**
 	 * @return the numLivre
@@ -55,18 +55,15 @@ public class LivreCriteria {
 		this.auteur = auteur;
 	}
 	/**
-	 * @return the categorie
+	 * @return the nomCategorie
 	 */
-	public Categorie getCategorie() {
-		return categorie;
+	public String getNomCategorie() {
+		return nomCategorie;
 	}
 	/**
-	 * @param categorie the categorie to set
+	 * @param nomCategorie the nomCategorie to set
 	 */
-	public void setCategorie(Categorie categorie) {
-		this.categorie = categorie;
+	public void setNomCategorie(String nomCategorie) {
+		this.nomCategorie = nomCategorie;
 	}
-	
-	
-
 }

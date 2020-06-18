@@ -32,32 +32,40 @@ public class PretSpecification implements Specification<Pret> {
         Predicate predicates = builder.conjunction();
 
         //add add criteria to predicates
-	       
+ 
 	        if (pretCriteria.getNumPret()!= null) {
 	        	predicates.getExpressions().add(builder.equal(root.get("numPret"), pretCriteria.getNumPret()));			
 	        }
-        /**
-        	if (pretCriteria.getUser()!= null) {
-            	predicates.getExpressions().add(builder.like(root.get("user").get("username"), "%" + pretCriteria.getUser().getUsername()+ "%"));		
+       
+        	if (pretCriteria.getUsername()!= null) {
+            	predicates.getExpressions().add(builder.like(root.get("user").get("username"), "%" + pretCriteria.getUsername()+ "%"));		
             }
-        	**/
-        	if(pretCriteria.getLivre()!=null) {
-	            if (pretCriteria.getLivre().getTitre()!= null) {
-	            	predicates.getExpressions().add(builder.like(root.get("livre").get("titre"), "%" + pretCriteria.getLivre().getTitre() + "%"));	  	            
-	            }
+        	
+        	if (pretCriteria.getUserId()!= null) {
+            	predicates.getExpressions().add(builder.equal(root.get("user").get("idUser"), pretCriteria.getUserId()));		
+            }
+        	
+            if (pretCriteria.getTitre()!= null) {
+            	predicates.getExpressions().add(builder.like(root.get("livre").get("titre"), "%" + pretCriteria.getTitre() + "%"));	  	            
+            }
+            
+            if (pretCriteria.getAuteur()!= null) {
+            	predicates.getExpressions().add(builder.like(root.get("livre").get("auteur"), "%" + pretCriteria.getAuteur() + "%"));	
+            }
+            
+            if (pretCriteria.getNomCategorieLivre()!= null) {
+            	predicates.getExpressions().add(builder.like(root.get("livre").get("categorie").get("nomCategorie"), "%" + pretCriteria.getNomCategorieLivre() + "%"));	
+            }
+            
+            if (pretCriteria.getNumLivre()!= null) {
+            	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), pretCriteria.getNumLivre()));	
+            }
+            if (pretCriteria.getPretStatut()!= null) {
+            	predicates.getExpressions().add(builder.like(root.get("pretStatut").get("code"),"%" + pretCriteria.getPretStatut() + "%"));			
+            	
+            }
 	            
-	            if (pretCriteria.getLivre().getAuteur()!= null) {
-	            	predicates.getExpressions().add(builder.like(root.get("livre").get("auteur"), "%" + pretCriteria.getLivre().getAuteur() + "%"));	
-	            }
-	            
-	            if (pretCriteria.getLivre().getCategorie()!= null) {
-	            	predicates.getExpressions().add(builder.like(root.get("livre").get("categorie").get("nomCategorie"), "%" + pretCriteria.getLivre().getCategorie().getNomCategorie() + "%"));	
-	            }
-	            
-	            if (pretCriteria.getLivre().getNumLivre()!= null) {
-	            	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), pretCriteria.getLivre().getNumLivre()));	
-	            }
-        	}
+        	
         /**	
             if (pretCriteria.getPretStatut().getCode()!= null) {
             	

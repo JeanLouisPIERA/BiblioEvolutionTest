@@ -6,6 +6,7 @@ package biblioWebServiceRest.entities;
 import java.io.Serializable;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,11 +42,12 @@ public class Livre implements Serializable{
 	private Integer nbExemplaires;
 	@ApiModelProperty(notes= "Nombre d'exemplaires de l'ouvrage actuellement disponibles au pret")
 	private Integer nbExemplairesDisponibles;
-	@ManyToOne
+	@ApiModelProperty(notes= "Categorie de l'ouvrage")
+	@ManyToOne 
 	@JoinColumn(name="num_categorie")
 	private Categorie categorie;
 	@JsonIgnore
-	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	private Collection<Pret> prets;
 	
 	public Livre() {

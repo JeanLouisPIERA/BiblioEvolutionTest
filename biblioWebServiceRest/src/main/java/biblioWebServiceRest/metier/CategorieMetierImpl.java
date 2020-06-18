@@ -9,6 +9,9 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +20,11 @@ import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.specs.CategorieSpecification;
 import biblioWebServiceRest.dto.CategorieDTO;
 import biblioWebServiceRest.entities.Categorie;
-import biblioWebServiceRest.exceptions.InternalServerErrorException;
-import biblioWebServiceRest.exceptions.NotFoundException;
+import biblioWebServiceRest.exceptions.BiblioException;
+import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
+import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.mapper.CategorieMapper;
 
 
@@ -31,25 +37,24 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	@Autowired
 	private CategorieMapper categorieMapper;
 
-		
+
+	
 		/**
 		 * Methode pour creer une nouvelle categorie de livres
 		 * La méthode envoie une exception si le nom de la categorie à créer existe déjà pour éviter les doublons
-		 * @param nomCategorie
+		 * @param categorieDTO
 		 * @return
-		 * @throws Exception
+		 * @throws EntityAlreadyExistsException
 		 */
 		@Override
-		public CategorieDTO createCategorie(String nomCategorie) throws Exception {
-				
-			Optional<Categorie> testNewCategorie = categorieRepository.findByNomCategorie(nomCategorie);
+		public Categorie createCategorie(CategorieDTO categorieDTO) throws EntityAlreadyExistsException {
+			
+			Categorie newCategorie = categorieMapper.categorieDTOToCategorie(categorieDTO);
+			Optional<Categorie> testNewCategorie = categorieRepository.findByNomCategorie(newCategorie.getNomCategorie());
 			if(testNewCategorie.isPresent()) 
-				throw new InternalServerErrorException("La categorie que vous souhaitez creer existe deja");
-			Categorie newCategorie = new Categorie();
-			newCategorie.setNomCategorie(nomCategorie);
+				throw new EntityAlreadyExistsException("La categorie que vous souhaitez creer existe deja");
 			categorieRepository.save(newCategorie);
-			CategorieDTO newCategorieDTO = categorieMapper.categorieToCategorieDTO(newCategorie);
-			return newCategorieDTO;
+			return newCategorie;
 			
 			
 		}
@@ -59,35 +64,36 @@ public class CategorieMetierImpl implements ICategorieMetier{
 		 * La méthode envoie une InternalServerException si la réference de la categorie à supprimer contient au moins un livre
 		 * La méthode envoie une NotFoundException si la réference n'existe pas
 		 * @param numCategorie
+		 * @throws EntityNotFoundException 
+		 * @throws EntityNotDeletableException 
 		 * @throws Exception
 		 */
 		@Override
-		public void deleteCategorie(Long numCategorie) throws Exception {
+		public void deleteCategorie(Long numCategorie) throws EntityNotFoundException, EntityNotDeletableException  {
 			Optional<Categorie> categorieToDelete = categorieRepository.findById(numCategorie);
 			if(!categorieToDelete.isPresent()) 
-				throw new NotFoundException("La categorie que vous voulez supprimer n'existe pas"); 
+				throw new EntityNotFoundException("La categorie que vous voulez supprimer n'existe pas"); 
 			if(!categorieToDelete.get().getLivres().isEmpty()) 
-				throw new InternalServerErrorException("Vous ne pouvez pas supprimer cette categorie qui contient des livres"); 
-			categorieRepository.deleteById(numCategorie);
+				throw new EntityNotDeletableException("Vous ne pouvez pas supprimer cette categorie qui contient des livres"); 
+			categorieRepository.deleteById(categorieToDelete.get().getNumCategorie());
 		}
+		
+		
 		/**
 		 * Méthode pour identifier toutes les categories de livres en referencement 
 		 * @param categorieCriteria
 		 * @return
 		 */
 		@Override
-		public List<CategorieDTO> searchByCriteria(CategorieCriteria categorieCriteria) {
+		public Page<Categorie> searchByCriteria(CategorieCriteria categorieCriteria, Pageable pageable) {
 			
 			Specification<Categorie> categorieSpecification = new CategorieSpecification(categorieCriteria);
-			List<Categorie> categories = categorieRepository.findAll(categorieSpecification);
-			List<CategorieDTO> categorieDTOs = categorieMapper.
-					categoriesToCategorieDTOs(categories);
-			return categorieDTOs;
+			Page<Categorie> categories = categorieRepository.findAll(categorieSpecification, pageable);
+			return categories;
 			
-			//Specification<Categorie> categorieSpecification = new CategorieSpecification(categorieCriteria);
-			//return categorieRepository.findAll(categorieSpecification);
 		
 		}
+		
 		
 		
 	

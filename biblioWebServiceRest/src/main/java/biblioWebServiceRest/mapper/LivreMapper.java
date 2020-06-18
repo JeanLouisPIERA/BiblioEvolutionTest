@@ -27,8 +27,8 @@ public interface LivreMapper {
 	
 	Livre livreDTOToLivre(LivreDTO dto);
 	
-	CategorieDTO categorieToCategorieDTO(Categorie entity);
-	Categorie categorieDTOToCategorie(CategorieDTO dto);
+	//CategorieDTO categorieToCategorieDTO(Categorie entity);
+	//Categorie categorieDTOToCategorie(CategorieDTO dto);
 	
 	List<LivreDTO> livresToLivresDTOs(List<Livre> livres);
 	List<Livre> livreDTOsToLivres(List<LivreDTO> livreDTOs);

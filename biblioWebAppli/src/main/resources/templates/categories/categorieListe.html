@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Affichage Categories</title>
+
+
+
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+   $.getJSON("http://localhost:8090/categories", function(result){
+      $.each(result, function(key,value) {
+         $("#categoriesJson").append(value.numCategorie+" "+value.nomCategorie+" ");
+      }); 
+   });
+});
+</script>
+</head>
+<body>
+ <div id = "productsJson"> </div>
+</body>
+</html>

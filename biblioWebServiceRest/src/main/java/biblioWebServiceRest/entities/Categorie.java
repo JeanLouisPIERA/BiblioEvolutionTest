@@ -6,6 +6,7 @@ package biblioWebServiceRest.entities;
 import java.io.Serializable;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class Categorie implements Serializable{
 	@ApiModelProperty(notes= "Nom de la categorie")
 	private String nomCategorie;
 	@JsonIgnore
-	@OneToMany(mappedBy="categorie", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="categorie", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	private Collection<Livre> livres;
 	
 	public Categorie() {

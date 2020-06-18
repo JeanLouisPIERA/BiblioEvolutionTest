@@ -4,26 +4,30 @@
  */
 package biblioWebServiceRest.services;
 
-import java.util.List;
 
+import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import biblioWebServiceRest.criteria.CategorieCriteria;
 import biblioWebServiceRest.dto.CategorieDTO;
 import biblioWebServiceRest.entities.Categorie;
-import biblioWebServiceRest.mapper.CategorieMapper;
+import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
+import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.metier.ICategorieMetier;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,8 +46,7 @@ public class CategorieRestService {
 	
 	@Autowired
 	private ICategorieMetier categorieMetier;
-	@Autowired
-	private CategorieMapper categorieMapper;
+	
 	
 
 	/**
@@ -62,13 +65,9 @@ public class CategorieRestService {
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@GetMapping(value="/categories", produces = "application/json")
-	public Page<Categorie> searchByCriteria(@PathParam("searched by") CategorieCriteria categorieCriteria, @RequestParam int page, @RequestParam int size) {
-
-		List<CategorieDTO> categorieDTOs = categorieMetier.searchByCriteria(categorieCriteria);
-		List<Categorie> categories = categorieMapper.categorieDTOsToCategories(categorieDTOs);
-		int end = (page + size > categories.size() ? categories.size() : (page + size));
-		Page<Categorie> categoriesByPage = new PageImpl<Categorie>(categories.subList(page, end));		
-		return categoriesByPage;
+	public ResponseEntity<Page<Categorie>> searchByCriteria(@PathParam(value = "categorieCriteria") CategorieCriteria categorieCriteria, @RequestParam int page, @RequestParam int size) {
+		Page<Categorie> pageCategories = categorieMetier.searchByCriteria(categorieCriteria, PageRequest.of(page, size));
+		return new ResponseEntity<Page<Categorie>>(pageCategories, HttpStatus.OK);
 	}
 
 
@@ -76,22 +75,23 @@ public class CategorieRestService {
 	 * Methode pour creer une nouvelle categorie de livres
 	 * @param nomCategorie
 	 * @return
+	 * @throws EntityAlreadyExistsException 
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.ICategorieMetier#createCategorie(java.lang.String)
 	 */
 	@ApiOperation(value = "Enregistrement d'une nouvelle categorie de livres en refencement", response = Categorie.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "La reference de cette categorie a été creee"),
+	        @ApiResponse(code = 400, message = "Les termes de la requête de création n'ont pas été validés : la saisie ne doit pas être nulle ou vide et elle doit comprendre entre 5 et 25 caractères alphabétiques."),
 	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
 	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 409, message = "La reference de cette categorie existe déjà"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@PostMapping(value="/categories/{nomCategorie}/creation", produces = "application/json")
-	public ResponseEntity<Categorie> createCategorie(@PathVariable String nomCategorie) throws Exception {
-		CategorieDTO newCategorieDTO = categorieMetier.createCategorie(nomCategorie);
-		Categorie newCategorie = categorieMapper.categorieDTOToCategorie(newCategorieDTO);
-		return new ResponseEntity<Categorie>(newCategorie, HttpStatus.CREATED);
+	@PostMapping(value="/categories", produces = "application/json", consumes = "application/json")
+	public ResponseEntity<Categorie> createCategorie(@Valid @RequestBody CategorieDTO categorieDTO) throws EntityAlreadyExistsException {
+		return new ResponseEntity<Categorie>(categorieMetier.createCategorie(categorieDTO), HttpStatus.CREATED);
 	}
 	
 
@@ -103,18 +103,21 @@ public class CategorieRestService {
 	 * @param numCategorie
 	 * @throws Exception
 	 * @return ResponseEntity HttpStatus OK
+	 * @throws EntityNotDeletableException 
+	 * @throws EntityNotFoundException 
 	 * @see biblioWebServiceRest.metier.ICategorieMetier#deleteCategorie(java.lang.Long)
 	 */
 	@ApiOperation(value = "Suppression d'une référence de categorie de livres en refencement", response = Categorie.class)
 	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "La demande de suppression de cette catégorie a été correctement effectuée"),
 	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
 	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
 	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@DeleteMapping(value="/categories/{numCategorie}/suppression", produces = "application/text")
-	public ResponseEntity<String> deleteCategorie(Long numCategorie) throws Exception {
+	@DeleteMapping(value="/categories/{numCategorie}", produces = "application/text")
+	public ResponseEntity<String> deleteCategorie(@PathVariable (value="numCategorie", required=true) Long numCategorie) throws EntityNotFoundException, EntityNotDeletableException {
 		categorieMetier.deleteCategorie(numCategorie);
 		return new ResponseEntity<String>("La categorie de cette reference a ete supprimee", HttpStatus.OK);
 		

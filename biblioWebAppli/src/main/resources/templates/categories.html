@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway:400,300,600" />
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/4.0.0/normalize.min.css" />
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" />
+
+  <title>Gestion des categories</title>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Mes catgories</h1>
+
+    <div class="row" th:each="task : ${categories}">
+
+      <div class="nine columns">
+
+        <form th:method="put" th:action="@{/}">
+
+          <input type="hidden" name="id" th:value="${categorie.numCategorie}" />
+
+          <input type="hidden" name="nom" th:value="${categorie.nomCategorie}" />
+
+          <input type="checkbox" name="completed" th:checked="${categorie.completed}" onchange="form.submit()" />
+
+          <span th:text="${categorie.nom}"></span>
+
+        </form>
+
+      </div>
+
+      <div class="three columns">
+
+        <form th:method="delete" th:action="@{/}">
+
+          <input type="hidden" name="id" th:value="${categorie.numCategorie}" />
+
+          <button class="button u-full-width" type="submit">Supprimer</button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+    <hr />
+
+    <form method="post" th:action="@{/}" th:object="${newCategorie}">
+
+      <div class="row">
+
+        <div class="nine columns">
+
+          <input type="text" placeholder="Nom de la catégorie" class="u-full-width" th:field="*{nomCategorie}" />
+
+          <span th:if="${error != null}" th:text="${error}"></span>
+
+        </div>
+
+        <div class="three columns">
+
+          <button type="submit" class="button-primary u-full-width">Créer</button>
+
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</body>
+
+</html>

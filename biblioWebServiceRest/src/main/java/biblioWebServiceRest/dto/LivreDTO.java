@@ -4,7 +4,13 @@
 
 package biblioWebServiceRest.dto;
 
-
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 /**
  * @author jeanl
@@ -12,26 +18,32 @@ package biblioWebServiceRest.dto;
  */
 public class LivreDTO {
 	
-	private Long numLivre; 
+	@NotEmpty
+	@Size(min = 5, max = 25)
 	public String titre; 
+	@NotEmpty
+	@Size(min = 5, max = 25)
 	private String auteur;
+	@NotNull
+	@Digits(fraction = 0, integer = 2)
+	@Positive
 	private Integer nbExemplaires;
-	private Integer nbExemplairesDisponibles;
-	private CategorieDTO categorie;
-	/**
-	 * @return the numLivre
-	 */
-	public Long getNumLivre() {
-		return numLivre;
-	}
-	/**
-	 * @param numLivre the numLivre to set
-	 */
-	public void setNumLivre(Long numLivre) {
-		this.numLivre = numLivre;
-	}
+	@Positive
+	private Long numCategorie;
 	
 	
+	/**
+	 * @return the nbExemplaires
+	 */
+	public Integer getNbExemplaires() {
+		return nbExemplaires;
+	}
+	/**
+	 * @param nbExemplaires the nbExemplaires to set
+	 */
+	public void setNbExemplaires(Integer nbExemplaires) {
+		this.nbExemplaires = nbExemplaires;
+	}
 	/**
 	 * @return the titre
 	 */
@@ -57,41 +69,18 @@ public class LivreDTO {
 		this.auteur = auteur;
 	}
 	/**
-	 * @return the categorie
+	 * @return the numCategorie
 	 */
-	public CategorieDTO getCategorie() {
-		return categorie;
+	public Long getNumCategorie() {
+		return numCategorie;
 	}
 	/**
-	 * @param categorie the categorie to set
+	 * @param numCategorie the numCategorie to set
 	 */
-	public void setCategorie(CategorieDTO categorie) {
-		this.categorie = categorie;
+	public void setNumCategorie(Long numCategorie) {
+		this.numCategorie = numCategorie;
 	}
-	/**
-	 * @return the nbExemplaires
-	 */
-	public Integer getNbExemplaires() {
-		return nbExemplaires;
-	}
-	/**
-	 * @param nbExemplaires the nbExemplaires to set
-	 */
-	public void setNbExemplaires(Integer nbExemplaires) {
-		this.nbExemplaires = nbExemplaires;
-	}
-	/**
-	 * @return the nbExemplairesDisponibles
-	 */
-	public Integer getNbExemplairesDisponibles() {
-		return nbExemplairesDisponibles;
-	}
-	/**
-	 * @param nbExemplairesDisponibles the nbExemplairesDisponibles to set
-	 */
-	public void setNbExemplairesDisponibles(Integer nbExemplairesDisponibles) {
-		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
-	}
+	
 	
 	
 	

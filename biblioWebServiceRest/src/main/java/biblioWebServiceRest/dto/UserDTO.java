@@ -11,20 +11,21 @@ package biblioWebServiceRest.dto;
  */
 public class UserDTO {
 	
-	private Long idUser;
 	private String username;
 	private String adresseMail;
+	private String password; 
+	
 	/**
-	 * @return the idUser
+	 * @return the password
 	 */
-	public Long getIdUser() {
-		return idUser;
+	public String getPassword() {
+		return password;
 	}
 	/**
-	 * @param idUser the idUser to set
+	 * @param password the password to set
 	 */
-	public void setIdUser(Long idUser) {
-		this.idUser = idUser;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	/**
 	 * @return the adresseMail

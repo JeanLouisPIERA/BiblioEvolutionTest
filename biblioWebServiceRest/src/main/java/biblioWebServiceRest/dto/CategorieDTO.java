@@ -3,28 +3,20 @@
  */
 package biblioWebServiceRest.dto;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 /**
  * @author jeanl
  *
  */
 public class CategorieDTO {
 	
-	private Long numCategorie;
-	
+	@NotEmpty
+	@Size(min = 5, max = 25)
 	private String nomCategorie;
 	
-	/**
-	 * @return the numCategorie
-	 */
-	public Long getNumCategorie() {
-		return numCategorie;
-	}
-	/**
-	 * @param numCategorie the numCategorie to set
-	 */
-	public void setNumCategorie(Long numCategorie) {
-		this.numCategorie = numCategorie;
-	}
 	
 	/**
 	 * @return the nomCategorie

@@ -4,25 +4,33 @@
  */
 package biblioWebServiceRest.services;
 
-import java.util.List;
 
+
+import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import biblioWebServiceRest.dto.PretCriteriaDTO;
+import biblioWebServiceRest.criteria.PretCriteria;
+
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.exceptions.BadRequestException;
+import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.mapper.PretMapper;
 import biblioWebServiceRest.metier.IPretMetier;
 import io.swagger.annotations.Api;
@@ -52,6 +60,9 @@ public class PretRestService {
 	 * @param nomLivre
 	 * @param nomEmprunteur
 	 * @return
+	 * @throws BookNotAvailableException 
+	 * @throws EntityNotFoundException 
+	 * @throws BadRequestException 
 	 * @throws Exception
 	 */
 	@ApiOperation(value = "Enregistrement d'un nouveau prêt", response = Pret.class)
@@ -62,10 +73,9 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@PostMapping(value="/prets/livre/{numLivre}/user/{idUser}", produces = "application/json")
-	public ResponseEntity<Pret> createPret(@PathVariable Long numLivre, @PathVariable Long idUser ) throws Exception {
-		PretDTO newPretDTO = pretMetier.createPret(numLivre, idUser);
-		Pret newPret = pretMapper.pretDTOToPret(newPretDTO); 
+	@PostMapping(value="/prets", produces = "application/json", consumes = "application/json")
+	public ResponseEntity<Pret> createPret(@Valid @RequestBody PretDTO pretDTO) throws BadRequestException, EntityNotFoundException, BookNotAvailableException{
+		Pret newPret = pretMetier.createPret(pretDTO);
 		return new ResponseEntity<Pret>(newPret, HttpStatus.CREATED);
 	}
 	
@@ -77,6 +87,8 @@ public class PretRestService {
 	 * Gestion DTO
 	 * @param numPret
 	 * @return
+	 * @throws BookNotAvailableException 
+	 * @throws EntityNotFoundException 
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.IPretMetier#prolongerPret(java.lang.Long)
 	 */
@@ -89,11 +101,10 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@PutMapping(value="/prets/{numPret}/prolongation", produces="application/json")
-	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws Exception {
+	@PatchMapping(value="/prets/{numPret}", produces="application/json")
+	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {
 		
-		PretDTO prolongationPretDTO = pretMetier.prolongerPret(numPret);
-		Pret prolongationPret = pretMapper.pretDTOToPret(prolongationPretDTO); 
+		Pret prolongationPret = pretMetier.prolongerPret(numPret);
 		return new ResponseEntity<Pret>(prolongationPret, HttpStatus.ACCEPTED);
 	
 	}
@@ -106,7 +117,7 @@ public class PretRestService {
 	 * Le nombre d'exemplaires de l'ouvrage disponibles au pret est augmenté de +1 
 	 * @param numPret
 	 * @return
-	 * @throws Exception
+	 * @throws EntityNotFoundException 
 	 * @see biblioWebServiceRest.metier.IPretMetier#cloturerPret(java.lang.Long)
 	 */
 	@ApiOperation(value = "Cloture d'un prêt à la restitution de l'ouvrage", response = Pret.class)
@@ -118,11 +129,10 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
-	@PutMapping(value="/prets/{numPret}/cloture", produces="application/json")
-	public ResponseEntity<Pret> cloturerPret(Long numPret) throws Exception {
+	@PutMapping(value="/prets/{numPret}", produces="application/json")
+	public ResponseEntity<Pret> cloturerPret(@PathVariable Long numPret) throws EntityNotFoundException {
 		
-		PretDTO cloturePretDTO = pretMetier.cloturerPret(numPret);
-		Pret cloturePret = pretMapper.pretDTOToPret(cloturePretDTO); 
+		Pret cloturePret = pretMetier.cloturerPret(numPret);
 		return new ResponseEntity<Pret>(cloturePret, HttpStatus.ACCEPTED);
 		
 	}
@@ -146,12 +156,9 @@ public class PretRestService {
 	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@GetMapping(value="/prets", produces="application/json")
-	public ResponseEntity<Page<Pret>> searchByPretCriteriaDTO(@PathParam("searched by")PretCriteriaDTO pretCriteriaDTO, @RequestParam int page, @RequestParam int size ) {
-		List<PretDTO> pretDTOs = pretMetier.searchByCriteria(pretCriteriaDTO);
-		List<Pret> prets = pretMapper.pretDTOsToPret(pretDTOs);
-		int end = (page + size > prets.size() ? prets.size() :(page + size));
-		Page<Pret> pretsByPage = new PageImpl<Pret>(prets.subList(page, end));
-		return new ResponseEntity<Page<Pret>>(pretsByPage, HttpStatus.OK);
+	public ResponseEntity<Page<Pret>> searchByPretCriteria(@PathParam("pretCriteria")PretCriteria pretCriteria, @RequestParam int page, @RequestParam int size ) {
+		Page<Pret> prets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
+		return new ResponseEntity<Page<Pret>>(prets, HttpStatus.OK);
 	}
 
 }
