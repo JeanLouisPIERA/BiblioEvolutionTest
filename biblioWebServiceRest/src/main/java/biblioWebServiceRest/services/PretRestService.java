@@ -4,8 +4,6 @@
  */
 package biblioWebServiceRest.services;
 
-
-
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
@@ -28,7 +26,6 @@ import biblioWebServiceRest.criteria.PretCriteria;
 
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.exceptions.BadRequestException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.mapper.PretMapper;
@@ -68,13 +65,10 @@ public class PretRestService {
 	@ApiOperation(value = "Enregistrement d'un nouveau prêt", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le prêt a été créé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@PostMapping(value="/prets", produces = "application/json", consumes = "application/json")
-	public ResponseEntity<Pret> createPret(@Valid @RequestBody PretDTO pretDTO) throws BadRequestException, EntityNotFoundException, BookNotAvailableException{
+	public ResponseEntity<Pret> createPret(@Valid @RequestBody PretDTO pretDTO) throws EntityNotFoundException, BookNotAvailableException{
 		Pret newPret = pretMetier.createPret(pretDTO);
 		return new ResponseEntity<Pret>(newPret, HttpStatus.CREATED);
 	}
@@ -94,12 +88,8 @@ public class PretRestService {
 	 */
 	@ApiOperation(value = "Prolongation de la durée d'un prêt en cours (exclusion des prets déjà prolongés ou échus non prolongés)", response = Pret.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
 	        @ApiResponse(code = 202, message = "Le prêt a été prolongé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@PatchMapping(value="/prets/{numPret}", produces="application/json")
 	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {
@@ -122,12 +112,8 @@ public class PretRestService {
 	 */
 	@ApiOperation(value = "Cloture d'un prêt à la restitution de l'ouvrage", response = Pret.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Code erreur non utilisé"),
 	        @ApiResponse(code = 202, message = "Le prêt a été cloturé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@PutMapping(value="/prets/{numPret}", produces="application/json")
 	public ResponseEntity<Pret> cloturerPret(@PathVariable Long numPret) throws EntityNotFoundException {
@@ -149,11 +135,7 @@ public class PretRestService {
 	@ApiOperation(value = "Recherche multi-critères d'un ou plusieurs prets", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
-	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@GetMapping(value="/prets", produces="application/json")
 	public ResponseEntity<Page<Pret>> searchByPretCriteria(@PathParam("pretCriteria")PretCriteria pretCriteria, @RequestParam int page, @RequestParam int size ) {

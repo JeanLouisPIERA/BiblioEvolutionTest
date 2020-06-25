@@ -44,12 +44,12 @@ public class ExceptionHandlerControllerAdvice {
 	 */
 	@ExceptionHandler(BookNotAvailableException.class)
 	@ResponseBody
-	@ResponseStatus(code = HttpStatus.NOT_FOUND)
+	@ResponseStatus(code = HttpStatus.LOCKED)
 	public ExceptionReponse handleCustomException(BookNotAvailableException ex1) {
 		ExceptionReponse exceptionReponse = new ExceptionReponse();
 		exceptionReponse.setLocalDate(LocalDate.now());
 		exceptionReponse.setMessageErreur(ex1.getMessage());
-		exceptionReponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+		exceptionReponse.setStatusCode(HttpStatus.LOCKED.value());
 		return exceptionReponse;
 	}
 	
@@ -82,37 +82,20 @@ public class ExceptionHandlerControllerAdvice {
 	
 	@ExceptionHandler (EntityNotDeletableException.class)
 	@ResponseBody
-	@ResponseStatus(code = HttpStatus.CONFLICT)
+	@ResponseStatus(code = HttpStatus.PRECONDITION_FAILED)
 	public ExceptionReponse handleCustomException(EntityNotDeletableException ex2) {
 		ExceptionReponse exceptionReponse = new ExceptionReponse();
 		exceptionReponse.setLocalDate(LocalDate.now());
 		exceptionReponse.setMessageErreur(ex2.getMessage());
-		exceptionReponse.setStatusCode(HttpStatus.CONFLICT.value());
+		exceptionReponse.setStatusCode(HttpStatus.PRECONDITION_FAILED.value());
 		return exceptionReponse;
 		
 	}
 	
-	
-	
-	/**
-	 * Cette méthode permet de gérer l'exception personnalisée " Bad Request"
-	 * @param ex3
-	 * @return
-	 */
-	@ExceptionHandler (BadRequestException.class)
-	@ResponseBody
-	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-	public ExceptionReponse handleCustomException(BadRequestException ex3) {
-		ExceptionReponse exceptionReponse = new ExceptionReponse();
-		exceptionReponse.setLocalDate(LocalDate.now());
-		exceptionReponse.setMessageErreur(ex3.getMessage());
-		exceptionReponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-		return exceptionReponse;
-		
-	}
 	
 	/**
 	 * Cette méthode permet de gérer l'exception personnalisée " Wrong Number"
+	 * Utilisée dans la méthode métier livre UPDATE pour la mise à jour du nombre d'exemplaires
 	 * @param ex3
 	 * @return
 	 */

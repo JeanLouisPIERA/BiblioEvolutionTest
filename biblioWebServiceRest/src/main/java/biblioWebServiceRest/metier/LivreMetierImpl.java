@@ -19,19 +19,13 @@ import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
-import biblioWebServiceRest.dto.LivreCriteriaDTO;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
-import biblioWebServiceRest.exceptions.BadRequestException;
-import biblioWebServiceRest.exceptions.BiblioException;
-import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.WrongNumberException;
-import biblioWebServiceRest.mapper.CategorieMapper;
-import biblioWebServiceRest.mapper.LivreCriteriaMapper;
 import biblioWebServiceRest.mapper.LivreMapper;
 
 @Service
@@ -67,11 +61,10 @@ public class LivreMetierImpl implements ILivreMetier{
 	 * @return
 	 * @throws EntityAlreadyExistsException,  
 	 * @throws EntityNotFoundException 
-	 * @throws WrongNumberException 
 	 * @throws Exception
 	 */
 	@Override
-	public Livre createLivre(LivreDTO livreDTO) throws EntityAlreadyExistsException, EntityNotFoundException, WrongNumberException {		
+	public Livre createLivre(LivreDTO livreDTO) throws EntityAlreadyExistsException, EntityNotFoundException {		
 		Livre livreToCreate = livreMapper.livreDTOToLivre(livreDTO); 
 		
 		Optional<Categorie> categorie = categorieRepository.findById(livreDTO.getNumCategorie());
@@ -79,6 +72,9 @@ public class LivreMetierImpl implements ILivreMetier{
 			throw new EntityNotFoundException("Le livre ne peut pas etre enregistre car la categorie saisie n'existe pas");
 		livreToCreate.setCategorie(categorie.get());
 		
+		/*
+		 * Recherche d'un livre via LivreCriteria : un livre est identifié par la combinaison unique d'un titre et d'un auteur
+		 */
 		LivreCriteria livreCriteria = new LivreCriteria(); 
 		livreCriteria.setTitre(livreToCreate.getTitre());
 		livreCriteria.setAuteur(livreToCreate.getAuteur());
@@ -89,9 +85,7 @@ public class LivreMetierImpl implements ILivreMetier{
 		
 		livreToCreate.setNbExemplairesDisponibles(livreDTO.getNbExemplaires());
 		
-		livreRepository.save(livreToCreate);
-		
-		return livreToCreate;
+		return livreRepository.save(livreToCreate);
 		
 	}
 
@@ -111,7 +105,8 @@ public class LivreMetierImpl implements ILivreMetier{
 	@Override
 	public Livre updateLivre(Long numLivre, LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException, WrongNumberException {
 		Optional<Livre> livreToUpdate = livreRepository.findById(numLivre);
-		if(!livreToUpdate.isPresent()) throw new EntityNotFoundException("Le livre à mettre à jour n'existe pas");
+		if(!livreToUpdate.isPresent()) 
+			throw new EntityNotFoundException("Le livre à mettre à jour n'existe pas");
 		
 		Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
 		
@@ -120,18 +115,29 @@ public class LivreMetierImpl implements ILivreMetier{
 			throw new EntityNotFoundException("Le changement de categorie est impossible car la categorie saisie n'existe pas");
 		livreToUpdate.get().setCategorie(categorie.get());
 		
+		/*
+		 * Si la modification du titre ou du nom de l'auteur créée une nouvelle combinaison déjà existante identifiée 
+		 * par la recherche via LivreCriteria, la mise à jour du livre est refusée pour respecter l'unicité des enregistrements
+		 */
 		LivreCriteria livreCriteria = new LivreCriteria(); 
 		livreCriteria.setTitre(livreToUpdate.get().getTitre());
 		livreCriteria.setAuteur(livreUpdates.getAuteur());
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
-		if(!livreCriteriaList.isEmpty())throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
+		if(!livreCriteriaList.isEmpty())
+			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
 		livreToUpdate.get().setTitre(livreUpdates.getTitre());
 		livreToUpdate.get().setAuteur(livreUpdates.getAuteur());
 				
-				
+		/*
+		 * La mise à jour du nombre total d'exemplaires d'une référence de livre est inférieure au nombre des exemplaires
+		 * disponibles avant mise à jour soulève une exception car il y a un problème de gestion : on supprime un livre 
+		 * qui est encore en circulation. Dans ce cas on rend impossible la gestion des encours de livres disponibles après mise
+		 * à jour		
+		 */
 		Integer nbExemplairesIndisponibles = livreToUpdate.get().getNbExemplaires()-livreToUpdate.get().getNbExemplairesDisponibles();
-		if(livreUpdates.getNbExemplaires()<0) throw new WrongNumberException("Le nombre total d'exemplaires de la référence de livre à mettre à jour doit au moins être égale à 0");
+		if(livreUpdates.getNbExemplaires()<0) 
+			throw new WrongNumberException("Le nombre total d'exemplaires de la référence de livre à mettre à jour doit au moins être égale à 0");
 		if(livreToUpdate.get().getNbExemplairesDisponibles()- (livreUpdates.getNbExemplaires())>0) throw new WrongNumberException("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
 		livreToUpdate.get().setNbExemplaires(livreUpdates.getNbExemplaires());
 		livreToUpdate.get().setNbExemplairesDisponibles(livreUpdates.getNbExemplaires()-nbExemplairesIndisponibles);
@@ -155,6 +161,10 @@ public class LivreMetierImpl implements ILivreMetier{
 		Optional<Livre> livreToDelete = livreRepository.findById(numLivre);
 		if(!livreToDelete.isPresent()) 
 			throw new EntityNotFoundException("Le livre que vous voulez supprimer n'existe pas"); 
+		/*
+		 * Comme les prets clotures ne sont pas supprimés, le seul moyen de s'assurer qu'il n'existe pas de pret encours pour un 
+		 * livre à supprimer est de vérifier que le nombre total d'exemplaires est égal au nombre d'exemplaires disponibles
+		 */
 		if(livreToDelete.get().getNbExemplairesDisponibles()!=livreToDelete.get().getNbExemplaires()) 
 			throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours"); 
 		livreRepository.deleteById(numLivre);

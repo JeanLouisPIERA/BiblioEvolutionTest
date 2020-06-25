@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,12 +56,7 @@ public class CategorieRestService {
 	 */
 	@ApiOperation(value = "Identification des categories de livres en referencement", response = Categorie.class)
 	@ApiResponses(value = {
-	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
-	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés")
 	})
 	@GetMapping(value="/categories", produces = "application/json")
 	public ResponseEntity<Page<Categorie>> searchByCriteria(@PathParam(value = "categorieCriteria") CategorieCriteria categorieCriteria, @RequestParam int page, @RequestParam int size) {
@@ -82,12 +76,10 @@ public class CategorieRestService {
 	@ApiOperation(value = "Enregistrement d'une nouvelle categorie de livres en refencement", response = Categorie.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "La reference de cette categorie a été creee"),
-	        @ApiResponse(code = 400, message = "Les termes de la requête de création n'ont pas été validés : la saisie ne doit pas être nulle ou vide et elle doit comprendre entre 5 et 25 caractères alphabétiques."),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
+	        @ApiResponse(code = 400, message = "Les termes de la requête de création n'ont pas été validés : "
+	        		+ "la saisie ne doit pas être nulle ou vide et elle doit comprendre entre 5 et 25 caractères alphabétiques."),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 409, message = "La reference de cette categorie existe déjà"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	        @ApiResponse(code = 409, message = "La reference de cette categorie existe déjà")
 	})
 	@PostMapping(value="/categories", produces = "application/json", consumes = "application/json")
 	public ResponseEntity<Categorie> createCategorie(@Valid @RequestBody CategorieDTO categorieDTO) throws EntityAlreadyExistsException {
@@ -110,11 +102,7 @@ public class CategorieRestService {
 	@ApiOperation(value = "Suppression d'une référence de categorie de livres en refencement", response = Categorie.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "La demande de suppression de cette catégorie a été correctement effectuée"),
-	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	        @ApiResponse(code = 404, message = "Ressource inexistante")
 	})
 	@DeleteMapping(value="/categories/{numCategorie}", produces = "application/text")
 	public ResponseEntity<String> deleteCategorie(@PathVariable (value="numCategorie", required=true) Long numCategorie) throws EntityNotFoundException, EntityNotDeletableException {

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Biblio</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Biblio</h1>
+        <hr>
+        <h2>Creation categorie</h2>
+
+        <form action="#" th:action="@{/categorie}" th:object="${newCategorie}" method="POST">
+            <input type="text" th:field="*{nomCategorie}" placeholder="Nom de la categorie" class="form-control mb-4 col-4">
+
+            <button type="submit" class="btn btn-info col-2"> Valider</button>
+        </form>
+
+        <hr>
+
+        <a th:href="@{/}"> Retour au menu</a>
+    </div>
+</body>
+
+</html>

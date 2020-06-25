@@ -3,19 +3,14 @@
  */
 package biblioWebServiceRest.metier;
 
-import java.util.InputMismatchException;
-import java.util.List;
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import biblioWebServiceRest.criteria.LivreCriteria;
-import biblioWebServiceRest.dto.LivreCriteriaDTO;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Livre;
-import biblioWebServiceRest.exceptions.BadRequestException;
-import biblioWebServiceRest.exceptions.BiblioException;
-import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -40,10 +35,9 @@ public interface ILivreMetier {
 	 * @return
 	 * @throws EntityAlreadyExistsException 
 	 * @throws EntityNotFoundException 
-	 * @throws WrongNumberException 
 	 * @throws Exception
 	 */
-	Livre createLivre(LivreDTO livreDTO) throws EntityAlreadyExistsException, EntityNotFoundException, WrongNumberException;
+	Livre createLivre(LivreDTO livreDTO) throws EntityAlreadyExistsException, EntityNotFoundException;
 	
 	/**
 	 * Mise à jour des attributs d'un livre déjà référencé

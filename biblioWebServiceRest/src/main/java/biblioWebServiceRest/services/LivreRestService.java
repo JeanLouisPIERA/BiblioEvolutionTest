@@ -4,10 +4,6 @@
  */
 package biblioWebServiceRest.services;
 
-
-
-import java.util.InputMismatchException;
-
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
@@ -29,7 +25,6 @@ import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.exceptions.BadRequestException;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -49,10 +44,6 @@ public class LivreRestService {
 	@Autowired
 	private ILivreMetier livreMetier;
 
-
-	
-
-
 	/**
 	 * Si aucun paramètre n'est renseigné, la méthode renvoie la liste de tous les livres enregistrés dans la base
 	 * Le titre et le nom de l'auteur doivent simplement matcher
@@ -67,11 +58,7 @@ public class LivreRestService {
 	@ApiOperation(value = "Recherche multi-critères d'un ou plusieurs livres", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
-	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	        @ApiResponse(code = 404, message = "Ressource inexistante")
 	})
 	@GetMapping(value="/livres", produces = "application/json")
 	public ResponseEntity<Page<Livre>> searchByLivreCriteria(@PathParam(value = "livreCriteria") LivreCriteria livreCriteria, @RequestParam int page, @RequestParam int size) {
@@ -90,21 +77,18 @@ public class LivreRestService {
 	 * @return
 	 * @throws EntityAlreadyExistsException,  
 	 * @throws EntityNotFoundException 
-	 * @throws WrongNumberException 
 	 * @see biblioWebServiceRest.metier.ILivreMetier#createLivre(java.lang.String, java.lang.String, java.lang.Long)
 	 */
 	@ApiOperation(value = "Enregistrement d'une nouvelle référence de livre. Si un même titre compte plusieurs tomes, enregistrer la référence du volume dans le titre. Exemple : Fantomas Tome 1)", response = Livre.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le livre a été créé"),
-	        @ApiResponse(code = 400, message = "Les termes de la requête de création n'ont pas été validés : la saisie ne doit des champs ne doit pas être nulle ou vide, le nom de l'auteur et le titre doivent comprendre entre 5 et 25 caractères alphabétiques "
-	        		+ "et le nombre d'exemplaires et la référence de la catégorie doivent être des nombres entiers non nuls."),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
+	        @ApiResponse(code = 400, message = "Les termes de la requête de création n'ont pas été validés : "
+    		+ "la saisie ne doit des champs ne doit pas être nulle ou vide, le nom de l'auteur et le titre doivent comprendre entre 5 et 25 caractères alphabétiques "
+    		+ "et le nombre d'exemplaires et la référence de la catégorie doivent être des nombres entiers non nuls."),
+	        @ApiResponse(code = 404, message = "Ressource inexistante")
 	})
 	@PostMapping(value="/livres", produces = "application/json")
-	public ResponseEntity<Livre> createLivre(@Valid @RequestBody LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException, WrongNumberException  {
+	public ResponseEntity<Livre> createLivre(@Valid @RequestBody LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException {
 		
 		Livre newLivre = livreMetier.createLivre(livreDTO);
 		return new ResponseEntity<Livre>(newLivre, HttpStatus.CREATED);
@@ -130,10 +114,7 @@ public class LivreRestService {
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le livre a été mis à jour"),
 	        @ApiResponse(code = 400, message = "Requête incomplete : il faut remplir tous les champs requis"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@PutMapping(value="/livres/{numLivre}", produces = "application/json")
 	public ResponseEntity<Livre> updateLivre(@PathVariable Long numLivre, @Valid @RequestBody LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException, WrongNumberException{
@@ -155,11 +136,7 @@ public class LivreRestService {
 	@ApiOperation(value = "Suppression d'une référence de livre", response = Livre.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "La demande de suppression de ce livre a été correctement effectuée"),
-	        @ApiResponse(code = 201, message = "Code erreur non utilisé"),
-	        @ApiResponse(code = 401, message = "Pas d'autorisation pour accéder à cette ressource"),
-	        @ApiResponse(code = 403, message = "Accès interdit à cette ressource "),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 500, message = "Erreur interne au Serveur")
 	})
 	@DeleteMapping(value="/livres/{numLivre}", produces = "application/text")
 	public ResponseEntity<String> deleteLivre(@PathVariable Long numLivre) throws EntityNotFoundException, EntityNotDeletableException{

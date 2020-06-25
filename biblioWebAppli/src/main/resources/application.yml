@@ -1,7 +1,0 @@
-server:
-
-  port: 8090
-
-resource:
-
-  categories: http://localhost:8090/categories

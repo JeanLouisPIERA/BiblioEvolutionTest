@@ -3,16 +3,12 @@
  */
 package biblioWebServiceRest.metier;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import biblioWebServiceRest.criteria.PretCriteria;
-import biblioWebServiceRest.dto.PretCriteriaDTO;
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.exceptions.BadRequestException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 
@@ -28,7 +24,7 @@ public interface IPretMetier {
 	 * @throws EntityNotFoundException 
 	 * @throws Exception
 	 */
-	Pret createPret(PretDTO pretDTO) throws BadRequestException, EntityNotFoundException, BookNotAvailableException;
+	Pret createPret(PretDTO pretDTO) throws EntityNotFoundException, BookNotAvailableException;
 	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
