@@ -1,0 +1,50 @@
+
+
+<div class="navbar navbar-default">
+
+ <nav role="navigation" class="navbar navbar-default">
+	<div class="navbar-collapse">
+		<a class="navbar-brand">Site Biblio</a>
+  	<div class="container">
+
+	    <div class="navbar-header">
+	    
+		     <ul class="nav navbar-nav nav-item active">
+			      <li >
+			      	<a class="nav-link" href="/"> Accueil <span class="sr-only"></span></a>
+			      </li>      
+		          <li><a href="/categories">Categories</a></li>
+		          
+		     </ul>
+		    
+		     </div>
+		    
+		     <ul class="nav navbar-nav navbar-right">
+		
+				 <li>	         
+					    <c:if test="${pageContext.request.userPrincipal.name != null}">
+					        <form id="logoutForm" method="POST" action="${contextPath}/logout">
+					            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+					        </form>
+					
+					        <div>${pageContext.request.userPrincipal.name} est connecté| <a onclick="document.forms['logoutForm'].submit()">Logout</a></div>
+					    </c:if>
+					  
+		         </li> 
+		         <li>
+			         <a href="mailto:jeanlouispiera@yahoo.fr?subject=Premiercontact&cc=jlp340105@gmail.com&body=Bonjour,">
+			  			Nous Contacter</a>
+		         </li>
+		     </ul>
+	    </div>
+	</div>
+</nav>
+ 
+</div>
+
+     
+
+
+
+				
+ 

@@ -4,9 +4,16 @@
 package biblioWebAppli.metier;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
+import biblioWebAppli.entities.Categorie;
+
+
+
+
+
 
 /**
  * @author jeanl
@@ -21,7 +28,7 @@ public interface ICategorieMetier {
 	 * @param size
 	 * @return
 	 */
-	public Page<CategorieDTO> searchByCriteria (CategorieCriteria categorieCriteria, int page, int size);
+	public Page<Categorie> searchByCriteria(CategorieCriteria categorieCriteria, int page, int size);
 	
 	
 	/**
@@ -29,7 +36,7 @@ public interface ICategorieMetier {
 	 * @param categorieDTO
 	 * @return
 	 */
-	public CategorieDTO createCategorie(CategorieDTO categorieDTO);
+	public Categorie createCategorie(CategorieDTO categorieDTO);
 	
 	/**
 	 * Permet de supprimer une categorie de livre

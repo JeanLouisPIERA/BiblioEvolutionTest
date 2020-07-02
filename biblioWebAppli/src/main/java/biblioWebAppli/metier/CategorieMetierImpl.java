@@ -4,22 +4,26 @@
  */
 package biblioWebAppli.metier;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-
+import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
+import biblioWebAppli.entities.Categorie;
+
+
+
+
 
 /**
  * @author jeanl
@@ -42,12 +46,29 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	     * @return
 	     */
 	    @Override
-		public Page<CategorieDTO> searchByCriteria(CategorieCriteria categorieCriteria, int page, int size) {
-	        List<CategorieDTO> categorieDTOs = (List<CategorieDTO>) Arrays.stream(restTemplate
-	        		.getForObject(uRL+categorieCriteria, CategorieDTO[].class)).collect(Collectors.toList());
-	        int end = (page + size > categorieDTOs.size() ? categorieDTOs.size() : (page + size));
-			return new PageImpl<CategorieDTO>(categorieDTOs.subList(page, end));
-	    
+		public Page<Categorie> searchByCriteria(CategorieCriteria categorieCriteria, int page, int size) {
+	    	
+	    	HttpHeaders headers = new HttpHeaders();
+	    	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+	    	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
+	    	        .queryParam("categorieCriteria", categorieCriteria)
+	    	        .queryParam("page", page)
+	    	        .queryParam("size", size);
+
+	    	HttpEntity<?> entity = new HttpEntity<>(headers);
+	    	
+	    	ResponseEntity<Page<Categorie>> categories = restTemplate.exchange
+	    			(builder.toUriString(), 
+    				HttpMethod.GET,
+    				entity,
+	    			new ParameterizedTypeReference<Page<Categorie>>(){});
+	        Page<Categorie> pageCategorie = categories.getBody();
+	            	
+	        return pageCategorie;
+	    	
+	    	
+	    	
 	    }
 	    
 	   
@@ -57,9 +78,9 @@ public class CategorieMetierImpl implements ICategorieMetier{
 		 * @param categorieDTO
 		 * @return
 		 */
-	    public CategorieDTO createCategorie(CategorieDTO categorieDTO) {
+	    public Categorie createCategorie(CategorieDTO categorieDTO) {
 	        //return restTemplate.postForObject(resource, categorieDTO, CategorieDTO.class);
-	    	CategorieDTO categorieToCreate = restTemplate.postForObject(uRL, categorieDTO, CategorieDTO.class);
+	    	Categorie categorieToCreate = restTemplate.postForObject(uRL, categorieDTO, Categorie.class);
 	    	return categorieToCreate;
 	    }
 	    
