@@ -60,11 +60,12 @@ public class PretSpecification implements Specification<Pret> {
             if (pretCriteria.getNumLivre()!= null) {
             	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), pretCriteria.getNumLivre()));	
             }
+            /**
             if (pretCriteria.getPretStatut()!= null) {
             	predicates.getExpressions().add(builder.like(root.get("pretStatut").get("code"),"%" + pretCriteria.getPretStatut() + "%"));			
             	
             }
-	            
+	        **/    
         	
         /**	
             if (pretCriteria.getPretStatut().getCode()!= null) {

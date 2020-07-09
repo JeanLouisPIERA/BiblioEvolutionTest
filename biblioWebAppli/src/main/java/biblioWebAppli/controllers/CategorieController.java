@@ -1,5 +1,5 @@
 /**
- * Permet de gérer l'affichage des pages html de l'Appli WEB
+ * Permet de gérer l'affichage des pages html de l'Appli WEB pour les Catégories
  */
 package biblioWebAppli.controllers;
 
@@ -11,28 +11,31 @@ import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import org.springframework.web.client.HttpClientErrorException;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
-import biblioWebAppli.dto.MessageDTO;
+
 import biblioWebAppli.entities.Categorie;
+import biblioWebAppli.exceptions.EntityAlreadyExistsException;
 import biblioWebAppli.metier.ICategorieMetier;
+import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+
 
 
 
@@ -49,17 +52,6 @@ public class CategorieController {
 	    private ObjectMapper mapper;
 	    
 	    /**
-	    @GetMapping("/categories/search")
-	    public String searchCategorieCriteria(Model model){
-	        model.addAttribute("categorieCriteria", new CategorieCriteria());
-	        model.addAttribute("page", null); 
-	        model.addAttribute("size", null);
-	        return "categories/categoriesSearch";
-	    }
-	    **/
-	    
-	    
-	    /**
 	     * Permet d'afficher une sélection de catégories sous forme de page
 	     * @param model
 	     * @param categorieCriteria
@@ -68,11 +60,9 @@ public class CategorieController {
 	     * @return
 	     */
 	    @RequestMapping(value="/categories", method = RequestMethod.GET)
-	    public String searchByCriteria(Model model, @PathParam(value = "") CategorieCriteria categorieCriteria, @RequestParam(name="page", defaultValue="0") int page, 
+	    public String searchByCriteria(Model model, @PathParam(value = "categorieCriteria") CategorieCriteria categorieCriteria, @RequestParam(name="page", defaultValue="0") int page, 
 				@RequestParam(name="size", defaultValue="3") int size){
 	    	model.addAttribute("categorieCriteria", new CategorieCriteria());
-	        //model.addAttribute("page", 0); 
-	        //model.addAttribute("size", 3);
 	    	Page<Categorie> pageCategories = categorieMetier.searchByCriteria(categorieCriteria, page, size);
 	    	model.addAttribute("categories", pageCategories.getContent());
 	    	model.addAttribute("page", Integer.valueOf(page));
@@ -91,31 +81,44 @@ public class CategorieController {
 	    @GetMapping("/categories/newCategorie")
 	    public String newCategorie(Model model){
 	        model.addAttribute("categorie", new CategorieDTO());
-	        return "categorieCreation";
+	        return "categories/categorieCreation";
 	    }
 
 	    /**
 	     * Permet de valider la création d'une nouvelle catégorie
 	     * @param categorieDTO
 	     * @return
+	     * @throws EntityAlreadyExistsException 
 	     */
 	    @PostMapping("/categories/newCategorie")
-	    public String createCategorie(@ModelAttribute("newCategorie") CategorieDTO categorieDTO){
-	            categorieMetier.createCategorie(categorieDTO);
-	            System.out.println("posted");
-	            return "redirect:/";
-
+	    public String createCategorie(Model model, @ModelAttribute("categorie") CategorieDTO categorieDTO) throws EntityAlreadyExistsException{
+			
+	        Categorie categorieToCreate = categorieMetier.createCategorie(categorieDTO);
+	        
+	        /**
+	        if(result.hasErrors()) {
+	        	String errorMessage = messageCreationCategorie.getStatusCode().toString();
+				model.addAttribute(errorMessage);
+				return "categories/categorieException";
+			}
+	        **/
+	        
+	        
+	        model.addAttribute(categorieToCreate);
+			return "categories/categorieConfirmation";
+	        
 	    }
 	    
 	    /**
 	     * permet de supprimer une catégorie existante
 	     * @param numCategorie
 	     * @return
+	     * @throws EntityNotDeletableException 
 	     */
-	    @DeleteMapping("/categories/{numCategorie}")
-	    public String delete(@RequestParam Long numCategorie){
+	    @RequestMapping(value="/categories/delete/{numCategorie}", method = RequestMethod.GET)
+	    public String delete(@PathVariable("numCategorie") Long numCategorie) throws EntityNotDeletableException{
 	        categorieMetier.delete(numCategorie);
-	        return "redirect:/";
+	        return "/categories/categorieSuppression";
 	    }
 	    
 	    /**
@@ -125,11 +128,12 @@ public class CategorieController {
 	     * @return
 	     * @throws IOException
 	     */
+	    /**
 	    @ExceptionHandler(HttpClientErrorException.class)
 	    public String handleClientError(HttpClientErrorException ex, Model model) throws IOException {
 	        MessageDTO dto = mapper.readValue(ex.getResponseBodyAsByteArray(), MessageDTO.class);
 	        model.addAttribute("error", dto.getMessage());
 	        return "errorMessage"; 
 	    }
-
+		**/
 }

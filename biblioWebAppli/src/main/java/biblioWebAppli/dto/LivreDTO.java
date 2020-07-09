@@ -1,8 +1,8 @@
 /**
- * Classe de sérialization des livres pour le Mapping DTO 
+ * Classe de sérialization des livres pour le Mapping DTO de l'API REST
  */
 
-package biblioWebServiceRest.dto;
+package biblioWebAppli.dto;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;

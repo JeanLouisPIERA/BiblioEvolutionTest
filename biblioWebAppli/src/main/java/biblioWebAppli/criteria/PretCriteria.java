@@ -1,7 +1,7 @@
 /**
  * Cette classe permet de réaliser ne recherche multicritères sur les prets en sélectionnant certaines propriétés 
  */
-package biblioWebServiceRest.criteria;
+package biblioWebAppli.criteria;
 
 
 

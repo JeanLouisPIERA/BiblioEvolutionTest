@@ -14,7 +14,6 @@ import javax.validation.constraints.Size;
 public class CategorieDTO {
 	
 	@NotEmpty
-	@Size(min = 5, max = 25)
 	private String nomCategorie;
 	
 	
