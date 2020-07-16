@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.LivreCriteria;
 import biblioWebAppli.dto.LivreDTO;
-import biblioWebAppli.entities.Livre;
 import biblioWebAppli.exceptions.EntityAlreadyExistsException;
 import biblioWebAppli.exceptions.EntityNotDeletableException;
 import biblioWebAppli.exceptions.EntityNotFoundException;
+import biblioWebAppli.objets.Livre;
 
 /**
  * @author jeanl
@@ -27,7 +27,7 @@ public interface ILivreMetier {
 	 * @param size
 	 * @return
 	 */
-	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable, int page, int size);
+	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable);
 	
 	
 	/**
@@ -36,8 +36,9 @@ public interface ILivreMetier {
 	 * @return
 	 * @throws EntityNotFoundException 
 	 * @throws EntityAlreadyExistsException 
+	 * @throws Exception 
 	 */
-	public Livre createLivre(LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException;
+	public Livre createLivre(LivreDTO livreDTO);
 	
 	/**
 	 * Mise à jour des attributs d'un livre déjà référencé
@@ -45,7 +46,7 @@ public interface ILivreMetier {
 	 * @param livreDTO
 	 * @return
 	 */
-	public Livre updateLivre(Long numLivre, LivreDTO livreDTO); 
+	public Livre updateLivre(Livre livre); 
 	
 	
 	/**
@@ -54,5 +55,5 @@ public interface ILivreMetier {
 	 * @throws EntityNotDeletableException 
 	 * @throws EntityNotFoundException 
 	 */
-	public void delete(Long numLivre) throws EntityNotFoundException, EntityNotDeletableException;
+	public String delete(Long numLivre);
 }

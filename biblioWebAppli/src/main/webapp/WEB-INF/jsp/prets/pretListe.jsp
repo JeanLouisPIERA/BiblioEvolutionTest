@@ -37,49 +37,49 @@
 							 
 				 <fieldset class="form-group">
 				 <label>Référence du Pret :</label>
-				 <input type="text" name="numPret" value="${livreCriteria.numPret}"/>
+				 <input type="text" name="numPret" value="${pretCriteria.numPret}"/>
 				 </fieldset>
 				 
 				 
 				 <fieldset class="form-group">
 				 <label>Nom de l'emprunteur :</label>
-				 <input type="text" name="username " value="${livreCriteria.username}"/>
+				 <input type="text" name="username" value="${pretCriteria.username}"/>
 				 </fieldset>
 				 
 				 
 				 <fieldset class="form-group">
 				 <label>Identifiant de l'emprunteur :</label>
-				 <input type="text" name="userId" value="${livreCriteria.userId}"/>
+				 <input type="text" name="userId" value="${pretCriteria.userId}"/>
 				 </fieldset>
 				 
-				 <br>
+				
 				 
 				 <fieldset class="form-group">
 				 <label>Identifiant du Livre :</label>
-				 <input type="text" name="numLivre" value="${livreCriteria.numLivre}"/>
+				 <input type="text" name="numLivre" value="${pretCriteria.numLivre}"/>
 				 </fieldset>
 				 
 				 <fieldset class="form-group">
 				 <label>Titre du Livre :</label>
-				 <input type="text" name="titre" value="${livreCriteria.titre}"/>
+				 <input type="text" name="titre" value="${pretCriteria.titre}"/>
 				 </fieldset>
 				 
 				 
 				 <fieldset class="form-group">
 				 <label>Auteur du Livre :</label>
-				 <input type="text" name="auteur " value="${livreCriteria.auteur}"/>
+				 <input type="text" name="auteur" value="${pretCriteria.auteur}"/>
 				 </fieldset>
 				 
 				 
 				 <fieldset class="form-group">
 				 <label>Nom de la catégorie :</label>
-				 <input type="text" name="nomCategorieLivre" value="${livreCriteria.nomCategorieLivre}"/>
+				 <input type="text" name="nomCategorieLivre" value="${pretCriteria.nomCategorieLivre}"/>
 				 </fieldset>
 				
-				 </fieldset> 
-				 <br>
-				 <button class="btn-sm btn-primary">Valider</button>
 				 
+				 
+				 <button class="btn-sm btn-primary">Valider</button>
+				 </fieldset> 
 				 </form:form>
 	 			</div>
 	 		</div> 
@@ -121,19 +121,20 @@
 								          <td>${pret.dateRetourPrevue}</td>
 								          <td>${pret.dateRetourEffectif}</td>
 								          <td>${pret.pretStatut.getText()}</td>
-								          <c:if test="${pret.pretStatut.getCode() != 'PROLONGE' && pret.pretStatut.getCode() != 'CLOTURE' }">
 								          <td>
+								          <c:if test="${pret.pretStatut.getCode() != 'PROLONGE' 
+								          && pret.pretStatut.getCode() != 'CLOTURE' 
+								          && pret.pretStatut.getCode() != 'ECHU'}">
 								          	<a type="button"  class="btn btn-warning" 
-								        	href="">Prolonger</a>
-								          </td>
+								        	href="/prets/prolongation/${pret.numPret}">Prolonger</a>
 								          </c:if>
-								          <c:if test="${pret.pretStatut.getCode() != 'CLOTURE'}">
+								          </td>
 								          <td>
+								          <c:if test="${pret.pretStatut.getCode() != 'CLOTURE'}">
 								          	<a type="button"  class="btn btn-danger" 
-								        	href="">Cloturer</a>
-								          </td>
+								        	href="/prets/cloture/${pret.numPret}">Cloturer</a>
 								          </c:if>
-					        	      	  
+					        	      	  </td>
 					    				 </tr>
 				   					</c:forEach>
 								</tbody>

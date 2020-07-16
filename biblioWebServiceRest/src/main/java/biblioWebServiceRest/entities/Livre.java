@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,17 +27,18 @@ import io.swagger.annotations.ApiModelProperty;
 
 
 @Entity
-@Table(name="livre", 
-uniqueConstraints= {
-		@UniqueConstraint(columnNames="titre")
-})
+//@Table(name="livre")
+@Table(name="livre", uniqueConstraints=
+@UniqueConstraint(columnNames = {"titre", "auteur"})) 
 public class Livre implements Serializable{
 	@Id @GeneratedValue
 	@ApiModelProperty(notes = "ID du livre generee dans la base de donnees")
 	private Long numLivre; 
 	@ApiModelProperty(notes= "Nom du livre")
+	@Column(name="titre")
 	private String titre; 
 	@ApiModelProperty(notes= "Nom de l'auteur du livre")
+	@Column(name="auteur")
 	private String auteur; 
 	@ApiModelProperty(notes= "Nombre d'exemplaires total de l'ouvrage que possède la bibliotheque")
 	private Integer nbExemplaires;

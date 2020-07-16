@@ -83,7 +83,7 @@
 								          <td>${categorie.numCategorie}</td>
 								          <td>
 								          	<a type="button"  class="btn btn-danger" 
-								        	href="/categories/delete/${categorie.numCategorie}">Suppression</a>
+								        	href="/categories/${categorie.numCategorie}">Suppression</a>
 								          </td>
 								          
 							        	  

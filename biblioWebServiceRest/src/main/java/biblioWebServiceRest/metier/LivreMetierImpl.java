@@ -65,24 +65,23 @@ public class LivreMetierImpl implements ILivreMetier{
 	 */
 	@Override
 	public Livre createLivre(LivreDTO livreDTO) throws EntityAlreadyExistsException, EntityNotFoundException {		
-		Livre livreToCreate = livreMapper.livreDTOToLivre(livreDTO); 
 		
 		Optional<Categorie> categorie = categorieRepository.findById(livreDTO.getNumCategorie());
 		if(!categorie.isPresent()) 
 			throw new EntityNotFoundException("Le livre ne peut pas etre enregistre car la categorie saisie n'existe pas");
-		livreToCreate.setCategorie(categorie.get());
 		
 		/*
 		 * Recherche d'un livre via LivreCriteria : un livre est identifié par la combinaison unique d'un titre et d'un auteur
 		 */
 		LivreCriteria livreCriteria = new LivreCriteria(); 
-		livreCriteria.setTitre(livreToCreate.getTitre());
-		livreCriteria.setAuteur(livreToCreate.getAuteur());
+		livreCriteria.setTitre(livreDTO.getTitre());
+		livreCriteria.setAuteur(livreDTO.getAuteur());
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
 		if(!livreCriteriaList.isEmpty()) 
 			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
-		
+		Livre livreToCreate = livreMapper.livreDTOToLivre(livreDTO); 
+		livreToCreate.setCategorie(categorie.get());
 		livreToCreate.setNbExemplairesDisponibles(livreDTO.getNbExemplaires());
 		
 		return livreRepository.save(livreToCreate);
@@ -110,24 +109,40 @@ public class LivreMetierImpl implements ILivreMetier{
 		
 		Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
 		
-		Optional<Categorie> categorie = categorieRepository.findById(livreDTO.getNumCategorie());
-		if(!categorie.isPresent()) 
-			throw new EntityNotFoundException("Le changement de categorie est impossible car la categorie saisie n'existe pas");
-		livreToUpdate.get().setCategorie(categorie.get());
+		
+		
 		
 		/*
 		 * Si la modification du titre ou du nom de l'auteur créée une nouvelle combinaison déjà existante identifiée 
 		 * par la recherche via LivreCriteria, la mise à jour du livre est refusée pour respecter l'unicité des enregistrements
 		 */
+		
 		LivreCriteria livreCriteria = new LivreCriteria(); 
-		livreCriteria.setTitre(livreToUpdate.get().getTitre());
-		livreCriteria.setAuteur(livreUpdates.getAuteur());
+		livreCriteria.setTitre(livreDTO.getTitre());
+		livreCriteria.setAuteur(livreDTO.getAuteur());
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
-		if(!livreCriteriaList.isEmpty())
+		System.out.println("taille" + livreCriteriaList.size());
+		
+		if(livreCriteriaList.size() == 1 
+				&& (
+					(livreToUpdate.get().getTitre()!=livreDTO.getTitre() && livreToUpdate.get().getAuteur()==livreDTO.getAuteur())
+					||
+					(livreToUpdate.get().getTitre()==livreDTO.getTitre() && livreToUpdate.get().getAuteur()==livreDTO.getAuteur())
+				)
+			)
 			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
+		
+		Optional<Categorie> categorie = categorieRepository.findById(livreDTO.getNumCategorie());
+		if(!categorie.isPresent()) 
+			throw new EntityNotFoundException("Le changement de categorie est impossible car la categorie saisie n'existe pas");
+		livreToUpdate.get().setCategorie(categorie.get());
+		
 		livreToUpdate.get().setTitre(livreUpdates.getTitre());
 		livreToUpdate.get().setAuteur(livreUpdates.getAuteur());
+		
+		
+		
 				
 		/*
 		 * La mise à jour du nombre total d'exemplaires d'une référence de livre est inférieure au nombre des exemplaires

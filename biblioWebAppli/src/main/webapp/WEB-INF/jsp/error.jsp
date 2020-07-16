@@ -40,7 +40,7 @@
 <table width="100%" border="1">
 <tr valign="top">
 <td width="40%"><b>Libellé de l'erreur:</b></td>
-<td>${pageContext.exception.cause.localizedMessage}</td>
+<td>${error}</td>
 </tr>
 
 </table>

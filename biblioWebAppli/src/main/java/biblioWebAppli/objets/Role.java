@@ -1,7 +1,7 @@
 /**
  * L'entité Role permet d'identifier les profils d'autorisation des utilisateurs
  */
-package biblioWebAppli.entities;
+package biblioWebAppli.objets;
 
 
 public class Role  {

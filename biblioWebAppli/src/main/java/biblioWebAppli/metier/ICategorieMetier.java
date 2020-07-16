@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
-import biblioWebAppli.entities.Categorie;
 import biblioWebAppli.exceptions.EntityAlreadyExistsException;
+import biblioWebAppli.objets.Categorie;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 
 
@@ -39,12 +39,12 @@ public interface ICategorieMetier {
 	 * @return
 	 * @throws EntityAlreadyExistsException 
 	 */
-	public Categorie createCategorie(CategorieDTO categorieDTO) throws EntityAlreadyExistsException;
+	public Categorie createCategorie(CategorieDTO categorieDTO);
 	
 	/**
 	 * Permet de supprimer une categorie de livre
 	 * @param numCategorie
 	 * @throws EntityNotDeletableException 
 	 */
-	public void delete(Long numCategorie) throws EntityNotDeletableException;
+	public String delete(Long numCategorie);
 }

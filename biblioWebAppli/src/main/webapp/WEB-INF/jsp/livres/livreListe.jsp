@@ -34,7 +34,7 @@
 
 <div class="container-fluid">
  <div class="row justify-content-center mb-3">
-  <div class="col-md-6 col-md-offset-3 ">
+  <div class="col-md-6 col-md-offset-2 ">
   
    <div class="panel panel-primary">
     <div class="panel-heading">
@@ -82,7 +82,7 @@
  
 <div class="container-fluid">
 	<div class="row d-flex justify-content-center">
-		<div class="container col-md-6 col-md-offset-3">
+		<div class="container col-md-8 col-md-offset-2">
 			<div class="wrapper">
 				 <div class="panel panel-primary">
 				  <div class="panel-heading">
@@ -109,15 +109,19 @@
 								          <td>${livre.nbExemplaires}</td>
 								          <td>${livre.nbExemplairesDisponibles}</td>
 								          <td>${livre.categorie.getNomCategorie()}</td>
-								          <c:if test="${livre.nbExemplairesDisponibles > 0}">
 								          <td>
-								          	<a type="button"  class="btn btn-success" 
-								        	href="/prets/newPret/${livre.numLivre}">Emprunter</a>
-								          </td>
+								          <c:if test="${livre.nbExemplairesDisponibles > 0}">
+								            <a type="button"  class="btn btn-success" 
+								        	href="/prets/livre/${livre.numLivre}">Emprunter</a>
 								          </c:if>
+								          </td>
+								          <td>
+								          	<a type="button"  class="btn btn-warning"
+								        	href="/livres/updateLivre/${livre.numLivre}">Modification</a>
+								          </td>
 								          <td>
 								          	<a type="button"  class="btn btn-danger" 
-								        	href="/livres/delete/${livre.numLivre}">Suppression</a>
+								        	href="/livres/${livre.numLivre}">Suppression</a>
 								          </td>
 								          
 					        	      	  

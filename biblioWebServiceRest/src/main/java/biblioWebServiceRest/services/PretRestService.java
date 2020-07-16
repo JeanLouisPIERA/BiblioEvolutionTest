@@ -91,7 +91,7 @@ public class PretRestService {
 	        @ApiResponse(code = 202, message = "Le prêt a été prolongé"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
-	@PatchMapping(value="/prets/{numPret}", produces="application/json")
+	@PutMapping(value="/prets/prolongation/{numPret}", produces="application/json")
 	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {
 		
 		Pret prolongationPret = pretMetier.prolongerPret(numPret);
@@ -115,7 +115,7 @@ public class PretRestService {
 	        @ApiResponse(code = 202, message = "Le prêt a été cloturé"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
-	@PutMapping(value="/prets/{numPret}", produces="application/json")
+	@PutMapping(value="/prets/cloture/{numPret}", produces="application/json")
 	public ResponseEntity<Pret> cloturerPret(@PathVariable Long numPret) throws EntityNotFoundException {
 		
 		Pret cloturePret = pretMetier.cloturerPret(numPret);

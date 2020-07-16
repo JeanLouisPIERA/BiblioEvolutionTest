@@ -1,11 +1,7 @@
 /**
- * Permet de gérer l'affichage des pages html de l'Appli WEB pour les Catégories
+ Permet de gérer l'affichage des pages html de l'Appli WEB pour les Catégories
  */
 package biblioWebAppli.controllers;
-
-import java.io.IOException;
-
-
 
 import javax.websocket.server.PathParam;
 
@@ -14,7 +10,6 @@ import org.springframework.data.domain.Page;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,20 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
-
-import biblioWebAppli.entities.Categorie;
-import biblioWebAppli.exceptions.EntityAlreadyExistsException;
 import biblioWebAppli.metier.ICategorieMetier;
-import biblioWebServiceRest.exceptions.EntityNotDeletableException;
-
-
+import biblioWebAppli.objets.Categorie;
 
 
 /**
@@ -88,23 +77,20 @@ public class CategorieController {
 	     * Permet de valider la création d'une nouvelle catégorie
 	     * @param categorieDTO
 	     * @return
-	     * @throws EntityAlreadyExistsException 
+	      
 	     */
 	    @PostMapping("/categories/newCategorie")
-	    public String createCategorie(Model model, @ModelAttribute("categorie") CategorieDTO categorieDTO) throws EntityAlreadyExistsException{
+	    public String createCategorie(Model model, @ModelAttribute("categorie") CategorieDTO categorieDTO){
 			
-	        Categorie categorieToCreate = categorieMetier.createCategorie(categorieDTO);
-	        
-	        /**
-	        if(result.hasErrors()) {
-	        	String errorMessage = messageCreationCategorie.getStatusCode().toString();
-				model.addAttribute(errorMessage);
-				return "categories/categorieException";
+	        Categorie categorieToCreate;
+			try {
+				categorieToCreate = categorieMetier.createCategorie(categorieDTO);
+				model.addAttribute(categorieToCreate);
+			} catch (HttpClientErrorException e) {
+		        model.addAttribute("error", e.getResponseBodyAsString());
+		        return"/error";
 			}
-	        **/
 	        
-	        
-	        model.addAttribute(categorieToCreate);
 			return "categories/categorieConfirmation";
 	        
 	    }
@@ -113,27 +99,19 @@ public class CategorieController {
 	     * permet de supprimer une catégorie existante
 	     * @param numCategorie
 	     * @return
-	     * @throws EntityNotDeletableException 
+	     * @throws Exception 
 	     */
-	    @RequestMapping(value="/categories/delete/{numCategorie}", method = RequestMethod.GET)
-	    public String delete(@PathVariable("numCategorie") Long numCategorie) throws EntityNotDeletableException{
-	        categorieMetier.delete(numCategorie);
+	    @RequestMapping(value="/categories/{numCategorie}", method = RequestMethod.GET)
+	    public String delete(Model model, @PathVariable("numCategorie") Long numCategorie){
+	        try {
+				categorieMetier.delete(numCategorie);
+			} catch (HttpClientErrorException e) {
+		        model.addAttribute("error", e.getResponseBodyAsString());
+		        return"/error";
+			}
 	        return "/categories/categorieSuppression";
 	    }
 	    
-	    /**
-	     * Permet de gérer l'affichage des messages d'erreur
-	     * @param ex
-	     * @param model
-	     * @return
-	     * @throws IOException
-	     */
-	    /**
-	    @ExceptionHandler(HttpClientErrorException.class)
-	    public String handleClientError(HttpClientErrorException ex, Model model) throws IOException {
-	        MessageDTO dto = mapper.readValue(ex.getResponseBodyAsByteArray(), MessageDTO.class);
-	        model.addAttribute("error", dto.getMessage());
-	        return "errorMessage"; 
-	    }
-		**/
+	    
+		
 }

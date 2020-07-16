@@ -61,7 +61,7 @@ public class LivreRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante")
 	})
 	@GetMapping(value="/livres", produces = "application/json")
-	public ResponseEntity<Page<Livre>> searchByLivreCriteria(@PathParam(value = "livreCriteria") LivreCriteria livreCriteria, @RequestParam int page, @RequestParam int size) {
+	public ResponseEntity<Page<Livre>> searchByLivreCriteria(@PathParam(value = "livreCriteria") LivreCriteria livreCriteria, @RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "3") int size) {
 		Page<Livre> pageLivres = livreMetier.searchByLivreCriteria(livreCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Livre>>(pageLivres, HttpStatus.OK);
 	} 
@@ -114,10 +114,10 @@ public class LivreRestService {
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le livre a été mis à jour"),
 	        @ApiResponse(code = 400, message = "Requête incomplete : il faut remplir tous les champs requis"),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante")
 	})
 	@PutMapping(value="/livres/{numLivre}", produces = "application/json")
-	public ResponseEntity<Livre> updateLivre(@PathVariable Long numLivre, @Valid @RequestBody LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException, WrongNumberException{
+	public ResponseEntity<Livre> updateLivre(@PathVariable Long numLivre, @Valid @RequestBody LivreDTO livreDTO) throws EntityNotFoundException, WrongNumberException, EntityAlreadyExistsException{
 	Livre livreToUpdate = livreMetier.updateLivre(numLivre, livreDTO); 
 	return new ResponseEntity<Livre>(livreToUpdate, HttpStatus.ACCEPTED); 
 	}

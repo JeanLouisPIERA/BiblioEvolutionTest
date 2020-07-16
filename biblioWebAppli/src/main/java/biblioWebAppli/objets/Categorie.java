@@ -1,7 +1,7 @@
 /**
  * L'entité Categorie permet d'instancier un objet unique référencé dans l'API REST 
  */
-package biblioWebAppli.entities;
+package biblioWebAppli.objets;
 
 /**
  * @author jeanl

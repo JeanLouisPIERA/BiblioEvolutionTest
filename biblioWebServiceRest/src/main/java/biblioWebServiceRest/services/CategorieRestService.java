@@ -59,7 +59,7 @@ public class CategorieRestService {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés")
 	})
 	@GetMapping(value="/categories", produces = "application/json")
-	public ResponseEntity<Page<Categorie>> searchByCriteria(@PathParam(value = "categorieCriteria") CategorieCriteria categorieCriteria, @RequestParam int page, @RequestParam int size) {
+	public ResponseEntity<Page<Categorie>> searchByCriteria(@PathParam(value = "categorieCriteria") CategorieCriteria categorieCriteria, @RequestParam(name="page", defaultValue = "0") int page, @RequestParam (name="size", defaultValue = "3")int size) {
 		Page<Categorie> pageCategories = categorieMetier.searchByCriteria(categorieCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Categorie>>(pageCategories, HttpStatus.OK);
 	}

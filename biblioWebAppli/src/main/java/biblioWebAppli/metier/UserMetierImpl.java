@@ -3,7 +3,7 @@
  */
 package biblioWebAppli.metier;
 
-import biblioWebAppli.entities.User;
+import biblioWebAppli.objets.User;
 
 /**
  * @author jeanl

@@ -2,7 +2,7 @@
  * L'entité User permet de créer un compte utilisateur (nom, adresse mail), son profil d'autorisation et son password 
  * et de gérer et d'archiver les prêts réalisés par un utilisateur sur ce compte
  */
-package biblioWebAppli.entities;
+package biblioWebAppli.objets;
 
 
 

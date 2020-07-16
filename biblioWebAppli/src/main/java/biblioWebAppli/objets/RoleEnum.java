@@ -1,7 +1,7 @@
 /**
  * L'énumération RoleEnum permet d'identifier les différents profils d'autorisation donnés à l'entité Role
  */
-package biblioWebAppli.entities;
+package biblioWebAppli.objets;
 
 public enum RoleEnum {
 	

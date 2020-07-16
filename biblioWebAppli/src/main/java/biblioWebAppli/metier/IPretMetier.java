@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.PretCriteria;
 import biblioWebAppli.dto.PretDTO;
-import biblioWebAppli.entities.Pret;
 import biblioWebAppli.exceptions.BookNotAvailableException;
 import biblioWebAppli.exceptions.EntityNotFoundException;
+import biblioWebAppli.objets.Pret;
 
 
 
@@ -30,7 +30,7 @@ public interface IPretMetier {
 	 * @throws EntityNotFoundException 
 	 * @throws Exception
 	 */
-	Pret createPret(PretDTO pretDTO) throws EntityNotFoundException, BookNotAvailableException;
+	Pret createPret(PretDTO pretDTO);
 	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 
@@ -39,7 +39,7 @@ public interface IPretMetier {
 	 * @throws EntityNotFoundException 
 	 * @throws BookNotAvailableException 
 	 */
-	Pret prolongerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException;
+	Pret prolongerPret(Long numPret);
 
 	/**
 	 * CRUD : UPDATE clôturer un prêt 
@@ -48,7 +48,7 @@ public interface IPretMetier {
 	 * @throws EntityNotFoundException 
 	 * @throws Exception
 	 */
-	Pret cloturerPret(Long numPret) throws EntityNotFoundException;
+	Pret cloturerPret(Long numPret);
 	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
@@ -58,7 +58,7 @@ public interface IPretMetier {
 	  * @param pretCriteria
 	  * @return
 	  */
-	 Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable, int page, int size);
+	 Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable);
 	 
 
 }

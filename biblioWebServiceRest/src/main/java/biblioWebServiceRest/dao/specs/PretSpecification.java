@@ -38,7 +38,7 @@ public class PretSpecification implements Specification<Pret> {
 	        }
        
         	if (pretCriteria.getUsername()!= null) {
-            	predicates.getExpressions().add(builder.like(root.get("user").get("username"), "%" + pretCriteria.getUsername()+ "%"));		
+            	predicates.getExpressions().add(builder.like(root.get("user").get("username"), "%" + pretCriteria.getUsername() + "%"));		
             }
         	
         	if (pretCriteria.getUserId()!= null) {

@@ -57,6 +57,16 @@ public class User implements Serializable {
 	
 	
 
+	/**
+	 * @param username
+	 */
+	public User(String username) {
+		super();
+		this.username = username;
+	}
+
+
+
 	public User(String username, String adresseMail) {
 		super();
 		this.username = username;

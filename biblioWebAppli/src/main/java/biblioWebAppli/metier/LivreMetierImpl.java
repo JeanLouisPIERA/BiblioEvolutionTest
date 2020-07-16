@@ -3,11 +3,16 @@
  */
 package biblioWebAppli.metier;
 
+import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,8 +28,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import biblioWebAppli.criteria.LivreCriteria;
 
 import biblioWebAppli.dto.LivreDTO;
-
-import biblioWebAppli.entities.Livre;
+import biblioWebAppli.objets.Livre;
+import biblioWebAppli.objets.Pret;
 
 /**
  * @author jeanl
@@ -36,7 +41,9 @@ public class LivreMetierImpl implements ILivreMetier {
 	@Autowired
     private RestTemplate restTemplate;
     
-    public final String uRL = "http://localhost:8080/livres";
+    //public final String uRL = "http://localhost:8080/livres";
+    @Value("${application.uRLLivre}")
+	private String uRL;
 	
     
 	/**
@@ -46,7 +53,7 @@ public class LivreMetierImpl implements ILivreMetier {
 	 * @return
 	 */
 	@Override
-	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable, int page, int size) {
+	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable) {
 		HttpHeaders headers = new HttpHeaders();
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
@@ -55,9 +62,8 @@ public class LivreMetierImpl implements ILivreMetier {
     	        .queryParam("titre", livreCriteria.getTitre())
     	        .queryParam("auteur", livreCriteria.getAuteur())
     	        .queryParam("nomCategorie", livreCriteria.getNomCategorie())
-    	        .queryParam("page", page)
-    	        .queryParam("size", size);
-    	
+    	        .queryParam("page", pageable.getPageNumber())
+    	        .queryParam("size", pageable.getPageSize());
 
     	HttpEntity<?> entity = new HttpEntity<>(headers);
     	
@@ -68,7 +74,6 @@ public class LivreMetierImpl implements ILivreMetier {
     			new ParameterizedTypeReference<RestResponsePage<Livre>>(){});
         Page<Livre> pageLivre = livres.getBody();
         
-            	
         return pageLivre;
 	}
 
@@ -82,30 +87,17 @@ public class LivreMetierImpl implements ILivreMetier {
 	 
 	 */
 	@Override
-	public Livre createLivre(LivreDTO livreDTO) throws biblioWebAppli.exceptions.EntityNotFoundException, biblioWebAppli.exceptions.EntityAlreadyExistsException {
+	public Livre createLivre(LivreDTO livreDTO){
 		HttpHeaders headers = new HttpHeaders();
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
 
-    	Livre livreToCreate = new Livre();
-    	
     	HttpEntity<LivreDTO> requestEntity = 
     	     new HttpEntity<>(livreDTO, headers);
-    	ResponseEntity<Livre> response;
-		try {
-			response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, 
+    	ResponseEntity<Livre> response =restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, 
 			              Livre.class);
-			System.out.println(response.getStatusCodeValue());
-			livreToCreate = response.getBody();
-			System.out.println(livreToCreate);
-		} catch (HttpClientErrorException exception) {
-			if(exception.getStatusCode() == HttpStatus.NOT_FOUND) 
-				throw new biblioWebAppli.exceptions.EntityNotFoundException("Le livre ne peut pas etre enregistre car la categorie saisie n'existe pas");
-			if(exception.getStatusCode() == HttpStatus.CONFLICT) 
-				throw new biblioWebAppli.exceptions.EntityAlreadyExistsException("Ce livre a déjà été référencé");
-		}
-        
-    	return livreToCreate;
+			
+		  return response.getBody();
 	}
 
 	/**
@@ -114,10 +106,107 @@ public class LivreMetierImpl implements ILivreMetier {
 	 * @return
 	 */
 	@Override
-	public Livre updateLivre(Long numLivre, LivreDTO livreDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	public Livre updateLivre(Livre livre) {
+		/**
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	//System.out.println("URI:"+ builder.toUriString());
+    	//System.out.println("URI:"+ uRL+"/"+livre.getNumLivre());     
+    	
+    	String URI = uRL+"/"+livre.getNumLivre();
+    	System.out.println("URI2:"+ uRL+"/"+livre.getNumLivre()); 
+    	
+    	headers.setConnection(URI);
+    	
+        Long numLivre = livre.getNumLivre();
+        
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("numLivre","numLivre");
+    	
+    	LivreDTO livreDTO = new LivreDTO(); 
+    	livreDTO.setAuteur(livre.getAuteur());
+    	livreDTO.setTitre(livre.getTitre());
+    	livreDTO.setNbExemplaires(livre.getNbExemplaires());
+
+    	HttpEntity<LivreDTO> requestEntity = 
+    	     new HttpEntity<>(livreDTO, headers);
+    	
+    	System.out.println("requestEntity" + requestEntity); 
+    	System.out.println("NbExemplaires" + livre.getNbExemplaires()); 
+    	
+ResponseEntity<Livre> response = 
+
+//restTemplate.
+    		
+    			restTemplate.exchange(
+    			URI, 
+    			HttpMethod.PUT, 
+    			requestEntity, 
+			    Livre.class 
+			    ,param
+			    );
+	
+    	
+    	
+    	
+
+    	//System.out.println("URI:"+ uRL+"/"+livre.getNumLivre());
+    	//System.out.println("response" + response.getBody());
+    	
+    	
+		  return response.getBody();
+    	
+    	
+		  **/
+		    	
+		LivreDTO livreDTO = new LivreDTO(); 
+    	livreDTO.setAuteur(livre.getAuteur());
+    	livreDTO.setTitre(livre.getTitre());
+    	livreDTO.setNbExemplaires(livre.getNbExemplaires());
+    	livreDTO.setNumCategorie(livre.getCategorie().getNumCategorie());
+    	
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<LivreDTO> requestEntity = 
+       	     new HttpEntity<>(livreDTO, headers);
+		
+		String url = uRL+"/"+livre.getNumLivre();
+    	System.out.println("URI:"+ uRL+"/"+livre.getNumLivre()); 
+		//String url = "http://test.com/Services/rest/{id}/Identifier";
+    	
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", livre.getNumLivre().toString());
+		URI uri = UriComponentsBuilder.fromUriString(url)
+		        .buildAndExpand(params)
+		        .toUri();
+		System.out.println("URI1:"+ uri); 
+		/**
+		uri = UriComponentsBuilder
+		        .fromUri(uri)
+		        .queryParam("auteur", livreDTO.getAuteur())
+		        .queryParam("titre", livreDTO.getTitre())
+		        .queryParam("nbExemplaires", livreDTO.getNbExemplaires())
+		        .queryParam("numCategorie", livreDTO.getNumCategorie())
+		        .build()
+		        .toUri();
+		
+		System.out.println("URI2:"+ uri); 
+		**/
+		
+		
+		
+		ResponseEntity<Livre> response = restTemplate.exchange(uri , HttpMethod.PUT, requestEntity, Livre.class);
+		
+		System.out.println("response:"+ response.toString()); 
+		
+		return response.getBody(); 
+		
 	}
+	
 
 	/**
 	 * @param numLivre
@@ -125,17 +214,24 @@ public class LivreMetierImpl implements ILivreMetier {
 	 * @throws biblioWebAppli.exceptions.EntityNotDeletableException,
 	 */
 	@Override
-	public void delete(Long numLivre) throws biblioWebAppli.exceptions.EntityNotFoundException, biblioWebAppli.exceptions.EntityNotDeletableException {
-		 try {
-				restTemplate.delete(uRL+"/"+numLivre);
-			} catch (HttpClientErrorException exception) {
-				if(exception.getStatusCode() == HttpStatus.NOT_FOUND) 
-					throw new biblioWebAppli.exceptions.EntityNotFoundException("Le livre que vous voulez supprimer n'existe pas"); 
-				if(exception.getStatusCode() == HttpStatus.PRECONDITION_FAILED) 
-					throw new biblioWebAppli.exceptions.EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours"); 
-				
-			}
+	public String delete(Long numLivre) {
+		// restTemplate.delete(uRL+"/"+numLivre);
+		 
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setAccept(Arrays.asList(MediaType.ALL));
+    	headers.setContentType(MediaType.TEXT_PLAIN);
+    	
+    	HttpEntity<?> requestEntity = 
+       	     new HttpEntity<>(headers);
 		
+		String url = uRL+"/"+numLivre;
+    	
+		ResponseEntity<String> response = restTemplate.exchange(url , HttpMethod.DELETE, requestEntity, String.class);
+		
+		System.out.println("response:"+ response.toString()); 
+		
+		return response.getBody(); 
+		 
 	}
 
 }

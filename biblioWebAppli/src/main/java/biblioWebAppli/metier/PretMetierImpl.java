@@ -3,9 +3,13 @@
  */
 package biblioWebAppli.metier;
 
+import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +27,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import biblioWebAppli.criteria.PretCriteria;
 import biblioWebAppli.dto.LivreDTO;
 import biblioWebAppli.dto.PretDTO;
-import biblioWebAppli.entities.Livre;
-import biblioWebAppli.entities.Pret;
 import biblioWebAppli.exceptions.BookNotAvailableException;
 import biblioWebAppli.exceptions.EntityNotFoundException;
+import biblioWebAppli.objets.Livre;
+import biblioWebAppli.objets.Pret;
 
 
 /**
@@ -39,7 +43,9 @@ public class PretMetierImpl implements IPretMetier{
 	@Autowired
     private RestTemplate restTemplate;
     
-    public final String uRL = "http://localhost:8080/prets";
+    //public final String uRL = "http://localhost:8080/prets";
+    @Value("${application.uRLPret}")
+	private String uRL;
 
 	/**
 	 * @param pretDTO
@@ -48,30 +54,16 @@ public class PretMetierImpl implements IPretMetier{
 	 * @throws BookNotAvailableException
 	 */
 	@Override
-	public Pret createPret(PretDTO pretDTO) throws EntityNotFoundException, BookNotAvailableException {
+	public Pret createPret(PretDTO pretDTO) {
 		HttpHeaders headers = new HttpHeaders();
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
 
-    	Pret pretToCreate = new Pret();
-    	
-    	HttpEntity<PretDTO> requestEntity = 
-    	     new HttpEntity<>(pretDTO, headers);
-    	ResponseEntity<Pret> response;
-		try {
-			response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, 
-			              Pret.class);
+    	HttpEntity<PretDTO> requestEntity = new HttpEntity<>(pretDTO, headers);
+    	ResponseEntity<Pret> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, Pret.class);
 			System.out.println(response.getStatusCodeValue());
-			pretToCreate = response.getBody();
-			System.out.println(pretToCreate);
-		} catch (HttpClientErrorException exception) {
-			if(exception.getStatusCode() == HttpStatus.NOT_FOUND) 
-				throw new biblioWebAppli.exceptions.EntityNotFoundException("Aucun enregistrement ne correspond au livre ou à l'utilisateur saisi");
-			if(exception.getStatusCode() == HttpStatus.LOCKED) 
-				throw new BookNotAvailableException ("Il n'y a plus d'exemplaire disponible de ce livre");
-		}
-        
-    	return pretToCreate;
+			
+    	return response.getBody();
 	}
 
 	/**
@@ -81,9 +73,21 @@ public class PretMetierImpl implements IPretMetier{
 	 * @throws BookNotAvailableException
 	 */
 	@Override
-	public Pret prolongerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException {
-		// TODO Auto-generated method stub
-		return null;
+	public Pret prolongerPret(Long numPret){
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<?> requestEntity = 
+       	     new HttpEntity<>(headers);
+		
+		String url = uRL+"/prolongation/"+numPret;
+    	
+		ResponseEntity<Pret> response = restTemplate.exchange(url , HttpMethod.PUT, requestEntity, Pret.class);
+		
+		System.out.println("response:"+ response.toString()); 
+		
+		return response.getBody(); 
 	}
 
 	/**
@@ -92,9 +96,21 @@ public class PretMetierImpl implements IPretMetier{
 	 * @throws EntityNotFoundException
 	 */
 	@Override
-	public Pret cloturerPret(Long numPret) throws EntityNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public Pret cloturerPret(Long numPret){
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<?> requestEntity = 
+       	     new HttpEntity<>(headers);
+		
+		String url = uRL+"/cloture/"+numPret;
+    	
+		ResponseEntity<Pret> response = restTemplate.exchange(url , HttpMethod.PUT, requestEntity, Pret.class);
+		
+		System.out.println("response:"+ response.toString()); 
+		
+		return response.getBody(); 
 	}
 
 	/**
@@ -103,7 +119,7 @@ public class PretMetierImpl implements IPretMetier{
 	 * @return
 	 */
 	@Override
-	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable, int page, int size) {
+	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		HttpHeaders headers = new HttpHeaders();
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     	
@@ -111,11 +127,14 @@ public class PretMetierImpl implements IPretMetier{
     	        .queryParam("numPret", pretCriteria.getNumPret())
     	        .queryParam("username", pretCriteria.getUsername())
     	        .queryParam("userId", pretCriteria.getUserId())
+    	        .queryParam("numLivre", pretCriteria.getNumLivre())
     	        .queryParam("titre", pretCriteria.getTitre())
     	        .queryParam("auteur", pretCriteria.getAuteur())
     	        .queryParam("nomCategorieLivre", pretCriteria.getNomCategorieLivre())
-    	        .queryParam("page", page)
-    	        .queryParam("size", size);
+    	        .queryParam("page", pageable.getPageNumber())
+    	        .queryParam("size", pageable.getPageSize());
+    	
+    	System.out.println("uri:"+ builder.toUriString());
     	
     	HttpEntity<?> entity = new HttpEntity<>(headers);
     	
