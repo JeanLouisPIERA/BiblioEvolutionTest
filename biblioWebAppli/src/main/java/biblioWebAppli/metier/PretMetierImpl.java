@@ -3,10 +3,9 @@
  */
 package biblioWebAppli.metier;
 
-import java.net.URI;
+
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,20 +15,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
+
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.PretCriteria;
-import biblioWebAppli.dto.LivreDTO;
+
 import biblioWebAppli.dto.PretDTO;
-import biblioWebAppli.exceptions.BookNotAvailableException;
-import biblioWebAppli.exceptions.EntityNotFoundException;
-import biblioWebAppli.objets.Livre;
+
 import biblioWebAppli.objets.Pret;
 
 
@@ -43,7 +40,6 @@ public class PretMetierImpl implements IPretMetier{
 	@Autowired
     private RestTemplate restTemplate;
     
-    //public final String uRL = "http://localhost:8080/prets";
     @Value("${application.uRLPret}")
 	private String uRL;
 
@@ -85,8 +81,6 @@ public class PretMetierImpl implements IPretMetier{
     	
 		ResponseEntity<Pret> response = restTemplate.exchange(url , HttpMethod.PUT, requestEntity, Pret.class);
 		
-		System.out.println("response:"+ response.toString()); 
-		
 		return response.getBody(); 
 	}
 
@@ -107,9 +101,7 @@ public class PretMetierImpl implements IPretMetier{
 		String url = uRL+"/cloture/"+numPret;
     	
 		ResponseEntity<Pret> response = restTemplate.exchange(url , HttpMethod.PUT, requestEntity, Pret.class);
-		
-		System.out.println("response:"+ response.toString()); 
-		
+	
 		return response.getBody(); 
 	}
 
@@ -133,8 +125,6 @@ public class PretMetierImpl implements IPretMetier{
     	        .queryParam("nomCategorieLivre", pretCriteria.getNomCategorieLivre())
     	        .queryParam("page", pageable.getPageNumber())
     	        .queryParam("size", pageable.getPageSize());
-    	
-    	System.out.println("uri:"+ builder.toUriString());
     	
     	HttpEntity<?> entity = new HttpEntity<>(headers);
     	

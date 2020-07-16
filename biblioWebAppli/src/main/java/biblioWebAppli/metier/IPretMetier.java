@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.PretCriteria;
 import biblioWebAppli.dto.PretDTO;
-import biblioWebAppli.exceptions.BookNotAvailableException;
-import biblioWebAppli.exceptions.EntityNotFoundException;
 import biblioWebAppli.objets.Pret;
 
 

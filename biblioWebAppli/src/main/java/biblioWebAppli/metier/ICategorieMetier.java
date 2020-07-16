@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
-import biblioWebAppli.exceptions.EntityAlreadyExistsException;
+
 import biblioWebAppli.objets.Categorie;
-import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+
 
 
 

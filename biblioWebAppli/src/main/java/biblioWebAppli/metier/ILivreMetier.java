@@ -8,9 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.LivreCriteria;
 import biblioWebAppli.dto.LivreDTO;
-import biblioWebAppli.exceptions.EntityAlreadyExistsException;
-import biblioWebAppli.exceptions.EntityNotDeletableException;
-import biblioWebAppli.exceptions.EntityNotFoundException;
 import biblioWebAppli.objets.Livre;
 
 /**

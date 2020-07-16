@@ -3,7 +3,7 @@
  */
 package biblioWebAppli.controllers;
 
-import java.util.EnumSet;
+
 
 import javax.websocket.server.PathParam;
 
@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import biblioWebAppli.criteria.LivreCriteria;
 
 import biblioWebAppli.dto.LivreDTO;
-import biblioWebAppli.exceptions.EntityNotFoundException;
+
 
 import biblioWebAppli.metier.ILivreMetier;
 import biblioWebAppli.objets.Livre;
@@ -108,23 +108,6 @@ public class LivreController {
 		}
     	
     	
-    	/**
-        try {
-			livreToCreate = livreMetier.createLivre(livreDTO);
-			model.addAttribute((Livre)livreToCreate);
-		} catch (Exception e) {
-			System.out.println(livreToCreate.toString());
-			System.out.println("Exception Test"+ e);
-			//ExceptionReponse exceptionReponse = (ExceptionReponse) livreToCreate;
-			
-			String errorReponse = e.getLocalizedMessage();
-					
-			System.out.println(errorReponse);
-			//System.out.println(errorReponse);
-			model.addAttribute(errorReponse);
-			}
-			**/
-
 		return "livres/livreConfirmation";
         
     }

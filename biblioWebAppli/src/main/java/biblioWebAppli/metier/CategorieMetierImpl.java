@@ -9,27 +9,23 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestClientResponseException;
+
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
 import biblioWebAppli.objets.Categorie;
-import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
+
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 
 
@@ -48,8 +44,6 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	    
 	    @Value("${application.uRLCategorie}")
 		private String uRL;
-	    
-	    
 	    
 	    
 	    /**
