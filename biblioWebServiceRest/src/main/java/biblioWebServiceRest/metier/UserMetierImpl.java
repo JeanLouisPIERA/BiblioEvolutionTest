@@ -51,6 +51,7 @@ public class UserMetierImpl implements IUserMetier{
 	public User createUser(String username) {
 		User u = new User(username);
 		Role r = roleRepository.findByName(RoleEnum.USER);
+		u.setAdresseMail(username.concat("@hotmail.com"));
 		u.setRole(r);
 		u.setPassword("$2a$10$8kVCmqZNmEu7ihwunzaNN.KxnFMn1HuDmBcj1O.mOK24gJ15C5b06");
 		userRepository.save(u);
@@ -64,6 +65,7 @@ public class UserMetierImpl implements IUserMetier{
 	public User createAdmin(String username) {
 		User u = new User(username);
 		Role r = roleRepository.findByName(RoleEnum.ADMIN);
+		u.setAdresseMail(username.concat("@hotmail.com"));
 		u.setRole(r);
 		u.setPassword("$2a$10$8kVCmqZNmEu7ihwunzaNN.KxnFMn1HuDmBcj1O.mOK24gJ15C5b06");
 		

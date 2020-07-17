@@ -5,7 +5,7 @@ package biblioWebServiceRest.metier;
 
 import biblioWebServiceRest.entities.User;
 
-public interface ISecuriteMetier {
+public interface ISecurityService {
 	
 		String findLoggedInUsername();
 		

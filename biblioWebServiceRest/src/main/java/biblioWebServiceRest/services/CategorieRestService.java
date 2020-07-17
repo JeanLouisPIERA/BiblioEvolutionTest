@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,7 +59,7 @@ public class CategorieRestService {
 	@ApiResponses(value = {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés")
 	})
-	@GetMapping(value="/categories", produces = "application/json")
+	@GetMapping(value="/user/categories", produces = "application/json")
 	public ResponseEntity<Page<Categorie>> searchByCriteria(@PathParam(value = "categorieCriteria") CategorieCriteria categorieCriteria, @RequestParam(name="page", defaultValue = "0") int page, @RequestParam (name="size", defaultValue = "3")int size) {
 		Page<Categorie> pageCategories = categorieMetier.searchByCriteria(categorieCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Categorie>>(pageCategories, HttpStatus.OK);
@@ -81,7 +82,7 @@ public class CategorieRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 409, message = "La reference de cette categorie existe déjà")
 	})
-	@PostMapping(value="/categories", produces = "application/json", consumes = "application/json")
+	@PostMapping(value="/user/categories", produces = "application/json", consumes="application/json")
 	public ResponseEntity<Categorie> createCategorie(@Valid @RequestBody CategorieDTO categorieDTO) throws EntityAlreadyExistsException {
 		return new ResponseEntity<Categorie>(categorieMetier.createCategorie(categorieDTO), HttpStatus.CREATED);
 	}
@@ -104,7 +105,7 @@ public class CategorieRestService {
 			@ApiResponse(code = 200, message = "La demande de suppression de cette catégorie a été correctement effectuée"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante")
 	})
-	@DeleteMapping(value="/categories/{numCategorie}", produces = "application/text")
+	@DeleteMapping(value="/admin/categories/{numCategorie}", produces = "application/text")
 	public ResponseEntity<String> deleteCategorie(@PathVariable (value="numCategorie", required=true) Long numCategorie) throws EntityNotFoundException, EntityNotDeletableException {
 		categorieMetier.deleteCategorie(numCategorie);
 		return new ResponseEntity<String>("La categorie de cette reference a ete supprimee", HttpStatus.OK);

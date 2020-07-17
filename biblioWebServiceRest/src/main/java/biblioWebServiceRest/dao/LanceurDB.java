@@ -21,6 +21,7 @@ import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Role;
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
+import biblioWebServiceRest.metier.IUserMetier;
 
 
 /*
@@ -40,6 +41,8 @@ public class LanceurDB implements CommandLineRunner {
 	private IRoleRepository roleRepository;
 	@Autowired
 	private ICategorieRepository categorieRepository;
+	@Autowired
+	private IUserMetier userMetier;
 	
 
 	public LanceurDB(ILivreRepository livreRepository, IPretRepository pretRepository, IUserRepository userRepository,
@@ -60,14 +63,24 @@ public class LanceurDB implements CommandLineRunner {
 		Role user = new Role(RoleEnum.USER);
 		roleRepository.save(admin);
 		roleRepository.save(user);
-		
+		/**
 		User user1 = new User("Jean-Charles", "password", "jeannot@yahoo.fr", user);
 		User user2 = new User("Charlemagne", "password", "charlot@gmail.com", user);
 		User user3 = new User("Alexandre", "Alexandre", "alex@hotmail.com", user);
+		User admin10 = new User("admin10", "Alexandre", "admin@hotmail.com", admin);
 		userRepository.save(user1);
 		userRepository.save(user2);
 		userRepository.save(user3);
+		userRepository.save(admin10);
+		**/
 		
+		User user1 = userMetier.createUser("Jean-Charles");
+		User user2 = userMetier.createUser("Charlemagne");
+		User user3 = userMetier.createUser("Alexandre");
+		User admin10 = userMetier.createAdmin("Admin10"); 
+				
+				
+				
 		Categorie categorie1 = new Categorie("Roman");
 		Categorie categorie2 = new Categorie("Essai scientifique");
 		Categorie categorie3 = new Categorie("Manuel scolaire");
