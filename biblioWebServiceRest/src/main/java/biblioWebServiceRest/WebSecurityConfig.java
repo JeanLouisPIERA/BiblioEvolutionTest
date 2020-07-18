@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,18 +51,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                //.antMatchers("/resources/**", "/registration", "/login", "/login?logout", "/", "/css/**", "/webjars/**", "/bootstrap/**").permitAll()
-                .antMatchers("/user/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
-                .antMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.toString())
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic();
-                //.authenticationEntryPoint(authenticationEntryPoint);
-        /**
-        http.addFilterAfter(new CustomFilter(),
-                BasicAuthenticationFilter.class);
-                **/
+        	.csrf().disable()
+        	//.antMatcher("/api/categories")
+        	.authorizeRequests()
+        	.antMatchers(HttpMethod.GET, "/**").hasAnyAuthority(RoleEnum.ADMIN.toString(), RoleEnum.USER.toString())
+        	.antMatchers(HttpMethod.PUT, "/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
+            .antMatchers(HttpMethod.POST, "/**").hasAuthority(RoleEnum.ADMIN.toString())
+            .antMatchers(HttpMethod.DELETE, "/**").hasAuthority(RoleEnum.ADMIN.toString())
+            .antMatchers("/**").authenticated()
+            .anyRequest().authenticated()
+            .and()
+            .httpBasic()
+            .authenticationEntryPoint(authenticationEntryPoint);
+        	;
+       
+    		/**
+    	  	http.addFilterAfter(new CustomFilter(),
+            BasicAuthenticationFilter.class);
+            **/
     }
    
     /**

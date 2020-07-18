@@ -60,7 +60,7 @@ public class LivreRestService {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante")
 	})
-	@GetMapping(value="/user/livres", produces = "application/json")
+	@GetMapping(value="/livres", produces = "application/json")
 	public ResponseEntity<Page<Livre>> searchByLivreCriteria(@PathParam(value = "livreCriteria") LivreCriteria livreCriteria, @RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "3") int size) {
 		Page<Livre> pageLivres = livreMetier.searchByLivreCriteria(livreCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Livre>>(pageLivres, HttpStatus.OK);
