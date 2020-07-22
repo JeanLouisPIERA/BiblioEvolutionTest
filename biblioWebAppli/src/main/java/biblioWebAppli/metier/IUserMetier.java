@@ -3,6 +3,7 @@
  */
 package biblioWebAppli.metier;
 
+import biblioWebAppli.dto.UserDTO;
 import biblioWebAppli.objets.User;
 
 /**
@@ -16,6 +17,9 @@ public interface IUserMetier {
 	 * @param username
 	 * @return
 	 */
-	public User findUser(String username);
+	public User findUser(UserDTO userDTO);
+	
+	public User findByUsername(String username, String password);
+	
 
 }

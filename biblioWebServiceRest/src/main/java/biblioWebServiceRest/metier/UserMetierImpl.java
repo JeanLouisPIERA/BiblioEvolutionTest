@@ -5,7 +5,10 @@ package biblioWebServiceRest.metier;
 
 
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.entities.Role;
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
 
 
 @Service
@@ -38,10 +42,25 @@ public class UserMetierImpl implements IUserMetier{
 
 	/**
 	 * Cette méthode permet de rechercher par son nom un utilisateur persisté en base de données
+	 * @throws EntityNotFoundException 
 	 */
 	@Override
-	public User findByUsername(String username) {
-	    return userRepository.findByUsername(username).get();
+	public User findByUsername(String username) throws EntityNotFoundException {
+		Optional<User> userFound = userRepository.findByUsername(username);
+		if (Boolean.FALSE.equals(userFound.isPresent())) {
+            throw new EntityNotFoundException("L'utilisateur avec ce nom n'existe pas :" + username);
+		}
+	    return userFound.get();
+	}
+	
+	
+	@Override
+	public User findByUsernameAndPassword(String username, String password) throws EntityNotFoundException{
+		
+			User userFound = this.findByUsername(username);
+			if(bCryptPasswordEncoder.matches(password, userFound.getPassword())) 
+				throw new EntityNotFoundException("Mot de passe incorrect");
+			return userFound;
 	}
 
 	/**

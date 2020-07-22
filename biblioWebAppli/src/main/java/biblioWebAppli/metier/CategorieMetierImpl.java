@@ -56,6 +56,7 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	    @Override
 		public Page<Categorie> searchByCriteria(CategorieCriteria categorieCriteria, int page, int size) {
 	    	
+	    	
 	    	HttpHeaders headers = new HttpHeaders();
 	    	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 	    	

@@ -1,10 +1,10 @@
-package biblioWebServiceRest;
+package biblioWebAppli;
 
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,10 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import biblioWebServiceRest.entities.RoleEnum;
-import biblioWebServiceRest.CustomFilter;
+import biblioWebAppli.metier.IUserMetier;
+import biblioWebAppli.objets.RoleEnum;
+
 
 
 /**
@@ -28,11 +28,13 @@ import biblioWebServiceRest.CustomFilter;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Qualifier("userDetailsServiceImpl")
+    
+	/**@Qualifier("userDetailsServiceImpl")
     @Autowired
     private UserDetailsService userDetailsService;
+    **/
     @Autowired
-    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
+    private IUserMetier userMetier;
 
     /**
      * Création d'un mot de passe crypté.
@@ -51,25 +53,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-        	.csrf().disable()
-        	//.antMatcher("/api/categories")
-        	.authorizeRequests()
-        	.antMatchers(HttpMethod.POST, "/users/login").permitAll()
-        	.antMatchers(HttpMethod.GET, "/**").hasAnyAuthority(RoleEnum.ADMIN.toString(), RoleEnum.USER.toString())
-        	.antMatchers(HttpMethod.PUT, "/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
-            .antMatchers(HttpMethod.POST, "/**").hasAuthority(RoleEnum.ADMIN.toString())
-            .antMatchers(HttpMethod.DELETE, "/**").hasAuthority(RoleEnum.ADMIN.toString())
-            .antMatchers("/**").authenticated()
-            .anyRequest().authenticated()
-            .and()
-            .httpBasic()
-            .authenticationEntryPoint(authenticationEntryPoint);
-        	;
-       
-    		/**
-    	  	http.addFilterAfter(new CustomFilter(),
-            BasicAuthenticationFilter.class);
-            **/
+            .authorizeRequests()
+                .antMatchers("/resources/**", "/registration", "/login", "/login?logout", "/", "/css/**", "/webjars/**", "/bootstrap/**").permitAll()
+                .antMatchers("/user/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
+                .antMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.toString())
+                .anyRequest().authenticated()
+                .and()
+            .formLogin()
+                .loginPage("/login")
+                .permitAll()
+                .and()
+            .logout()
+                .permitAll();
     }
    
     /**
@@ -78,7 +73,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * @throws Exception
      */
     @Bean
-    public AuthenticationManager customAuthenticationManager() throws Exception {
+    public AuthenticationManager customAuthenticationManager(String username, String password) throws Exception {
+    	
+    	authenticationManager().authenticate();
         return authenticationManager();
     }
     
@@ -90,7 +87,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+    	auth
+    	//userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+    	.inMemoryAuthentication()
+    	.withUser(userMetier.findByUsername(username, password)); 
+    	
+       
     }
+    
     
 }

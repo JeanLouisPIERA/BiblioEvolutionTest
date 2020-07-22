@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import biblioWebServiceRest.dao.IUserRepository;
+import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.metier.IUserMetier;
@@ -36,6 +37,8 @@ import biblioWebServiceRest.metier.IUserMetier;
 public class UserRestService {
 	@Autowired
 	private IUserRepository userRepository;
+	@Autowired
+	private IUserMetier userMetier;
 
 	
 	  /**
@@ -113,6 +116,16 @@ public class UserRestService {
 	    response.put("deleted", Boolean.TRUE);
 	    return response;
 	  }
+	  
+	  @PostMapping(value = "/users/login")
+		public ResponseEntity<User> findUserByLoginAndPassword(@RequestBody UserDTO userDTO) throws EntityNotFoundException {
+			User userFound = userMetier.findByUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
+			return new ResponseEntity<User>(userFound, HttpStatus.OK);
+		}
+	  
+	  
+	  
+	  
 	}
 	
 

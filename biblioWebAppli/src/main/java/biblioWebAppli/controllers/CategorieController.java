@@ -48,7 +48,7 @@ public class CategorieController {
 	     * @param size
 	     * @return
 	     */
-	    @RequestMapping(value="/categories", method = RequestMethod.GET)
+	    @RequestMapping(value="/user/categories", method = RequestMethod.GET)
 	    public String searchByCriteria(Model model, @PathParam(value = "categorieCriteria") CategorieCriteria categorieCriteria, @RequestParam(name="page", defaultValue="0") int page, 
 				@RequestParam(name="size", defaultValue="3") int size){
 	    	model.addAttribute("categorieCriteria", new CategorieCriteria());
@@ -67,7 +67,7 @@ public class CategorieController {
 	     * @param model
 	     * @return
 	     */
-	    @GetMapping("/categories/newCategorie")
+	    @GetMapping("/admin/categories/newCategorie")
 	    public String newCategorie(Model model){
 	        model.addAttribute("categorie", new CategorieDTO());
 	        return "categories/categorieCreation";
@@ -79,7 +79,7 @@ public class CategorieController {
 	     * @return
 	      
 	     */
-	    @PostMapping("/categories/newCategorie")
+	    @PostMapping("/admin/categories/newCategorie")
 	    public String createCategorie(Model model, @ModelAttribute("categorie") CategorieDTO categorieDTO){
 			
 	        Categorie categorieToCreate;
@@ -101,7 +101,7 @@ public class CategorieController {
 	     * @return
 	     * @throws Exception 
 	     */
-	    @RequestMapping(value="/categories/{numCategorie}", method = RequestMethod.GET)
+	    @RequestMapping(value="/admin/categories/{numCategorie}", method = RequestMethod.GET)
 	    public String delete(Model model, @PathVariable("numCategorie") Long numCategorie){
 	        try {
 				categorieMetier.delete(numCategorie);
