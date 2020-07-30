@@ -54,6 +54,12 @@ public interface IPretMetier {
 	  */
 	 Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable);
 	 
+	 /**
+	  * Change le statut des prets échus : la date du jour > date de retour prévue  
+	  */
+	 public void updatePretsEchus(); 
+	 
+	 
 		
 		
 }

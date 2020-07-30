@@ -41,6 +41,7 @@ import io.swagger.annotations.ApiResponses;
 
 
 @RestController
+@RequestMapping("/biblio")
 @Api(value="Gestion des categories de livres en referencement dans la Bibliotheque")
 public class CategorieRestService {
 	

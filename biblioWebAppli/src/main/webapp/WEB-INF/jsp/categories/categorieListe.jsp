@@ -30,6 +30,10 @@
  </div>
  </div>
 
+  
+  
+ 
+
 <div class="container-fluid">
  <div class="row justify-content-center mb-3">
   <div class="col-md-4 col-md-offset-4 ">
@@ -111,6 +115,7 @@
 			</div>
 		</div>
 	</div>
+	
 </div>
 
  
@@ -119,7 +124,7 @@
 <%@ include file="/WEB-INF/jsp/common/footer1.jspf"%>
 </div>
 
-</div>
+
 </body>
 
 </html>

@@ -5,7 +5,10 @@
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -49,6 +52,8 @@ public class User implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	Collection<Pret> prets;
+	
+	
 	
 	public User() {
 		super();
@@ -174,6 +179,9 @@ public class User implements Serializable {
 	public void setPrets(Collection<Pret> prets) {
 		this.prets = prets;
 	}
+	
+	
+	
 	
 
 }

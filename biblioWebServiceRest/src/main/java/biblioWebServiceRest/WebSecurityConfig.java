@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     @Autowired
     private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
+    
 
     /**
      * Création d'un mot de passe crypté.
@@ -53,30 +55,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
         	.csrf().disable()
         	//.antMatcher("/api/categories")
+        	//.httpBasic()
+            //.authenticationEntryPoint(authenticationEntryPoint)
+            //.and()
         	.authorizeRequests()
-        	.antMatchers(HttpMethod.POST, "/users/login").permitAll()
-        	.antMatchers(HttpMethod.GET, "/**").hasAnyAuthority(RoleEnum.ADMIN.toString(), RoleEnum.USER.toString())
-        	.antMatchers(HttpMethod.PUT, "/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
-            .antMatchers(HttpMethod.POST, "/**").hasAuthority(RoleEnum.ADMIN.toString())
-            .antMatchers(HttpMethod.DELETE, "/**").hasAuthority(RoleEnum.ADMIN.toString())
+        	.antMatchers(HttpMethod.POST, "/login" ).permitAll()
+        	.antMatchers(HttpMethod.GET, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
+        	.antMatchers(HttpMethod.PUT, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
+            .antMatchers(HttpMethod.POST, "/biblio/**").hasAuthority(RoleEnum.ADMIN.toString())
+            .antMatchers(HttpMethod.DELETE, "/biblio/**").hasAuthority(RoleEnum.ADMIN.toString())
             .antMatchers("/**").authenticated()
             .anyRequest().authenticated()
             .and()
             .httpBasic()
-            .authenticationEntryPoint(authenticationEntryPoint);
-        	;
+            .authenticationEntryPoint(authenticationEntryPoint)
+            ;
+        
        
-    		/**
-    	  	http.addFilterAfter(new CustomFilter(),
-            BasicAuthenticationFilter.class);
-            **/
+    		
+    	  	//http.addFilterAfter(new CustomFilter(),
+            //BasicAuthenticationFilter.class);
+            
     }
    
     /**
      * Méthode qui permet de vérifier les credentials 
      * @return
      * @throws Exception
-     */
+    */ 
     @Bean
     public AuthenticationManager customAuthenticationManager() throws Exception {
         return authenticationManager();
@@ -87,10 +93,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * Création du Manager d'Authentification 
      * @param auth
      * @throws Exception
-     */
+    */ 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
+    
+    
+   
+    
+    
     
 }

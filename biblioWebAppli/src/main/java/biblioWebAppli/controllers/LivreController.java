@@ -33,7 +33,7 @@ import biblioWebAppli.dto.LivreDTO;
 
 import biblioWebAppli.metier.ILivreMetier;
 import biblioWebAppli.objets.Livre;
-import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+
 
 
 /**
@@ -143,7 +143,7 @@ public class LivreController {
 	 * @param livreDTO
 	 * @return
 	 */
-    @RequestMapping(value = "livres/updateLivre/{numLivre}", method = RequestMethod.POST)
+    @RequestMapping(value = "/livres/updateLivre/{numLivre}", method = RequestMethod.POST)
     public String addNewLivreToUpdate(Model model, Livre livre){
         
         try {

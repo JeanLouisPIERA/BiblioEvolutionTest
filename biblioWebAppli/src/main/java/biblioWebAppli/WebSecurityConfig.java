@@ -1,20 +1,23 @@
 package biblioWebAppli;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import biblioWebAppli.metier.IUserMetier;
 import biblioWebAppli.objets.RoleEnum;
+
 
 
 
@@ -28,72 +31,47 @@ import biblioWebAppli.objets.RoleEnum;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    
-	/**@Qualifier("userDetailsServiceImpl")
-    @Autowired
-    private UserDetailsService userDetailsService;
-    **/
-    @Autowired
-    private IUserMetier userMetier;
+	
+	@Autowired private RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    /**
-     * Création d'un mot de passe crypté.
-     */
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+          .inMemoryAuthentication()
+          .withUser("Alexandre")
+          .password(passwordEncoder().encode("jeanlouis"))
+          .authorities("ROLE_USER");
     }
 
-    /**
-     * Configuration des autorisations par les rôles.
-     * Elle définit quels URLS sont sécurisés ou pas (comme / )
-     */
-    
-    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .antMatchers("/resources/**", "/registration", "/login", "/login?logout", "/", "/css/**", "/webjars/**", "/bootstrap/**").permitAll()
-                .antMatchers("/user/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
-                .antMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.toString())
-                .anyRequest().authenticated()
-                .and()
-            .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .and()
-            .logout()
-                .permitAll();
+          .authorizeRequests()
+          .antMatchers("/resources/**", "/registration", "/login", "/login?logout", "/css/**", "/webjars/**", "/bootstrap/**").permitAll()
+          .anyRequest()
+          .authenticated()
+          .and()
+          .httpBasic()
+          .authenticationEntryPoint(authenticationEntryPoint);
+
+       //http.addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class);
     }
-   
-    /**
-     * Méthode qui permet de vérifier les credentials 
-     * @return
-     * @throws Exception
-     */
+    
     @Bean
-    public AuthenticationManager customAuthenticationManager(String username, String password) throws Exception {
-    	
-    	authenticationManager().authenticate();
-        return authenticationManager();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
-    
-    
-    /**
-     * Création du Manager d'Authentification 
-     * @param auth
-     * @throws Exception
-     */
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    	auth
-    	//userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
-    	.inMemoryAuthentication()
-    	.withUser(userMetier.findByUsername(username, password)); 
-    	
-       
-    }
-    
-    
+	
+	
 }
+	
+
+    
+	
+    
+    
+    
+    
+    
+    
+    

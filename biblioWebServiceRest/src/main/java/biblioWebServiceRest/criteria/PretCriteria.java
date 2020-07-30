@@ -3,8 +3,7 @@
  */
 package biblioWebServiceRest.criteria;
 
-
-
+import biblioWebServiceRest.entities.PretStatut;
 
 /**
  * @author jeanl
@@ -19,6 +18,7 @@ public class PretCriteria {
 	private String titre; 
 	private String auteur;
 	private String nomCategorieLivre;
+	private String code; 
 	/**
 	 * @return the numPret
 	 */
@@ -116,6 +116,28 @@ public class PretCriteria {
 	public void setNomCategorieLivre(String nomCategorieLivre) {
 		this.nomCategorieLivre = nomCategorieLivre;
 	}
+
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	
+
+	
+	
+
+	
+	
 	
 	
 	

@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
+import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 
+@SuppressWarnings("deprecation")
 @SpringBootApplication
 public class BiblioWebAppliApplication {
 	
@@ -34,7 +37,9 @@ public class BiblioWebAppliApplication {
 	
 	@Bean 
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-    return builder.basicAuthentication("username", "password").build();
+    RestTemplate builtRestTemplate = builder.basicAuthentication("username","password").build(); 
+    
+		return builtRestTemplate;
 	}
 	
     

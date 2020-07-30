@@ -11,10 +11,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpClientErrorException;
 
-import biblioWebAppli.metier.ISecurityService;
 import biblioWebAppli.metier.IUserMetier;
 import biblioWebAppli.objets.User;
+import biblioWebServiceRest.dto.UserDTO;
 
 
 
@@ -24,8 +26,6 @@ public class UserController {
 
 @Autowired
 private IUserMetier userMetier;
-@Autowired
-private ISecurityService securityService;
 
 
 
@@ -77,16 +77,29 @@ public String registration(@ModelAttribute("userForm") User userForm,
  */
 @RequestMapping(value = "/login", method = RequestMethod.GET)
 public String login(Model model, String error, String logout) {
+	/**
 	System.out.println("error1="+error);
     if (error != null)
         model.addAttribute("error", "Votre nom d'utilisateur et/ou votre mot de passe sont invalides.");
 
     if (logout != null)
         model.addAttribute("message", "Vous avez bien été déconnecté.");
-
+**/
     return "login";
 }
 
+@RequestMapping(value="/login", method = RequestMethod.POST)
+public String autologin(Model model, @RequestParam("username")String username,  @RequestParam("password")String password )  {
+	try {
+		User userInLogged = userMetier.findByUsernameAndPassword(username, password);
+		model.addAttribute("user", userInLogged);
+	} catch (HttpClientErrorException e) {
+        model.addAttribute("error", e.getResponseBodyAsString());
+        return"/error";
+	}
+	return "accueil";
+	
+}
 
 /**
  * Cette méthode gère l'affichage de la page accueil

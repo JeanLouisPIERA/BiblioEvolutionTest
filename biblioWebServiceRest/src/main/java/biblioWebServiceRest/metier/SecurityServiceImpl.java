@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.entities.User;
 
 
@@ -21,6 +22,8 @@ public class SecurityServiceImpl implements ISecurityService{
 private AuthenticationManager authenticationManager;
 @Autowired
 private UserDetailsService userDetailsService;
+@Autowired
+private IUserRepository userRepository;
 
 private static final Logger logger = LoggerFactory.getLogger
 (SecurityServiceImpl.class);
@@ -45,6 +48,7 @@ public String findLoggedInUsername() {
 public User findLoggedInUser() {
 	Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
     if (userDetails instanceof UserDetails) {
+    	System.out.println("User"+((UserDetails)userDetails).getUsername());
         return (User) ((UserDetails)userDetails);
     }
 
@@ -55,7 +59,7 @@ public User findLoggedInUser() {
  * Cette méthode permet à un visiteur de se logger automatiquement avec le role USER
  */
 @Override
-public void autologin(String username, String password) {
+public User autologin(String username, String password) {
     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken 
     = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
@@ -65,7 +69,13 @@ public void autologin(String username, String password) {
     if (usernamePasswordAuthenticationToken.isAuthenticated()) {
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         logger.debug(String.format("Auto login %s successfully!", username));
+        System.out.println("Auto login %s successfully!"+username);
+        User userAuthenticated = userRepository.findByUsername(username).get();	
+        return userAuthenticated;
+       
     }
+    
+    return null;
 }
 
 

@@ -26,23 +26,26 @@
   	<div class="col-md-6 col-md-offset-3">
   	<div class="wrapper">
     
-      <form method="POST" action="${contextPath}/login" class="form-signin">
+      <!-- form method="POST" action="{contextPath}/login" class="form-signin" modelAttribute="user"-->
+      <form:form class="form-inline d-flex bd-highlight" method="POST" action="/login">
         <h2 class="form-heading">Identifiez-vous</h2>
 
-        <div class="form-group ${error != null ? 'has-error' : ''}">
-            <span>${message}</span>
+        <div class="form-group">
+            
             <input name="username" type="text" class="form-control" placeholder="Votre nom d'utilisateur"
                    autofocus="true"/>
+            
                    <br>
+                  
             <input name="password" type="password" class="form-control" placeholder="Votre mot de passe"/>
-            <span>${error}</span>
+            
             <br>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			
             <button class="btn btn-sm btn-primary btn-block" type="submit">Valider</button>
             <h6 class="text-center">Pas encore inscrit ? Cliquez ici pour créer votre compte !</a></h6>
         </div>
-      </form>
+      </form:form>
       </div>
     </div>
     

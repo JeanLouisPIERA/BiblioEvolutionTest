@@ -4,8 +4,11 @@
  */
 package biblioWebAppli.metier;
 
+
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
@@ -24,9 +28,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.CategorieCriteria;
 import biblioWebAppli.dto.CategorieDTO;
+import biblioWebAppli.httpheaders.RestTemplateFactory;
 import biblioWebAppli.objets.Categorie;
 
-import biblioWebServiceRest.exceptions.EntityNotDeletableException;
+
+
 
 
 
@@ -41,10 +47,36 @@ public class CategorieMetierImpl implements ICategorieMetier{
 			    
 	    @Autowired
 	    private RestTemplate restTemplate;
+	    @Autowired
+	    private RestTemplateFactory restTemplateFactory;
+	    @Autowired
+	    private HttpHeadersFactory httpHeadersFactory; 
+	    @Autowired
+	    private PasswordEncoder passwordEncoder;
+	    
+	    
 	    
 	    @Value("${application.uRLCategorie}")
 		private String uRL;
-	    
+	    @Value("${application.username}")
+		private String username;
+		@Value("${application.password}")
+		private String password;
+		
+		
+		public HttpHeaders createHeaders(String username, String password){
+		  	   return new HttpHeaders() {{
+		  	         String auth = username + ":" + password;
+		  	         byte[] encodedAuth = Base64.encodeBase64( 
+		  	            auth.getBytes(Charset.forName("US-ASCII")) );
+		  	         String authHeader = "Basic " + new String( encodedAuth );
+		  	         set( "Authorization", authHeader );
+		  	      }};
+		  	}
+		
+		
+		
+		
 	    
 	    /**
 	     * Permet d'obtenir une sélection paginée des catégories
@@ -53,12 +85,13 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	     * @param size
 	     * @return
 	     */
-	    @Override
+		@Override
 		public Page<Categorie> searchByCriteria(CategorieCriteria categorieCriteria, int page, int size) {
 	    	
-	    	
 	    	HttpHeaders headers = new HttpHeaders();
+	    			//httpHeadersFactory.createHeaders(username,passwordEncoder.encode(password));
 	    	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+	    	
 	    	
 	    	System.out.println("uRL:"+uRL);
 	    	
@@ -68,20 +101,18 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	    	        .queryParam("size", size);
 	    	
 	    	System.out.println("uri =" + builder.toUriString());
-
-	    	HttpEntity<?> entity = new HttpEntity<>(headers);
 	    	
-	    	ResponseEntity<RestResponsePage<Categorie>> categories = restTemplate.exchange
+	    	HttpEntity<?> requestEntity = new HttpEntity<>(httpHeadersFactory.createHeaders(username, password));
+	    	
+	    	ResponseEntity<RestResponsePage<Categorie>> categories = restTemplateFactory.getObject().
+	    			exchange
 	    			(builder.toUriString(), 
     				HttpMethod.GET,
-    				entity,
+    				requestEntity,
 	    			new ParameterizedTypeReference<RestResponsePage<Categorie>>(){});
 	        Page<Categorie> pageCategorie = categories.getBody();
-	        
-	            	
+	           	
 	        return pageCategorie;
-	    	
-	    	
 	    	
 	    }
 	    
@@ -96,12 +127,15 @@ public class CategorieMetierImpl implements ICategorieMetier{
 		 */
 	    public Categorie createCategorie(CategorieDTO categorieDTO) {
 	    	
-	    	HttpHeaders headers = new HttpHeaders();
+	    	HttpHeaders headers = createHeaders(username,password);
 	    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 	    	headers.setContentType(MediaType.APPLICATION_JSON);
 
 	    	HttpEntity<CategorieDTO> requestEntity = 
 	    	     new HttpEntity<>(categorieDTO, headers);
+	    	
+	    	
+	    	
 	    	ResponseEntity<Categorie> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, 
 				              Categorie.class);
 			System.out.println(response.getStatusCodeValue());
@@ -118,7 +152,7 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	   
 	    public String delete(Long numCategorie) {
 	    	//restTemplate.delete(uRL+"/"+numCategorie);   
-	    	HttpHeaders headers = new HttpHeaders();
+	    	HttpHeaders headers = createHeaders(username,password);
 	    	headers.setAccept(Arrays.asList(MediaType.ALL));
 	    	headers.setContentType(MediaType.TEXT_PLAIN);
 	    	
@@ -126,6 +160,8 @@ public class CategorieMetierImpl implements ICategorieMetier{
 	       	     new HttpEntity<>(headers);
 			
 			String url = uRL+"/"+numCategorie;
+			
+			//restTemplateFactory.afterPropertiesSet();
 	    	
 			ResponseEntity<String> response = restTemplate.exchange(url , HttpMethod.DELETE, requestEntity, String.class);
 			

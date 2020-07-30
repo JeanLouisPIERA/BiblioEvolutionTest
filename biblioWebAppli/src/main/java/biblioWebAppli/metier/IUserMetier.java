@@ -17,9 +17,9 @@ public interface IUserMetier {
 	 * @param username
 	 * @return
 	 */
-	public User findUser(UserDTO userDTO);
+	//public User findUser(UserDTO userDTO);
 	
-	public User findByUsername(String username, String password);
+	public User findByUsernameAndPassword(String username, String password);
 	
-
+	//public User findByUsername(String username);
 }

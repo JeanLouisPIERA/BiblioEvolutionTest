@@ -5,6 +5,7 @@ package biblioWebServiceRest.metier;
 
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -48,6 +49,7 @@ public class PretMetierImpl implements IPretMetier {
 	PretMapper pretMapper;
 	@Autowired
 	LivreMapper livreMapper; 
+	
 	
 	
 	/**
@@ -159,11 +161,27 @@ public class PretMetierImpl implements IPretMetier {
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
+		System.out.println("spec"+ pretSpecification.toString());
 		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
 		return prets;
 	}
 
+	/**
+	 * @param pageable
+	 * @return
+	 */
+	@Override
+	public void updatePretsEchus() {
+		List<Pret> allPrets = pretRepository.findAll(); 
+		for (Pret pret : allPrets) {
+			if (pret.getDateRetourPrevue().isAfter(LocalDate.now()) && pret.getPretStatut().equals(PretStatut.CLOTURE))
+				pret.setPretStatut(PretStatut.ECHU);
+			
+			pretRepository.save(pret);
+				}
+	}
 	
-
+	
+	
 	
 }

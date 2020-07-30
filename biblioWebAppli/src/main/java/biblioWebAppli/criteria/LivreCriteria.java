@@ -4,7 +4,7 @@
 package biblioWebAppli.criteria;
 
 
-import biblioWebServiceRest.entities.Categorie;
+
 
 
 /**

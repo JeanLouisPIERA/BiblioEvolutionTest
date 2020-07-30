@@ -11,7 +11,7 @@ public interface ISecurityService {
 		
 		User findLoggedInUser();
 		
-		void autologin(String username, String password);
+		User autologin(String username, String password);
 		
 
 }

@@ -20,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -39,10 +40,18 @@ import biblioWebAppli.objets.Pret;
 public class LivreMetierImpl implements ILivreMetier {
 	
 	@Autowired
-    private RestTemplate restTemplate;
+	RestTemplate restTemplate;
+	@Autowired
+    private HttpHeadersFactory httpHeadersFactory; 
+    
+    
     
     @Value("${application.uRLLivre}")
 	private String uRL;
+    @Value("${application.username}")
+	private String username;
+	@Value("${application.password}")
+	private String password;
 	
     
 	/**
@@ -53,7 +62,7 @@ public class LivreMetierImpl implements ILivreMetier {
 	 */
 	@Override
 	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable) {
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
@@ -65,6 +74,8 @@ public class LivreMetierImpl implements ILivreMetier {
     	        .queryParam("size", pageable.getPageSize());
 
     	HttpEntity<?> entity = new HttpEntity<>(headers);
+    	
+    	System.out.println("builderUI"+builder.toUriString());
     	
     	ResponseEntity<RestResponsePage<Livre>> livres = restTemplate.exchange
     			(builder.toUriString(), 
@@ -87,7 +98,7 @@ public class LivreMetierImpl implements ILivreMetier {
 	 */
 	@Override
 	public Livre createLivre(LivreDTO livreDTO){
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -113,7 +124,7 @@ public class LivreMetierImpl implements ILivreMetier {
     	livreDTO.setNbExemplaires(livre.getNbExemplaires());
     	livreDTO.setNumCategorie(livre.getCategorie().getNumCategorie());
     	
-    	HttpHeaders headers = new HttpHeaders();
+    	HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
@@ -143,7 +154,7 @@ public class LivreMetierImpl implements ILivreMetier {
 	@Override
 	public String delete(Long numLivre) {
 		 
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.ALL));
     	headers.setContentType(MediaType.TEXT_PLAIN);
     	

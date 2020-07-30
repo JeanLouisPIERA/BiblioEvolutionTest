@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +28,7 @@ import biblioWebServiceRest.criteria.PretCriteria;
 
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.mapper.PretMapper;
@@ -40,6 +43,7 @@ import io.swagger.annotations.ApiResponse;
  */
 
 @RestController
+@RequestMapping("/biblio")
 @Api(value="Gestion des prêts de livres")
 public class PretRestService {
 	
@@ -142,5 +146,26 @@ public class PretRestService {
 		Page<Pret> prets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Pret>>(prets, HttpStatus.OK);
 	}
+
+
+	/**
+	 * @param pageable
+	 * @return
+	 * @see biblioWebServiceRest.metier.IPretMetier#selectPretsEchus(org.springframework.data.domain.Pageable)
+	 */
+	@ApiOperation(value = "Recherche des prets échus (date retour supérieure à date de la requête)", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@GetMapping(value="/pretsEchus", produces="application/json")
+	public ResponseEntity<Page<Pret>> selectPretsEchus(@PathParam("pretCriteria") PretCriteria pretCriteria, @RequestParam int page, @RequestParam int size) {
+		pretMetier.updatePretsEchus();
+		Page<Pret> selectionPretsEchus = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
+		return new ResponseEntity<Page<Pret>>(selectionPretsEchus, HttpStatus.OK); 
+	}
+	
+	
+	
 
 }

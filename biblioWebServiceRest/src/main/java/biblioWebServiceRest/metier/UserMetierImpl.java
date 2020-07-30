@@ -29,6 +29,8 @@ public class UserMetierImpl implements IUserMetier{
 	private IRoleRepository roleRepository;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private SecurityServiceImpl securityService;
 
 	/**
 	 * Cette méthode permet de persister un utilisateur en base de donnéees 
@@ -47,20 +49,31 @@ public class UserMetierImpl implements IUserMetier{
 	@Override
 	public User findByUsername(String username) throws EntityNotFoundException {
 		Optional<User> userFound = userRepository.findByUsername(username);
+		System.out.println("Test3User"+userFound.get());
 		if (Boolean.FALSE.equals(userFound.isPresent())) {
             throw new EntityNotFoundException("L'utilisateur avec ce nom n'existe pas :" + username);
 		}
+		System.out.println("Test2User"+userFound.get());
 	    return userFound.get();
 	}
 	
 	
 	@Override
 	public User findByUsernameAndPassword(String username, String password) throws EntityNotFoundException{
-		
+		/**
 			User userFound = this.findByUsername(username);
-			if(bCryptPasswordEncoder.matches(password, userFound.getPassword())) 
+			System.out.println("Test1User"+userFound);
+			if(!bCryptPasswordEncoder.matches(password, userFound.getPassword())) 
 				throw new EntityNotFoundException("Mot de passe incorrect");
 			return userFound;
+			**/
+		    User userFound = securityService.autologin(username, password);
+		    //User userFound = securityService.findLoggedInUser(); 
+		    System.out.println("userFound Name"+userFound.getUsername());
+		    System.out.println("userFound password"+userFound.getPassword());
+		    return userFound;
+		
+		
 	}
 
 	/**

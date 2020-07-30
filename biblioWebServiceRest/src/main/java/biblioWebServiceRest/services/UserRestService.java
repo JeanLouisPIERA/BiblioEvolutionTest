@@ -27,6 +27,7 @@ import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.metier.ISecurityService;
 import biblioWebServiceRest.metier.IUserMetier;
 
 /**
@@ -39,6 +40,8 @@ public class UserRestService {
 	private IUserRepository userRepository;
 	@Autowired
 	private IUserMetier userMetier;
+	@Autowired
+	ISecurityService securityService;
 
 	
 	  /**
@@ -118,9 +121,16 @@ public class UserRestService {
 	  }
 	  
 	  @PostMapping(value = "/users/login")
-		public ResponseEntity<User> findUserByLoginAndPassword(@RequestBody UserDTO userDTO) throws EntityNotFoundException {
-			User userFound = userMetier.findByUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
-			return new ResponseEntity<User>(userFound, HttpStatus.OK);
+		public ResponseEntity<User> Authentication(@RequestBody UserDTO userDTO) throws EntityNotFoundException {
+			//securityService.autologin(userDTO.getUsername(), userDTO.getPassword());
+			//securityService.findLoggedInUser(); 
+			//return new ResponseEntity<String>("Login OK", HttpStatus.OK);
+		  
+		    User userAuthenticated = userMetier.findByUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
+		    System.out.println("userAuthenticated"+userAuthenticated.getUsername()); 
+		    System.out.println("userAuthenticated"+userAuthenticated.getPassword()); 
+		    return new ResponseEntity<User>(userAuthenticated, HttpStatus.OK);
+		  
 		}
 	  
 	  
