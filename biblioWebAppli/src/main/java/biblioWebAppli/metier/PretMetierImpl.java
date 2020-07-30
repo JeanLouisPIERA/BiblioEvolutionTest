@@ -39,7 +39,15 @@ public class PretMetierImpl implements IPretMetier{
 	
 	@Autowired
     private RestTemplate restTemplate;
+	@Autowired
+    private HttpHeadersFactory httpHeadersFactory; 
     
+    
+    @Value("${application.username}")
+	private String username;
+	@Value("${application.password}")
+	private String password;
+	
     @Value("${application.uRLPret}")
 	private String uRL;
 
@@ -51,7 +59,7 @@ public class PretMetierImpl implements IPretMetier{
 	 */
 	@Override
 	public Pret createPret(PretDTO pretDTO) {
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -70,7 +78,7 @@ public class PretMetierImpl implements IPretMetier{
 	 */
 	@Override
 	public Pret prolongerPret(Long numPret){
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
@@ -91,7 +99,7 @@ public class PretMetierImpl implements IPretMetier{
 	 */
 	@Override
 	public Pret cloturerPret(Long numPret){
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
@@ -112,7 +120,7 @@ public class PretMetierImpl implements IPretMetier{
 	 */
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)

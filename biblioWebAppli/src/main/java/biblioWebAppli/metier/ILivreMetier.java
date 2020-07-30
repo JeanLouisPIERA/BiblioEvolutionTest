@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.LivreCriteria;
-import biblioWebAppli.dto.LivreDTO;
 import biblioWebAppli.objets.Livre;
 
 /**
@@ -27,30 +26,5 @@ public interface ILivreMetier {
 	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable);
 	
 	
-	/**
-	 * Permet d'enregistrer un nouveau livre
-	 * @param livreDTO
-	 * @return
-	 * @throws EntityNotFoundException 
-	 * @throws EntityAlreadyExistsException 
-	 * @throws Exception 
-	 */
-	public Livre createLivre(LivreDTO livreDTO);
 	
-	/**
-	 * Mise à jour des attributs d'un livre déjà référencé
-	 * @param numLivre
-	 * @param livreDTO
-	 * @return
-	 */
-	public Livre updateLivre(Livre livre); 
-	
-	
-	/**
-	 * Permet de supprimer une référence de livre enregistré
-	 * @param numLivre
-	 * @throws EntityNotDeletableException 
-	 * @throws EntityNotFoundException 
-	 */
-	public String delete(Long numLivre);
 }

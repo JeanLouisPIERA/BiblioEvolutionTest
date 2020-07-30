@@ -28,7 +28,7 @@
  <div class="panel panel-primary">
      <div class="panel-heading">Bienvenue dans votre Espace Personnel</div>
         <div class="panel-body">
-           Bonjour ${name}!!<br></br> <a href="/biblio/user/categories">Cliquer ici</a> pour accéder aux catégories. 
+           Bonjour ${name}!!
            <br></br> <a href="/biblio/user/livres">Cliquer ici</a> pour consulter tous les livres. 
            <br></br> <a href="/biblio/user/prets">Cliquer ici</a> pour consulter les prets en cours. 
                       

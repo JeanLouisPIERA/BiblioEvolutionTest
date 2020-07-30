@@ -1,7 +1,7 @@
 /**
  * 
  */
-package biblioWebAppli.httpheaders;
+package biblioWebAppli.security;
 
 import org.apache.http.HttpHost;
 import org.springframework.beans.factory.FactoryBean;

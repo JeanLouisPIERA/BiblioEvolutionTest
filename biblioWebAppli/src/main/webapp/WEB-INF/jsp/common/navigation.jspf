@@ -13,7 +13,6 @@
 			      <li >
 			      	<a class="nav-link" href="/"> Accueil <span class="sr-only"></span></a>
 			      </li>      
-		          <li><a href="/categories">Categories</a></li>
 		          <li><a href="/livres">Livres</a></li>
 		          <li><a href="/prets">Prets</a></li>
 		          

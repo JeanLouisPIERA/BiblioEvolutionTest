@@ -1,7 +1,7 @@
 /**
  * 
  */
-package biblioWebAppli.httpheaders;
+package biblioWebAppli.security;
 
 import java.net.URI;
 
