@@ -23,19 +23,16 @@
 		     <ul class="nav navbar-nav navbar-right">
 		
 				 <li>	         
-					    <c:if test="${pageContext.request.userPrincipal.name != null}">
+					    
 					        <form id="logoutForm" method="POST" action="${contextPath}/logout">
 					            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					        </form>
 					
-					        <div>${pageContext.request.userPrincipal.name} est connecté| <a onclick="document.forms['logoutForm'].submit()">Logout</a></div>
-					    </c:if>
+					        <div><a onclick="document.forms['logoutForm'].submit()">Logout</a></div>
+					    
 					  
 		         </li> 
-		         <li>
-			         <a href="mailto:jeanlouispiera@yahoo.fr?subject=Premiercontact&cc=jlp340105@gmail.com&body=Bonjour,">
-			  			Nous Contacter</a>
-		         </li>
+		         
 		     </ul>
 	    </div>
 	</div>

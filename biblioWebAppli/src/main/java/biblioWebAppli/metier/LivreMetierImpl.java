@@ -4,6 +4,9 @@
 package biblioWebAppli.metier;
 
 
+
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,7 +19,6 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +28,7 @@ import biblioWebAppli.criteria.LivreCriteria;
 
 
 import biblioWebAppli.objets.Livre;
+import biblioWebAppli.security.RestTemplateFactory;
 
 
 /**
@@ -36,7 +39,9 @@ import biblioWebAppli.objets.Livre;
 public class LivreMetierImpl implements ILivreMetier {
 	
 	@Autowired
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
+	//@Autowired
+	//private RestTemplateFactory restTemplateFactory;
 	@Autowired
     private HttpHeadersFactory httpHeadersFactory; 
     
@@ -58,9 +63,13 @@ public class LivreMetierImpl implements ILivreMetier {
 	 */
 	@Override
 	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable) {
+		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
+    	
+    	System.out.println("headers"+headers.toString());
+    	
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-
+    	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
     	        .queryParam("numLivre", livreCriteria.getNumLivre())
     	        .queryParam("titre", livreCriteria.getTitre())
@@ -68,10 +77,10 @@ public class LivreMetierImpl implements ILivreMetier {
     	        .queryParam("nomCategorie", livreCriteria.getNomCategorie())
     	        .queryParam("page", pageable.getPageNumber())
     	        .queryParam("size", pageable.getPageSize());
-
-    	HttpEntity<?> entity = new HttpEntity<>(headers);
     	
-    	System.out.println("builderUI"+builder.toUriString());
+    	System.out.println("URI"+builder.toUriString());
+    	
+    	HttpEntity<?> entity = new HttpEntity<>(headers);
     	
     	ResponseEntity<RestResponsePage<Livre>> livres = restTemplate.exchange
     			(builder.toUriString(), 
@@ -84,5 +93,4 @@ public class LivreMetierImpl implements ILivreMetier {
 	}
 
 	
-
 }

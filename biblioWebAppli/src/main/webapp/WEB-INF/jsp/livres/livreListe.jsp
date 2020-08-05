@@ -24,11 +24,7 @@
 
 <div class="wrapper">
 
-<div>
- <a type="button" class="btn btn-primary btn-md" href="/livres/newLivre">Enregistrer une nouvelle référence de livre</a>
- <br>
- <br>
- </div>
+
  </div>
  </div>
 
@@ -115,14 +111,7 @@
 								        	href="/prets/livre/${livre.numLivre}">Emprunter</a>
 								          </c:if>
 								          </td>
-								          <td>
-								          	<a type="button"  class="btn btn-warning"
-								        	href="/livres/updateLivre/${livre.numLivre}">Modification</a>
-								          </td>
-								          <td>
-								          	<a type="button"  class="btn btn-danger" 
-								        	href="/livres/${livre.numLivre}">Suppression</a>
-								          </td>
+								          
 								          
 					        	      	  
 					    				 </tr>

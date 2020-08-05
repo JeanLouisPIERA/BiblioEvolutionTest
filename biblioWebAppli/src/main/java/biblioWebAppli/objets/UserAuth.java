@@ -12,6 +12,7 @@ public class UserAuth {
 	private String username;
 	
 	private String password;
+	
 
 	/**
 	 * @return the username
@@ -40,6 +41,9 @@ public class UserAuth {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	
+	
 	
 	
 

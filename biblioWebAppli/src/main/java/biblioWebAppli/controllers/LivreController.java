@@ -48,7 +48,12 @@ public class LivreController {
 			@RequestParam(name="size", defaultValue="3") int size){
     	model.addAttribute("livreCriteria", new LivreCriteria());
     	
+    	System.out.println("test");
+    	
     	Page<Livre> livres = livreMetier.searchByCriteria(livreCriteria, PageRequest.of(page, size));
+    	
+    	
+    	System.out.println("test1");
     	
     	model.addAttribute("livres", livres.getContent());
     	model.addAttribute("page", Integer.valueOf(page));

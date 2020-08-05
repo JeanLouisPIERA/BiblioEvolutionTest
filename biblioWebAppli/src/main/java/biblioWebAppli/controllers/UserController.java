@@ -3,8 +3,11 @@ package biblioWebAppli.controllers;
 
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,7 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import biblioWebAppli.metier.IUserMetier;
 import biblioWebAppli.objets.User;
-import biblioWebServiceRest.dto.UserDTO;
+
 
 
 
@@ -26,7 +29,10 @@ public class UserController {
 
 @Autowired
 private IUserMetier userMetier;
-
+@Value("${application.username}")
+private String applicationUsername;
+@Value("${application.password}")
+private String applicationPassword;
 
 
 /**
@@ -48,13 +54,34 @@ public String login(Model model, String error, String logout) {
  * @param username
  * @param password
  * @return
+ * @throws IOException 
+ * @throws FileNotFoundException 
  */
 
 @RequestMapping(value="/login", method = RequestMethod.POST)
-public String autologin(Model model, @RequestParam("username")String username,  @RequestParam("password")String password )  {
+public String autologin(Model model, @RequestParam("username")String username,  @RequestParam("password")String password) throws FileNotFoundException, IOException   {
+	
+	if(!username.equals(applicationUsername) || !password.equals(applicationPassword))
+		{model.addAttribute("error", "Votre nom d'utilisateur et/ou votre mot de passe sont invalides.");
+		return "login";}
+	
 	try {
+		
+		
 		User userInLogged = userMetier.findByUsernameAndPassword(username, password);
 		model.addAttribute("user", userInLogged);
+		
+		
+		
+		System.out.println("testnom"+userInLogged.getUsername());
+		
+		//if (error != null)
+	        //model.addAttribute("error", "Votre nom d'utilisateur et/ou votre mot de passe sont invalides.");
+
+	    //if (logout != null)
+	        //model.addAttribute("message", "Vous avez bien été déconnecté.");
+		
+		
 	} catch (HttpClientErrorException e) {
         model.addAttribute("error", e.getResponseBodyAsString());
         return"/error";

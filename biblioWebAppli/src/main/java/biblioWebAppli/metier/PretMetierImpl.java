@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
@@ -28,6 +29,7 @@ import biblioWebAppli.criteria.PretCriteria;
 import biblioWebAppli.dto.PretDTO;
 
 import biblioWebAppli.objets.Pret;
+
 
 
 /**
@@ -47,6 +49,10 @@ public class PretMetierImpl implements IPretMetier{
 	private String username;
 	@Value("${application.password}")
 	private String password;
+	@Value("${idUserLoggedIn}")
+	private Long idUserLoggedIn;
+	@Value("${usernameLoggedIn}")
+	private String usernameLoggedIn;
 	
     @Value("${application.uRLPret}")
 	private String uRL;
@@ -62,6 +68,9 @@ public class PretMetierImpl implements IPretMetier{
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	pretDTO.setIdUser(idUserLoggedIn);
+    	System.out.println("pretIdUser"+pretDTO.getIdUser()); 
 
     	HttpEntity<PretDTO> requestEntity = new HttpEntity<>(pretDTO, headers);
     	ResponseEntity<Pret> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, Pret.class);
@@ -121,18 +130,28 @@ public class PretMetierImpl implements IPretMetier{
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
+		
+		System.out.println("headersPret"+headers.toString());
+		
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    	
+    	//String loggedInUsername= SecurityContextHolder.getContext().getAuthentication().getName();
+    	//System.out.println("securityNom"+SecurityContextHolder.getContext().getAuthentication().getName());
+    	
+    	
     	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
     	        .queryParam("numPret", pretCriteria.getNumPret())
-    	        .queryParam("username", pretCriteria.getUsername())
-    	        .queryParam("userId", pretCriteria.getUserId())
+    	        .queryParam("username", usernameLoggedIn)
+    	        //.queryParam("userId", pretCriteria.getUserId())
     	        .queryParam("numLivre", pretCriteria.getNumLivre())
     	        .queryParam("titre", pretCriteria.getTitre())
     	        .queryParam("auteur", pretCriteria.getAuteur())
     	        .queryParam("nomCategorieLivre", pretCriteria.getNomCategorieLivre())
     	        .queryParam("page", pageable.getPageNumber())
     	        .queryParam("size", pageable.getPageSize());
+    	
+    	System.out.println("uriPret"+(builder.toUriString()));
     	
     	HttpEntity<?> entity = new HttpEntity<>(headers);
     	

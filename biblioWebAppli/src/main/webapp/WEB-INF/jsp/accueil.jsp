@@ -1,6 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <!DOCTYPE html>
 <html>
@@ -29,8 +29,8 @@
      <div class="panel-heading">Bienvenue dans votre Espace Personnel</div>
         <div class="panel-body">
            Bonjour ${name}!!
-           <br></br> <a href="/biblio/user/livres">Cliquer ici</a> pour consulter tous les livres. 
-           <br></br> <a href="/biblio/user/prets">Cliquer ici</a> pour consulter les prets en cours. 
+           <br></br> <a href="/livres">Cliquer ici</a> pour consulter tous les livres. 
+           <br></br> <a href="/prets">Cliquer ici</a> pour consulter les prets en cours. 
                       
         </div>
      </div>

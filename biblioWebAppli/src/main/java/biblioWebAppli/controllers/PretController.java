@@ -30,6 +30,7 @@ import biblioWebAppli.dto.PretDTO;
 import biblioWebAppli.metier.IPretMetier;
 
 import biblioWebAppli.objets.Pret;
+import biblioWebAppli.objets.UserAuth;
 
 /**
  * @author jeanl
@@ -57,6 +58,9 @@ public class PretController {
     public String searchByCriteria(Model model, @PathParam(value = "pretCriteria") PretCriteria pretCriteria, @RequestParam(name="page", defaultValue="0") int page, 
 			@RequestParam(name="size", defaultValue="3") int size){
     	model.addAttribute("pretCriteria", new PretCriteria());
+    	
+    	//UserAuth userInLogged = (UserAuth) model.getAttribute("user");
+    	//String userInLoggedName = userInLogged.getUsername();
     	
     	Page<Pret> pagePrets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
     	
