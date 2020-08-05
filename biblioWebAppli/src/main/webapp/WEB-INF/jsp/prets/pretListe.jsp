@@ -40,20 +40,6 @@
 				 <input type="text" name="numPret" value="${pretCriteria.numPret}"/>
 				 </fieldset>
 				 
-				 
-				 <fieldset class="form-group">
-				 <label>Nom de l'emprunteur :</label>
-				 <input type="text" name="username" value="${pretCriteria.username}"/>
-				 </fieldset>
-				 
-				 
-				 <fieldset class="form-group">
-				 <label>Identifiant de l'emprunteur :</label>
-				 <input type="text" name="userId" value="${pretCriteria.userId}"/>
-				 </fieldset>
-				 
-				
-				 
 				 <fieldset class="form-group">
 				 <label>Identifiant du Livre :</label>
 				 <input type="text" name="numLivre" value="${pretCriteria.numLivre}"/>
@@ -101,9 +87,10 @@
 					   		 <thead>		 
 					   			  	 
 					    			 <tr>
-									      <th>Référence</th>
-									      <th>Emprunteur</th>
-									      <th>Livre</th>
+									      <th>Référence du Prêt</th>
+									      <th>Référence du Livre</th>
+									      <th>Titre</th>
+									      <th>Catégorie</th>
 									      <th>Date du Pret</th>
 									      <th>Date de Retour Prévue</th>
 									      <th>Date de Retour Effectif</th>
@@ -115,8 +102,9 @@
 					   				 <c:forEach var="pret" items="${prets}">
 					   				 <tr>
 								          <td>${pret.numPret}</td>
-							              <td>${pret.user.getUsername()}</td>
+							              <td>${pret.livre.getNumLivre()}</td>
 							              <td>${pret.livre.getTitre()}</td>
+							              <td>${pret.livre.categorie.getNomCategorie()}</td>
 								          <td>${pret.datePret}</td>
 								          <td>${pret.dateRetourPrevue}</td>
 								          <td>${pret.dateRetourEffectif}</td>

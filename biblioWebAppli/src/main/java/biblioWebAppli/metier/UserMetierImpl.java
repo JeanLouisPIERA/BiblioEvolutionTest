@@ -80,6 +80,8 @@ public class UserMetierImpl implements IUserMetier{
 		//SecurityContextHolder.getContext().getAuthentication().getName();
     	System.out.println("securityNom"+SecurityContextHolder.getContext().getAuthentication().getName());
 		
+    	
+    	/**
     	if(response.getStatusCodeValue()==200) {
 		Properties properties = new Properties();
 		//InputStream input = new  FileInputStream("src/main/resources/application.properties");
@@ -89,6 +91,7 @@ public class UserMetierImpl implements IUserMetier{
 		properties.setProperty("idUserLoggedIn", userAuthenticated.getIdUser().toString());
 		properties.store(new FileOutputStream("src/main/resources/application.properties"), "");
 		}
+		**/
     	return userAuthenticated;
 	}
 	

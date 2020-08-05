@@ -49,10 +49,9 @@ public class PretMetierImpl implements IPretMetier{
 	private String username;
 	@Value("${application.password}")
 	private String password;
-	@Value("${idUserLoggedIn}")
-	private Long idUserLoggedIn;
-	@Value("${usernameLoggedIn}")
-	private String usernameLoggedIn;
+	@Value("${application.idUser}")
+	private Long idUser;
+	
 	
     @Value("${application.uRLPret}")
 	private String uRL;
@@ -69,8 +68,11 @@ public class PretMetierImpl implements IPretMetier{
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
-    	pretDTO.setIdUser(idUserLoggedIn);
+    	pretDTO.setIdUser(idUser);
     	System.out.println("pretIdUser"+pretDTO.getIdUser()); 
+    	System.out.println("pretNumLivre"+pretDTO.getNumLivre()); 
+    	System.out.println("pretURL"+uRL); 
+    	System.out.println("pretHeaders"+headers); 
 
     	HttpEntity<PretDTO> requestEntity = new HttpEntity<>(pretDTO, headers);
     	ResponseEntity<Pret> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, Pret.class);
@@ -142,7 +144,7 @@ public class PretMetierImpl implements IPretMetier{
     	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
     	        .queryParam("numPret", pretCriteria.getNumPret())
-    	        .queryParam("username", usernameLoggedIn)
+    	        .queryParam("username", username)
     	        //.queryParam("userId", pretCriteria.getUserId())
     	        .queryParam("numLivre", pretCriteria.getNumLivre())
     	        .queryParam("titre", pretCriteria.getTitre())

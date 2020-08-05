@@ -3,7 +3,7 @@ package biblioWebAppli.security;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -35,16 +35,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired private RestAuthenticationEntryPoint authenticationEntryPoint;
 	
-	/**
+	
+	@Value("${application.username}")
+	private String applicationUsername;
+	@Value("${application.password}")
+	private String applicationPassword;
+	
+	
+	
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
           .inMemoryAuthentication()
-          .withUser("Admin10")
-          .password(passwordEncoder().encode("jeanlouis"))
+          .withUser(applicationUsername)
+          .password(passwordEncoder().encode(applicationPassword))
           .authorities("ROLE_USER");
     }
-    **/
+    
 	
 
     @Override

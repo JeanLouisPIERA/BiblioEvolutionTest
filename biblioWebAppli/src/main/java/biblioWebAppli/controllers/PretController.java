@@ -6,6 +6,7 @@ package biblioWebAppli.controllers;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -43,7 +44,8 @@ public class PretController {
     private IPretMetier pretMetier;
     @Autowired
     private ObjectMapper mapper;
-    
+    @Value("${application.idUser}")
+	private Long idUser;
 
     
     /**
@@ -81,6 +83,7 @@ public class PretController {
      * @param model
      * @return
      */
+    /**
     @GetMapping("/prets/livre/{numLivre}")
     public String newLivre(Model model, @PathVariable Long numLivre){
     	PretDTO pretDTO = new PretDTO();
@@ -88,7 +91,7 @@ public class PretController {
         model.addAttribute("pretDTO", pretDTO);
         return "prets/pretCreation";
     }
-
+**/
     
     /**
      * Permet de valider l'enregistrement d'un nouveau pret
@@ -96,9 +99,15 @@ public class PretController {
      * @param pretDTO
      * @return
      */
-    @PostMapping("/prets/livre/{numLivre}")
-    public String createPret(Model model, @ModelAttribute("pretDTO") PretDTO pretDTO){
+    @GetMapping("/prets/livre/{numLivre}")
+    public String createPret(Model model, @PathVariable Long numLivre){
         try {
+        	PretDTO pretDTO = new PretDTO();
+        	pretDTO.setNumLivre(numLivre);
+        	pretDTO.setIdUser(idUser);
+        	System.out.println("pretIdUserControl"+pretDTO.getIdUser()); 
+        	System.out.println("pretNumLivreControl"+pretDTO.getNumLivre()); 
+        	model.addAttribute("pretDTO", pretDTO);
 			Pret pretToCreate = pretMetier.createPret(pretDTO);
 			model.addAttribute(pretToCreate);
 		} catch (HttpClientErrorException e) {

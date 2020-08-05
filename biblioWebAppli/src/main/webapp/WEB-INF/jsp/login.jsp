@@ -31,8 +31,14 @@
         <h2 class="form-heading">Identifiez-vous</h2>
 
         
-         <div class="form-group ${error != null ? 'has-error' : ''}">
-            <span>${message}</span>
+         <div class="form-group">
+            
+            
+            <c:if test="${error!=null}">
+            ${error}
+            </c:if>
+            
+            <br>
             
             <input name="username" type="text" class="form-control" placeholder="Votre nom d'utilisateur"
                    autofocus="true"/>
@@ -42,7 +48,7 @@
             <input name="password" type="password" class="form-control" placeholder="Votre mot de passe"/>
             
             <br>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            
 			
             <button class="btn btn-sm btn-primary btn-block" type="submit">Valider</button>
             
