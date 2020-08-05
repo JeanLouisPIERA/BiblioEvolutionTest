@@ -18,7 +18,6 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
@@ -68,12 +67,6 @@ public class PretMetierImpl implements IPretMetier{
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
-    	pretDTO.setIdUser(idUser);
-    	System.out.println("pretIdUser"+pretDTO.getIdUser()); 
-    	System.out.println("pretNumLivre"+pretDTO.getNumLivre()); 
-    	System.out.println("pretURL"+uRL); 
-    	System.out.println("pretHeaders"+headers); 
-
     	HttpEntity<PretDTO> requestEntity = new HttpEntity<>(pretDTO, headers);
     	ResponseEntity<Pret> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, Pret.class);
 			System.out.println(response.getStatusCodeValue());
@@ -131,16 +124,10 @@ public class PretMetierImpl implements IPretMetier{
 	 */
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
+		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
 		
-		System.out.println("headersPret"+headers.toString());
-		
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-    	
-    	//String loggedInUsername= SecurityContextHolder.getContext().getAuthentication().getName();
-    	//System.out.println("securityNom"+SecurityContextHolder.getContext().getAuthentication().getName());
-    	
-    	
     	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
     	        .queryParam("numPret", pretCriteria.getNumPret())
@@ -152,8 +139,6 @@ public class PretMetierImpl implements IPretMetier{
     	        .queryParam("nomCategorieLivre", pretCriteria.getNomCategorieLivre())
     	        .queryParam("page", pageable.getPageNumber())
     	        .queryParam("size", pageable.getPageSize());
-    	
-    	System.out.println("uriPret"+(builder.toUriString()));
     	
     	HttpEntity<?> entity = new HttpEntity<>(headers);
     	

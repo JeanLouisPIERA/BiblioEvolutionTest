@@ -4,9 +4,6 @@
 package biblioWebAppli.metier;
 
 
-
-import java.util.Base64;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,9 +23,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.LivreCriteria;
 
-
 import biblioWebAppli.objets.Livre;
-import biblioWebAppli.security.RestTemplateFactory;
+
 
 
 /**
@@ -40,12 +36,8 @@ public class LivreMetierImpl implements ILivreMetier {
 	
 	@Autowired
 	private RestTemplate restTemplate;
-	//@Autowired
-	//private RestTemplateFactory restTemplateFactory;
 	@Autowired
     private HttpHeadersFactory httpHeadersFactory; 
-    
-    
     
     @Value("${application.uRLLivre}")
 	private String uRL;
@@ -65,9 +57,6 @@ public class LivreMetierImpl implements ILivreMetier {
 	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable) {
 		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
-    	
-    	System.out.println("headers"+headers.toString());
-    	
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
@@ -77,8 +66,6 @@ public class LivreMetierImpl implements ILivreMetier {
     	        .queryParam("nomCategorie", livreCriteria.getNomCategorie())
     	        .queryParam("page", pageable.getPageNumber())
     	        .queryParam("size", pageable.getPageSize());
-    	
-    	System.out.println("URI"+builder.toUriString());
     	
     	HttpEntity<?> entity = new HttpEntity<>(headers);
     	

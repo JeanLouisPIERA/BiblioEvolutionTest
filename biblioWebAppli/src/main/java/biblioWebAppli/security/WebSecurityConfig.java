@@ -12,12 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import biblioWebAppli.metier.IUserMetier;
-import biblioWebAppli.objets.RoleEnum;
 
 
 
@@ -32,10 +29,7 @@ import biblioWebAppli.objets.RoleEnum;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Autowired private RestAuthenticationEntryPoint authenticationEntryPoint;
-	
-	
+
 	@Value("${application.username}")
 	private String applicationUsername;
 	@Value("${application.password}")
@@ -63,17 +57,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
           .authenticated()
           .and()
           .httpBasic()
-          //.authenticationEntryPoint(authenticationEntryPoint)
           .and()
           .logout()
               .permitAll();
-          
-          
-          
-          
-          
-         
-       http.addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class);
+   
+        http
+          .addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class);
     }
     
     @Bean

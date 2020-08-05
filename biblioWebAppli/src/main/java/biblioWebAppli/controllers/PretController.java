@@ -12,16 +12,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 import biblioWebAppli.criteria.PretCriteria;
 
@@ -31,7 +28,6 @@ import biblioWebAppli.dto.PretDTO;
 import biblioWebAppli.metier.IPretMetier;
 
 import biblioWebAppli.objets.Pret;
-import biblioWebAppli.objets.UserAuth;
 
 /**
  * @author jeanl
@@ -61,9 +57,6 @@ public class PretController {
 			@RequestParam(name="size", defaultValue="3") int size){
     	model.addAttribute("pretCriteria", new PretCriteria());
     	
-    	//UserAuth userInLogged = (UserAuth) model.getAttribute("user");
-    	//String userInLoggedName = userInLogged.getUsername();
-    	
     	Page<Pret> pagePrets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
     	
     	model.addAttribute("prets", pagePrets.getContent());
@@ -76,23 +69,7 @@ public class PretController {
         return "prets/pretListe";
     }
     
-    
-    
-    /**
-     * Permet d'afficher le formulaire de création d'un pret
-     * @param model
-     * @return
-     */
-    /**
-    @GetMapping("/prets/livre/{numLivre}")
-    public String newLivre(Model model, @PathVariable Long numLivre){
-    	PretDTO pretDTO = new PretDTO();
-    	pretDTO.setNumLivre(numLivre);
-        model.addAttribute("pretDTO", pretDTO);
-        return "prets/pretCreation";
-    }
-**/
-    
+ 
     /**
      * Permet de valider l'enregistrement d'un nouveau pret
      * @param model
@@ -105,8 +82,6 @@ public class PretController {
         	PretDTO pretDTO = new PretDTO();
         	pretDTO.setNumLivre(numLivre);
         	pretDTO.setIdUser(idUser);
-        	System.out.println("pretIdUserControl"+pretDTO.getIdUser()); 
-        	System.out.println("pretNumLivreControl"+pretDTO.getNumLivre()); 
         	model.addAttribute("pretDTO", pretDTO);
 			Pret pretToCreate = pretMetier.createPret(pretDTO);
 			model.addAttribute(pretToCreate);
@@ -121,6 +96,7 @@ public class PretController {
 
 
 	/**
+	 * Permet de prolonger la durée d'un prêt
 	 * @param numPret
 	 * @return
 	 * @see biblioWebAppli.metier.IPretMetier#prolongerPret(java.lang.Long)
@@ -137,6 +113,13 @@ public class PretController {
 		return "prets/pretProlongation";
 	}
     
+    
+    /**
+     * Permet de clôturer un prêt sans supprimer son enregistrement
+     * @param model
+     * @param numPret
+     * @return
+     */
     @GetMapping("/prets/cloture/{numPret}")
 	public String cloturerPret(Model model, @PathVariable("numPret") Long numPret) {
 		try {
