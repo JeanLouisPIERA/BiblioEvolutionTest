@@ -12,6 +12,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import biblioWebServiceRest.entities.Categorie;
@@ -43,6 +44,8 @@ public class LanceurDB implements CommandLineRunner {
 	private ICategorieRepository categorieRepository;
 	@Autowired
 	private IUserMetier userMetier;
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 
 	public LanceurDB(ILivreRepository livreRepository, IPretRepository pretRepository, IUserRepository userRepository,
@@ -54,6 +57,35 @@ public class LanceurDB implements CommandLineRunner {
 		this.roleRepository = roleRepository;
 		this.categorieRepository = categorieRepository;
 	}
+	
+	/**
+	 * Cette méthode permet de créer un jeu de données Utilisateur dans le Main au moment du lancement de l'appli 
+	 */
+	public User createUser(String username, String password) {
+		User user = new User(username);
+		Role role = roleRepository.findByName(RoleEnum.USER);
+		user.setAdresseMail(username.concat("@hotmail.com"));
+		user.setRole(role);
+		user.setPassword(bCryptPasswordEncoder.encode(password));
+		userRepository.save(user);
+		return user;
+	}
+
+	/**
+	 * Cette méthode permet de créer un administrateur dans le Main au moment du lancement de l'appli
+	 */
+	public User createAdmin(String username, String password) {
+		User user = new User(username);
+		Role r = roleRepository.findByName(RoleEnum.ADMIN);
+		user.setAdresseMail(username.concat("@hotmail.com"));
+		user.setRole(r);
+		user.setPassword(bCryptPasswordEncoder.encode(password));
+		
+		userRepository.save(user);
+		
+		
+		return user;
+	}
 
 
 	@Override
@@ -63,21 +95,11 @@ public class LanceurDB implements CommandLineRunner {
 		Role user = new Role(RoleEnum.USER);
 		roleRepository.save(admin);
 		roleRepository.save(user);
-		/**
-		User user1 = new User("Jean-Charles", "password", "jeannot@yahoo.fr", user);
-		User user2 = new User("Charlemagne", "password", "charlot@gmail.com", user);
-		User user3 = new User("Alexandre", "Alexandre", "alex@hotmail.com", user);
-		User admin10 = new User("admin10", "Alexandre", "admin@hotmail.com", admin);
-		userRepository.save(user1);
-		userRepository.save(user2);
-		userRepository.save(user3);
-		userRepository.save(admin10);
-		**/
 		
-		User user1 = userMetier.createUser("Jean-Charles");
-		User user2 = userMetier.createUser("Charlemagne");
-		User user3 = userMetier.createUser("Alexandre");
-		User admin10 = userMetier.createAdmin("Admin10"); 
+		User user1 = this.createUser("Jean-Charles", "jeancharles");
+		User user2 = this.createUser("Charlemagne", "charlemagne");
+		User user3 = this.createUser("Alexandre", "alexandre");
+		User admin10 = this.createAdmin("Admin10", "admin10"); 
 				
 				
 				
@@ -109,70 +131,27 @@ public class LanceurDB implements CommandLineRunner {
 		livreRepository.save(livre2);
 		livreRepository.save(livre3);
 		livreRepository.save(livre4);
+		livreRepository.save(new Livre("La guerre de Troie n'aura pas lieu", "Jean Anouilh", 1, 1, categorie4));
+        livreRepository.save(new Livre("Memoire d'un clown", "Achille Zavatta", 2, 0, categorie5));
+        livreRepository.save(new Livre("La Legende des Siecles", "Victor Hugo", 3, 2, categorie6));
+        livreRepository.save(new Livre("Le Seigneur de l'Anneau", "JRR Tolkien", 5, 5, categorie7));
+        livreRepository.save(new Livre("Asterix Le Gaulois", "Uderzo et Goscinny", 10, 10,categorie8));
+        livreRepository.save(new Livre("Metamorphose des cloportes", "Alphonse Boudard", 1, 1, categorie9));
+        livreRepository.save(new Livre("San Antonio a de la memoire", "Frederic Dard", 3, 1,categorie9));
+        livreRepository.save(new Livre("San Antonio fume les cloportes", "Frederic Dard", 1, 0,categorie9));
+        livreRepository.save(new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,categorie9));
+        livreRepository.save(new Livre("Tintin et le mystèrez de l'oreille cassée", "Herge", 6,0, categorie8));
+        livreRepository.save(new Livre("Alcools", "Apollinaire", 1, 1,categorie6));
 		
 		pretRepository.save(new Pret(LocalDate.of(2020, Month.JUNE, 5), LocalDate.of(2020, Month.JULY, 5), PretStatut.ECHU, user1, livre1));
 		pretRepository.save(new Pret(LocalDate.of(2020, Month.MAY, 29), LocalDate.of(2010, Month.JULY, 29), PretStatut.PROLONGE, user2, livre2));
 		pretRepository.save(new Pret(LocalDate.of(2020,  Month.JUNE, 29), LocalDate.of(2020,  Month.JULY, 29), PretStatut.ENCOURS, user3, livre3)); 
 		
+	}
+				
+}
 	
-        /**
-                livreRepository.save(new Livre("La guerre de Troie n'aura pas lieu", "Jean Anouilh", 1, 1, categorie4));
-                livreRepository.save(new Livre("Memoire d'un clown", "Achille Zavatta", 2, 0, categorie5));
-                livreRepository.save(new Livre("La Legende des Siecles", "Victor Hugo", 3, 2, categorie6));
-                livreRepository.save(new Livre("Le Seigneur de l'Anneau", "JRR Tolkien", 5, 5, categorie7));
-                livreRepository.save(new Livre("Asterix Le Gaulois", "Uderzo et Goscinny", 10, 10,categorie8));
-                livreRepository.save(new Livre("Metamorphose des cloportes", "Alphonse Boudard", 1, 1, categorie9));
-                livreRepository.save(new Livre("San Antonio a de la memoire", "Frederic Dard", 3, 1,categorie9));
-                livreRepository.save(new Livre("San Antonio fume les cloportes", "Frederic Dard", 1, 0,categorie9));
-                livreRepository.save(new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,categorie9));
-                livreRepository.save(new Livre("Tintin et le mystèrez de l'oreille cassée", "Herge", 6,0, categorie8));
-                livreRepository.save(new Livre("Alcools", "Apollinaire", 1, 1,categorie6));
-		**/
-        		
-        
-	}
-		
-		
-	}
 	
-	/**
-	@Bean
-    public CommandLineRunner specificationsDemo(ILivreRepository livreRepository, ICategorieRepository categorieRepository) {
-        return args -> {
-
-            // create new movies
-        	
-        	Categorie categorie4 = new Categorie("Theatre");
-        	Categorie categorie5 = new Categorie("Memoire");
-        	Categorie categorie6 = new Categorie("Poesie");
-        	Categorie categorie7 = new Categorie("Heroic Fantasy");
-        	Categorie categorie8 = new Categorie("Bande Dessinee");
-        	Categorie categorie9 = new Categorie("Policier");
-        	categorieRepository.save(categorie4);
-    		categorieRepository.save(categorie5);
-    		categorieRepository.save(categorie6);
-    		categorieRepository.save(categorie7);
-    		categorieRepository.save(categorie8);
-    		categorieRepository.save(categorie9);
-            livreRepository.saveAll(Arrays.asList(
-                    new Livre("La guerre de Troie n'aura pas lieu", "Jean Anouilh", 1, 1, categorie4),
-                    new Livre("Memoire d'un clown", "Achille Zavatta", 2, 0, categorie5),
-                    new Livre("La Legende des Siecles", "Victor Hugo", 3, 2, categorie6),
-                    new Livre("Le Seigneur de l'Anneau", "JRR Tolkien", 5, 5, categorie7),
-                    new Livre("Asterix Le Gaulois", "Uderzo et Goscinny", 10, 10,categorie8),
-                    new Livre("Metamorphose des cloportes", "Alphonse Boudard", 1, 1, categorie9),
-                    new Livre("San Antonio a de la memoire", "Frederic Dard", 3, 1,categorie9),
-                    new Livre("San Antonio fume les cloportes", "Frederic Dard", 1, 0,categorie9),
-                    new Livre("Le Gorille joue au clown", "Antoine Dominique", 2, 0,categorie9),
-                    new Livre("Tintin et le mystèrez de l'oreille cassée", "Herge", 6,0, categorie8),
-                    new Livre("Alcools", "Apollinaire", 1, 1,categorie6)
-                    
-                    
-            ));
-        
-        };
-	}
-	**/
 	
 
             

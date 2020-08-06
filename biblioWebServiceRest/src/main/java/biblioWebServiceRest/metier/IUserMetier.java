@@ -5,21 +5,16 @@ package biblioWebServiceRest.metier;
 
 import java.util.Optional;
 
+import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 
 public interface IUserMetier {
 	
 	
-	public void save(User user);
-	
-	public User findByUsername(String username) throws EntityNotFoundException;
+	public User registrateUser(UserDTO userDTO);
 	
 	public User findByUsernameAndPassword(String username, String password) throws EntityNotFoundException;
 	
-	public User createUser(String username);
 	
-	public User createAdmin(String username);
-
-
 }

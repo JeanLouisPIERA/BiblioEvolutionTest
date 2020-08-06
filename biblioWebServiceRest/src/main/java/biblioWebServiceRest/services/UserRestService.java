@@ -35,6 +35,7 @@ import biblioWebServiceRest.metier.IUserMetier;
  *
  */
 @RestController
+@RequestMapping("/biblio")
 public class UserRestService {
 	@Autowired
 	private IUserRepository userRepository;
@@ -45,97 +46,40 @@ public class UserRestService {
 
 	
 	  /**
-	   * Get all users list.
+	   * Permet d'obtenir la liste de tous les utilisateurs
 	   *
 	   * @return the list
 	   */
 	  @GetMapping("/users")
-	  public List<User> getAllUsers() {
-	    return userRepository.findAll();
+	  public ResponseEntity<List<User>> getAllUsers() {
+	    return new ResponseEntity<List<User>>(userRepository.findAll(), HttpStatus.OK);
 	  }
+	  
 	  /**
-	   * Gets users by id.
-	   *
-	   * @param userId the user id
-	   * @return the users by id
-	   * @throws ResourceNotFoundException the resource not found exception
-	   */
-	  @GetMapping("/users/{id}")
-	  public ResponseEntity<User> getUsersById(@PathVariable(value = "id") Long userId)
-	      throws EntityNotFoundException {
-	    User user =
-	        userRepository
-	            .findById(userId)
-	            .orElseThrow(() -> new EntityNotFoundException("User not found on :: " + userId));
-	    return ResponseEntity.ok().body(user);
-	  }
-	  /**
-	   * Create user user.
+	   * Creation d'un utilisateur
 	   *
 	   * @param user the user
 	   * @return the user
 	   */
 	  @PostMapping("/users")
-	  public User createUser(@Valid @RequestBody User user) {
-	    return userRepository.save(user);
-	  }
-	  /**
-	   * Update user response entity.
-	   *
-	   * @param userId the user id
-	   * @param userDetails the user details
-	   * @return the response entity
-	   * @throws ResourceNotFoundException the resource not found exception
-	   */
-	  @PutMapping("/users/{id}")
-	  public ResponseEntity<User> updateUser(
-	      @PathVariable(value = "id") Long userId, @Valid @RequestBody User userDetails)
-	      throws EntityNotFoundException {
-	    User user =
-	        userRepository
-	            .findById(userId)
-	            .orElseThrow(() -> new EntityNotFoundException("User not found on :: " + userId));
-	    user.setAdresseMail(userDetails.getAdresseMail());
-	    user.setUsername(userDetails.getUsername());
-	    user.setPassword(userDetails.getPassword());
-	    final User updatedUser = userRepository.save(user);
-	    return ResponseEntity.ok(updatedUser);
-	  }
-	  /**
-	   * Delete user map.
-	   *
-	   * @param userId the user id
-	   * @return the map
-	   * @throws Exception the exception
-	   */
-	  @DeleteMapping("/users/{id}")
-	  public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws Exception {
-	    User user =
-	        userRepository
-	            .findById(userId)
-	            .orElseThrow(() -> new EntityNotFoundException("User not found on :: " + userId));
-	    userRepository.delete(user);
-	    Map<String, Boolean> response = new HashMap<>();
-	    response.put("deleted", Boolean.TRUE);
-	    return response;
+	  public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) {
+	    return new ResponseEntity<User>(userMetier.registrateUser(userDTO), HttpStatus.OK);
 	  }
 	  
+	  /**
+	   * Permet d'authentifier un utilisateur à partir de son nom et de son mot de passe
+	   * @param userDTO
+	   * @return
+	   * @throws EntityNotFoundException
+	   */
 	  @PostMapping(value = "/users/login")
 		public ResponseEntity<User> Authentication(@RequestBody UserDTO userDTO) throws EntityNotFoundException {
-			//securityService.autologin(userDTO.getUsername(), userDTO.getPassword());
-			//securityService.findLoggedInUser(); 
-			//return new ResponseEntity<String>("Login OK", HttpStatus.OK);
-		  
+			
 		    User userAuthenticated = userMetier.findByUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
-		    System.out.println("userAuthenticated"+userAuthenticated.getUsername()); 
-		    System.out.println("userAuthenticated"+userAuthenticated.getPassword()); 
 		    return new ResponseEntity<User>(userAuthenticated, HttpStatus.OK);
 		  
 		}
-	  
-	  
-	  
-	  
+	 
 	}
 	
 

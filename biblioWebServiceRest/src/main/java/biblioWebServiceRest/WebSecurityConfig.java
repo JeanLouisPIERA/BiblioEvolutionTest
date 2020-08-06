@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             //.authenticationEntryPoint(authenticationEntryPoint)
             //.and()
         	.authorizeRequests()
-        	.antMatchers(HttpMethod.POST, "/login" ).permitAll()
+        	.antMatchers(HttpMethod.POST, "biblio/users/login" ).permitAll()
         	.antMatchers(HttpMethod.GET, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
         	.antMatchers(HttpMethod.PUT, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
             .antMatchers(HttpMethod.POST, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())

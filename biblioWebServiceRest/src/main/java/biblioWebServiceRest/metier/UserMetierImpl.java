@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 
 import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
+import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.Role;
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.mapper.UserMapper;
 
 
 @Service
@@ -31,42 +33,30 @@ public class UserMetierImpl implements IUserMetier{
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private SecurityServiceImpl securityService;
+	@Autowired
+	private UserMapper userMapper;
 
 	/**
 	 * Cette méthode permet de persister un utilisateur en base de donnéees 
 	 */
 	@Override
-	public void save(User user) {
-	    user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-	    user.setRole(roleRepository.findByName(RoleEnum.USER));
-	    userRepository.save(user);
+	public User registrateUser(UserDTO userDTO) {
+		User userToCreate = userMapper.userDTOToUser(userDTO);
+	    userToCreate.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+	    userToCreate.setRole(roleRepository.findByName(RoleEnum.USER));
+	    return userRepository.save(userToCreate);
 	}
+	
 
 	/**
-	 * Cette méthode permet de rechercher par son nom un utilisateur persisté en base de données
-	 * @throws EntityNotFoundException 
+	 * Cette méthode permet d'authentifier un utilisateur par son nom et son mot de passe
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws EntityNotFoundException
 	 */
 	@Override
-	public User findByUsername(String username) throws EntityNotFoundException {
-		Optional<User> userFound = userRepository.findByUsername(username);
-		System.out.println("Test3User"+userFound.get());
-		if (Boolean.FALSE.equals(userFound.isPresent())) {
-            throw new EntityNotFoundException("L'utilisateur avec ce nom n'existe pas :" + username);
-		}
-		System.out.println("Test2User"+userFound.get());
-	    return userFound.get();
-	}
-	
-	
-	@Override
 	public User findByUsernameAndPassword(String username, String password) throws EntityNotFoundException{
-		/**
-			User userFound = this.findByUsername(username);
-			System.out.println("Test1User"+userFound);
-			if(!bCryptPasswordEncoder.matches(password, userFound.getPassword())) 
-				throw new EntityNotFoundException("Mot de passe incorrect");
-			return userFound;
-			**/
 		    User userFound = securityService.autologin(username, password);
 		    //User userFound = securityService.findLoggedInUser(); 
 		    System.out.println("userFound Name"+userFound.getUsername());
@@ -74,37 +64,6 @@ public class UserMetierImpl implements IUserMetier{
 		    return userFound;
 		
 		
-	}
-
-	/**
-	 * Cette méthode permet de créer un jeu de données Utilisateur dans le Main au moment du lancement de l'appli 
-	 */
-	@Override
-	public User createUser(String username) {
-		User u = new User(username);
-		Role r = roleRepository.findByName(RoleEnum.USER);
-		u.setAdresseMail(username.concat("@hotmail.com"));
-		u.setRole(r);
-		u.setPassword("$2a$10$8kVCmqZNmEu7ihwunzaNN.KxnFMn1HuDmBcj1O.mOK24gJ15C5b06");
-		userRepository.save(u);
-		return u;
-	}
-
-	/**
-	 * Cette méthode permet de créer un administrateur dans le Main au moment du lancement de l'appli
-	 */
-	@Override
-	public User createAdmin(String username) {
-		User u = new User(username);
-		Role r = roleRepository.findByName(RoleEnum.ADMIN);
-		u.setAdresseMail(username.concat("@hotmail.com"));
-		u.setRole(r);
-		u.setPassword("$2a$10$8kVCmqZNmEu7ihwunzaNN.KxnFMn1HuDmBcj1O.mOK24gJ15C5b06");
-		
-		userRepository.save(u);
-		
-		
-		return u;
 	}
 
 	

@@ -34,12 +34,6 @@
          <div class="form-group">
             
             
-            <c:if test="${error!=null}">
-            ${error}
-            </c:if>
-            
-            <br>
-            
             <input name="username" type="text" class="form-control" placeholder="Votre nom d'utilisateur"
                    autofocus="true"/>
             
@@ -53,6 +47,13 @@
             <button class="btn btn-sm btn-primary btn-block" type="submit">Valider</button>
             
         </div>
+        
+        <c:if test="${error!=null}">
+            ${error}
+            </c:if>
+            
+            <br>
+        
       </form:form>
       </div>
     </div>

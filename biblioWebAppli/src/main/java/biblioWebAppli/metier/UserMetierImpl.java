@@ -36,7 +36,6 @@ public class UserMetierImpl implements IUserMetier{
     
     @Value("${application.uRLUser}")
 	private String uRL;
-	
     
 	/**
 	 * @param username

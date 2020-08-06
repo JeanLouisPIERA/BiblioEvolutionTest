@@ -51,7 +51,6 @@
  </div>
  
  <div>
- <a type="button" class="btn btn-primary btn-md" href="/categories">Retour au menu Categorie</a>
  <a type="button" class="btn btn-primary btn-md" href="/livres">Retour au menu Livre</a>
  <a type="button" class="btn btn-primary btn-md" href="/livres">Retour au menu Pret</a>
  </div>
