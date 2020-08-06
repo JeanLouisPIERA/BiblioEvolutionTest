@@ -100,6 +100,7 @@ public class LanceurDB implements CommandLineRunner {
 		User user2 = this.createUser("Charlemagne", "charlemagne");
 		User user3 = this.createUser("Alexandre", "alexandre");
 		User admin10 = this.createAdmin("Admin10", "admin10"); 
+		User user4  = this.createUser("UserBatch", "userBatch"); 
 				
 				
 				
@@ -143,9 +144,10 @@ public class LanceurDB implements CommandLineRunner {
         livreRepository.save(new Livre("Tintin et le mystèrez de l'oreille cassée", "Herge", 6,0, categorie8));
         livreRepository.save(new Livre("Alcools", "Apollinaire", 1, 1,categorie6));
 		
-		pretRepository.save(new Pret(LocalDate.of(2020, Month.JUNE, 5), LocalDate.of(2020, Month.JULY, 5), PretStatut.ECHU, user1, livre1));
-		pretRepository.save(new Pret(LocalDate.of(2020, Month.MAY, 29), LocalDate.of(2010, Month.JULY, 29), PretStatut.PROLONGE, user2, livre2));
-		pretRepository.save(new Pret(LocalDate.of(2020,  Month.JUNE, 29), LocalDate.of(2020,  Month.JULY, 29), PretStatut.ENCOURS, user3, livre3)); 
+		pretRepository.save(new Pret(LocalDate.of(2020, Month.JULY, 5), LocalDate.of(2020, Month.AUGUST, 5), PretStatut.ECHU, user1, livre1));
+		pretRepository.save(new Pret(LocalDate.of(2020, Month.JUNE, 29), LocalDate.of(2020, Month.AUGUST, 29), PretStatut.PROLONGE, user2, livre2));
+		pretRepository.save(new Pret(LocalDate.of(2020,  Month.JULY, 29), LocalDate.of(2020,  Month.AUGUST, 29), PretStatut.ENCOURS, user3, livre3)); 
+		pretRepository.save(new Pret(LocalDate.of(2020,  Month.MAY, 29), LocalDate.of(2020,  Month.JUNE, 29), PretStatut.CLOTURE, user3, livre4)); 
 		
 	}
 				

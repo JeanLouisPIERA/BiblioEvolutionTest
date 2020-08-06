@@ -5,6 +5,7 @@ package biblioWebServiceRest.metier;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -171,14 +172,17 @@ public class PretMetierImpl implements IPretMetier {
 	 * @return
 	 */
 	@Override
-	public void updatePretsEchus() {
+	public List<Pret> searchAndUpdatePretsEchus() {
 		List<Pret> allPrets = pretRepository.findAll(); 
+		List<Pret> pretsEchus = new ArrayList<Pret>();
 		for (Pret pret : allPrets) {
-			if (pret.getDateRetourPrevue().isAfter(LocalDate.now()) && pret.getPretStatut().equals(PretStatut.CLOTURE))
-				pret.setPretStatut(PretStatut.ECHU);
-			
+			if (pret.getDateRetourPrevue().isBefore(LocalDate.now()) && !pret.getPretStatut().equals(PretStatut.CLOTURE))
+				{pret.setPretStatut(PretStatut.ECHU);
+				pretsEchus.add(pret); 
 			pretRepository.save(pret);
 				}
+		}
+		return pretsEchus; 
 	}
 	
 	

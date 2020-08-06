@@ -120,6 +120,7 @@
 	<modules>
 		<module>biblioWebServiceRest</module>
 		<module>biblioWebAppli</module>
+		<module>biblioBatch</module>
 	</modules>
 
 

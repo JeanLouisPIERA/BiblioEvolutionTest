@@ -3,6 +3,8 @@
  */
 package biblioWebServiceRest.metier;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -55,9 +57,10 @@ public interface IPretMetier {
 	 Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable);
 	 
 	 /**
-	  * Change le statut des prets échus : la date du jour > date de retour prévue  
+	  * Identifie et change le statut des prets échus : la date du jour > date de retour prévue
+	  * Retourne la liste des prets échus  
 	  */
-	 public void updatePretsEchus(); 
+	 List<Pret> searchAndUpdatePretsEchus(); 
 	 
 	 
 		

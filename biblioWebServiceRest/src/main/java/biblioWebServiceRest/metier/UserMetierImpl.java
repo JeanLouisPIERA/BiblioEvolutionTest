@@ -4,18 +4,15 @@
 package biblioWebServiceRest.metier;
 
 
-
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.dto.UserDTO;
-import biblioWebServiceRest.entities.Role;
+
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -58,12 +55,7 @@ public class UserMetierImpl implements IUserMetier{
 	@Override
 	public User findByUsernameAndPassword(String username, String password) throws EntityNotFoundException{
 		    User userFound = securityService.autologin(username, password);
-		    //User userFound = securityService.findLoggedInUser(); 
-		    System.out.println("userFound Name"+userFound.getUsername());
-		    System.out.println("userFound password"+userFound.getPassword());
 		    return userFound;
-		
-		
 	}
 
 	

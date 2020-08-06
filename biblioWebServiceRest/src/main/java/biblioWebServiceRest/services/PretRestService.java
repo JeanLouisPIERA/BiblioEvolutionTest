@@ -4,6 +4,8 @@
  */
 package biblioWebServiceRest.services;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
@@ -158,11 +160,10 @@ public class PretRestService {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
-	@GetMapping(value="/pretsEchus", produces="application/json")
-	public ResponseEntity<Page<Pret>> selectPretsEchus(@PathParam("pretCriteria") PretCriteria pretCriteria, @RequestParam int page, @RequestParam int size) {
-		pretMetier.updatePretsEchus();
-		Page<Pret> selectionPretsEchus = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
-		return new ResponseEntity<Page<Pret>>(selectionPretsEchus, HttpStatus.OK); 
+	@GetMapping(value="/prets/echus", produces="application/json")
+	public ResponseEntity<List<Pret>> selectPretsEchus() {
+		List<Pret> pretsEchusListe = pretMetier.searchAndUpdatePretsEchus();
+		return new ResponseEntity<List<Pret>>(pretsEchusListe, HttpStatus.OK); 
 	}
 	
 	
