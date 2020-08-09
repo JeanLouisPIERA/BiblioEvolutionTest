@@ -29,6 +29,8 @@ import biblioWebServiceRest.metier.IUserMetier;
  * Cette classe permet de créer et de persister un jeu de données démo au lancement de l'application
  */
 
+public class LanceurDB {
+/**
 @Component
 public class LanceurDB implements CommandLineRunner {
 
@@ -58,9 +60,9 @@ public class LanceurDB implements CommandLineRunner {
 		this.categorieRepository = categorieRepository;
 	}
 	
-	/**
-	 * Cette méthode permet de créer un jeu de données Utilisateur dans le Main au moment du lancement de l'appli 
-	 */
+	
+	//Cette méthode permet de créer un jeu de données Utilisateur dans le Main au moment du lancement de l'appli 
+	
 	public User createUser(String username, String password) {
 		User user = new User(username);
 		Role role = roleRepository.findByName(RoleEnum.USER);
@@ -71,9 +73,9 @@ public class LanceurDB implements CommandLineRunner {
 		return user;
 	}
 
-	/**
-	 * Cette méthode permet de créer un administrateur dans le Main au moment du lancement de l'appli
-	 */
+	
+	//Cette méthode permet de créer un administrateur dans le Main au moment du lancement de l'appli
+	
 	public User createAdmin(String username, String password) {
 		User user = new User(username);
 		Role r = roleRepository.findByName(RoleEnum.ADMIN);
@@ -103,7 +105,7 @@ public class LanceurDB implements CommandLineRunner {
 		User user4  = this.createUser("UserBatch", "userBatch"); 
 				
 				
-				
+		
 		Categorie categorie1 = new Categorie("Roman");
 		Categorie categorie2 = new Categorie("Essai scientifique");
 		Categorie categorie3 = new Categorie("Manuel scolaire");
@@ -148,9 +150,14 @@ public class LanceurDB implements CommandLineRunner {
 		pretRepository.save(new Pret(LocalDate.of(2020, Month.JUNE, 29), LocalDate.of(2020, Month.AUGUST, 29), PretStatut.PROLONGE, user2, livre2));
 		pretRepository.save(new Pret(LocalDate.of(2020,  Month.JULY, 29), LocalDate.of(2020,  Month.AUGUST, 29), PretStatut.ENCOURS, user3, livre3)); 
 		pretRepository.save(new Pret(LocalDate.of(2020,  Month.MAY, 29), LocalDate.of(2020,  Month.JUNE, 29), PretStatut.CLOTURE, user3, livre4)); 
-		
+		pretRepository.save(new Pret(LocalDate.of(2020,  Month.JUNE, 29), LocalDate.of(2020,  Month.JULY, 29), PretStatut.ENCOURS, user2, livre3)); 
+	
+	
+
 	}
-				
+
+**/
+
 }
 	
 	
