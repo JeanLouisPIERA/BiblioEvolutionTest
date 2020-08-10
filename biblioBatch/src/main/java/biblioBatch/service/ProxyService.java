@@ -1,56 +1,49 @@
 /**
  * 
  */
-package biblioBatch.scheduledtasks;
+package biblioBatch.service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
 import biblioBatch.objets.Pret;
-import biblioBatch.service.HttpHeadersFactory;
-
 
 /**
  * @author jeanl
  *
  */
-@Component
-public class ScheduledTasks implements IScheduledTasks {
+@Service
+public class ProxyService {
 	
 	@Autowired
     private RestTemplate restTemplate;
 	@Autowired
     private HttpHeadersFactory httpHeadersFactory; 
+	@Autowired
+	private MailService mailService;
     
     
     @Value("${application.username}")
 	private String username;
 	@Value("${application.password}")
 	private String password;
-	
     @Value("${application.uRLPret}")
 	private String uRL;
 	
-
 	/**
 	 * Cette méthode permet d'obtenir la liste des prêts échus à la date du batch
 	 * @return
 	 */
-	@Override
-	//@Scheduled(cron="*/5 * * * * MON-FRI")
 	public Pret[] relancePretsEchus() {
 		
 		String url = uRL + "/echus";
@@ -71,5 +64,28 @@ public class ScheduledTasks implements IScheduledTasks {
 	}
 	
 	
+	
+	/**
+     * Cette méthode permet d'envoyer une série de mails à partir de la liste des prêts échus récupérée dans l'API Biblio
+     */
+    public void sendMailsList() {
+    	
+    	Pret[] relancePretsList = this.relancePretsEchus(); 
+    	
+    	for (Pret pretARelancer : relancePretsList) {
+	    	String adresseMail = pretARelancer.getUser().getAdresseMail(); 
+	    	Long numPret= pretARelancer.getNumPret();
+	    	LocalDate echeance = pretARelancer.getDateRetourPrevue(); 
+	    	String mailSubject = "Votre Pret de livre"+numPret+"est échu depuis le"+echeance;
+	    	String nomUser = pretARelancer.getUser().getUsername(); 
+	    	String nomLivre = pretARelancer.getLivre().getTitre(); 
+	    	String mailText = "Bonjour"+nomUser+"Votre prêt est échu. Merci de ramener à la bibliothèque l'ouvrage suivant"+nomLivre;
+	    	
+	        mailService.sendMail(adresseMail, mailSubject, mailText);
+	        
+	    	}
+    	
+    }
+    
 
 }
