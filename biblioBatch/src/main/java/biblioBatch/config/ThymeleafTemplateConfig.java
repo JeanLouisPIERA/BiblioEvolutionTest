@@ -13,7 +13,9 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -25,7 +27,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
  *
  */
 @Configuration
-@PropertySource("classpath:application.properties")
 public class ThymeleafTemplateConfig implements ApplicationContextAware, EnvironmentAware {
 	
 	public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
@@ -51,20 +52,36 @@ public class ThymeleafTemplateConfig implements ApplicationContextAware, Environ
 		this.applicationContext = applicationContext;
 		
 	}
+	/**
+	@Bean
+	public ResourceBundleMessageSource emailMessageSource() {
+	    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+	    messageSource.setBasename("/mailMessages");
+	    return messageSource;
+	}
+	**/
 	
 	
 	/**
 	 * Ce bean permet de générer le template spécialement configuré pour envoyer des mails
 	 * @return
 	 */
+	/**
     @Bean
     public SpringTemplateEngine springTemplateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(htmlTemplateResolver());
         return templateEngine;
     }
-    
- 
+    **/
+	@Bean
+	public SpringTemplateEngine thymeleafTemplateEngine() {
+	    SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+	    templateEngine.addDialect(new Java8TimeDialect());
+	    templateEngine.setTemplateResolver(thymeleafTemplateResolver());
+	    //templateEngine.setTemplateEngineMessageSource(emailMessageSource());
+	    return templateEngine;
+	}
     
     /**
      * Ce bean permet d'indiquer à la dépendance Thymeleaf où se trouve le template HTML 
@@ -80,7 +97,7 @@ public class ThymeleafTemplateConfig implements ApplicationContextAware, Environ
         emailTemplateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         return emailTemplateResolver;
     }
-    **/
+    
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setOrder(Integer.valueOf(2));
@@ -92,6 +109,14 @@ public class ThymeleafTemplateConfig implements ApplicationContextAware, Environ
         templateResolver.setCacheable(false);
         return templateResolver;
     }
-
-	
+    **/
+    @Bean
+    public SpringResourceTemplateResolver thymeleafTemplateResolver() {
+        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+        templateResolver.setPrefix("/WEB-INF/views/mail/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML");
+        templateResolver.setCharacterEncoding("UTF-8");
+        return templateResolver;
+    }
 }

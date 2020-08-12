@@ -5,11 +5,13 @@ package biblioBatch.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,8 +89,11 @@ public class ProxyService {
     	
     	for (Pret pretARelancer : relancePretsList) {
 	    	String mailTo = pretARelancer.getUser().getAdresseMail(); 
+	    	
 	    	Long numPret= pretARelancer.getNumPret();
-	    	LocalDate echeance = pretARelancer.getDateRetourPrevue(); 
+	    	LocalDateTime echeance = pretARelancer.getDateRetourPrevue().atStartOfDay(); 
+	    	LocalDateTime debut = pretARelancer.getDatePret().atStartOfDay(); 
+	    	System.out.println("echeance"+echeance);
 	    	String nomUser = pretARelancer.getUser().getUsername();
 	    	String nomLivre = pretARelancer.getLivre().getTitre(); 
 	    	
@@ -121,19 +126,27 @@ public class ProxyService {
 	         
 	         **/
 	    	
+	    	
+	    	/**
 	    	 Mail mail = new Mail();
 	         mail.setFrom(mailFrom);//replace with your desired email
 	         mail.setMailTo(mailTo);//replace with your desired email
 	         mail.setSubject("Relance ouvrage nom rendu - Bibliothèque Municipale");
-
+			**/
+	    	
+	    	String subject = "Relance ouvrage nom rendu - Bibliothèque Municipale BIBLIO";
+	    	
 	         Map<String, Object> model = new HashMap<String, Object>();
 	         model.put("numPret", numPret);
-	         model.put("dateEcheance", echeance);
+	         model.put("debut", debut);
+	         model.put("echeance", echeance);
 	         model.put("nomUser", nomUser);
 	         model.put("nomLivre", nomLivre);
-	         mail.setProps(model);
 	         
-	         mailService.sendEmail(mail);
+	         
+	        
+	         
+	         mailService.sendMessageUsingThymeleafTemplate(new InternetAddress(mailTo,nomUser), subject, model);
     	
 	    	}
     

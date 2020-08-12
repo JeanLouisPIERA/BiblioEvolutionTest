@@ -4,9 +4,12 @@
 package biblioBatch.service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +32,12 @@ import biblioBatch.objets.Mail;
  */
 
 @Service
-public class MailService {
+public class MailService{
 	
 	@Autowired
-	private JavaMailSender javaMailSender;
+	private JavaMailSender eMailSender;
 	@Autowired
-    private SpringTemplateEngine templateEngine;
+    private SpringTemplateEngine thymeleafTemplateEngine;
 	
 	@Value("${application.mail}")
 	private String mail;
@@ -66,7 +69,8 @@ public class MailService {
     }
     **/
     /**
-    @Autowired
+    @throws UnsupportedEncodingException 
+     * @Autowired
     private Configuration freemarkerConfig;
 
     public void sendSimpleMessage(Mail mail) throws MessagingException, IOException, TemplateException {
@@ -87,31 +91,39 @@ public class MailService {
     }
     **/
 	
-	public void sendEmail(Mail mail) throws MessagingException, IOException {
+	 public void sendMessageUsingThymeleafTemplate(
+		        InternetAddress to, String subject, Map<String, Object> templateModel)
+		            throws MessagingException, UnsupportedEncodingException {
+		                
+		        Context thymeleafContext = new Context();
+		        thymeleafContext.setVariables(templateModel);
+		        
+		        String htmlBody = thymeleafTemplateEngine.process("template-thymeleaf.html", thymeleafContext);
+
+		        sendHtmlMessage(to, subject, htmlBody);
+		    }
+	
+	public void sendHtmlMessage(InternetAddress to, String subject, String htmlBody) throws MessagingException, UnsupportedEncodingException {
         
-		Context context = new Context();
-        context.setVariables(mail.getProps());
+		//Context context = new Context();
+        //context.setVariables(mail.getProps());
 		
 		
 		
-		MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(
-        		message,
-                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
-        
+		MimeMessage message = eMailSender.createMimeMessage();
+        //MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
         //helper.addAttachment("template-cover.png", new ClassPathResource("javabydeveloper-email.PNG"));
         
-        
+		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
      
-        helper.setTo(mail.getMailTo());
-        helper.setSubject(mail.getSubject());
-        helper.setFrom(mail.getFrom());
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setFrom(new InternetAddress(mail,"Biblio"));
         
-        String html = templateEngine.process("templates/email-template.html", context);
-        helper.setText(html, true);
+        //String html = templateEngine.process("templates/email-template.html", context);
+        helper.setText(htmlBody, true);
 
-        javaMailSender.send(message);
+        eMailSender.send(message);
     }
 
     

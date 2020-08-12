@@ -1,5 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<!-- DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml"-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Template du email de relance des prêts échus</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -9,28 +11,37 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            font-size: 48px;
+            font-size: 20px;
         }
     </style>
 </head>
  <body>
  	<p>
-      Objet: <b> échéance de votre prêt </b> N° :
+      Objet: votre prêt N°
       <span th:text="${numPret}"></span>
+      enregistré le 
+      <span th:text="${#temporals.format(debut, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
     </p>
     <p th:text="${'Bonjour ' + nomUser}"></p>
     <p>
-      Votre emprunt de livre à la bibliothèque <b>est échu</b> depuis le :
-      <span th:text="${echeance}"></span>
+      Votre emprunt de livre rappelé en objet est échu depuis le :
+      <b>
+      <span th:text="${#temporals.format(echeance, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
+      </b>
     </p>
     <p>
       Merci de ramener à la bibliothèque <b> dans les meilleurs délais </b> l'ouvrage suivant :
+      <br></br>
+      <b>
       <span th:text="${nomLivre}"></span>
+      </b>
     </p>
     
     <p>
-      Avec nos remerciements <br/>.
-      L'équipe de la Bibliothèque.
+      Avec nos remerciements <br/>
+      </p>
+      <p>
+      L'équipe Biblio
     </p>
     
     
