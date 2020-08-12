@@ -4,7 +4,6 @@
 package biblioBatch.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import biblioBatch.objets.Mail;
 import biblioBatch.objets.Pret;
 
 
@@ -51,6 +49,8 @@ public class ProxyService {
 	private String uRL;
     @Value("${application.mail}")
 	private String mailFrom;
+    @Value("${application.subject}")
+    private String subject;
 	
 	/**
 	 * Cette méthode permet d'obtenir la liste des prêts échus à la date du batch
@@ -76,13 +76,15 @@ public class ProxyService {
 	}
 	
 	
-	
 	/**
-     * Cette méthode permet d'envoyer une série de mails à partir de la liste des prêts échus récupérée dans l'API Biblio
-	 * @throws TemplateException 
-	 * @throws IOException 
-	 * @throws MessagingException 
-     */
+	 * Cette méthode permet d'envoyer une série de mails à partir de la liste des prêts échus récupérée dans l'API Biblio
+     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService
+     * Gestion de la date en LocalDateTime gérée par Thymeleaf
+     * Gestion de new InternetAddress pour le destinataire
+     * Importation du sujet depuis application.properties
+	 * @throws MessagingException
+	 * @throws IOException
+	 */
     public void sendMailsList() throws MessagingException, IOException {
     	
     	Pret[] relancePretsList = this.relancePretsEchus(); 
@@ -93,48 +95,9 @@ public class ProxyService {
 	    	Long numPret= pretARelancer.getNumPret();
 	    	LocalDateTime echeance = pretARelancer.getDateRetourPrevue().atStartOfDay(); 
 	    	LocalDateTime debut = pretARelancer.getDatePret().atStartOfDay(); 
-	    	System.out.println("echeance"+echeance);
 	    	String nomUser = pretARelancer.getUser().getUsername();
 	    	String nomLivre = pretARelancer.getLivre().getTitre(); 
-	    	
-	    	/**
-	    	String mailSubject = "Votre Pret de livre"+numPret+"est échu depuis le"+echeance;
-	    	String nomUser = pretARelancer.getUser().getUsername(); 
-	    	String nomLivre = pretARelancer.getLivre().getTitre(); 
-	    	String mailText = "Bonjour"+nomUser+"Votre prêt est échu. Merci de ramener à la bibliothèque l'ouvrage suivant"+nomLivre;
-	    	
-	        mailService.sendMail(adresseMail, mailSubject, mailText);
-	        **/
-	    	
-	    	
-	    	/**
-	    	 Mail mail = new Mail();
-	         mail.setFrom(mailFrom);
-	         mail.setTo(mailTo);
-	         mail.setSubject("Relance ouvrage nom rendu - Bibliothèque Municipale");
-
-	         Map model = new HashMap();
-	         model.put("numPret", numPret);
-	         model.put("dateEcheance", echeance);
-	         model.put("nomUser", nomUser);
-	         model.put("nomLivre", nomLivre);
-	         
-	         
-	         mail.setModel(model);
-
-	         mailService.sendSimpleMessage(mail);
-	         
-	         **/
-	    	
-	    	
-	    	/**
-	    	 Mail mail = new Mail();
-	         mail.setFrom(mailFrom);//replace with your desired email
-	         mail.setMailTo(mailTo);//replace with your desired email
-	         mail.setSubject("Relance ouvrage nom rendu - Bibliothèque Municipale");
-			**/
-	    	
-	    	String subject = "Relance ouvrage nom rendu - Bibliothèque Municipale BIBLIO";
+	    	String nomAuteur = pretARelancer.getLivre().getAuteur(); 
 	    	
 	         Map<String, Object> model = new HashMap<String, Object>();
 	         model.put("numPret", numPret);
@@ -142,10 +105,8 @@ public class ProxyService {
 	         model.put("echeance", echeance);
 	         model.put("nomUser", nomUser);
 	         model.put("nomLivre", nomLivre);
-	         
-	         
-	        
-	         
+	         model.put("nomAuteur", nomAuteur);
+	          
 	         mailService.sendMessageUsingThymeleafTemplate(new InternetAddress(mailTo,nomUser), subject, model);
     	
 	    	}

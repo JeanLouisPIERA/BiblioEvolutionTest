@@ -3,9 +3,9 @@
  */
 package biblioBatch.service;
 
-import java.io.IOException;
+
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
+
 import java.util.Map;
 
 import javax.mail.MessagingException;
@@ -19,10 +19,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-
-
-import biblioBatch.objets.Mail;
-
 
 
 
@@ -41,56 +37,17 @@ public class MailService{
 	
 	@Value("${application.mail}")
 	private String mail;
-	
+	@Value("${application.template}")
+	private String template;
 	
 	/**
-    public void EmailService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
-    
-    
-     * Cette méthode permet de créer et d'envoyer un mail 
-     * @param toEmail
-     * @param subject
-     * @param message
-     */
-    /**
-    public void sendMail(String toEmail, String subject, String message) {
-
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-        mailMessage.setTo(toEmail);
-        mailMessage.setSubject(subject);
-        mailMessage.setText(message);
-
-        mailMessage.setFrom(mail);
-
-        javaMailSender.send(mailMessage);
-    }
-    **/
-    /**
-    @throws UnsupportedEncodingException 
-     * @Autowired
-    private Configuration freemarkerConfig;
-
-    public void sendSimpleMessage(Mail mail) throws MessagingException, IOException, TemplateException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,
-                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
-
-        Template emailTemplate = freemarkerConfig.getTemplate("email-template.ftlh");
-        String html = FreeMarkerTemplateUtils.processTemplateIntoString(emailTemplate, mail.getModel());
-
-        helper.setTo(mail.getTo());
-        helper.setText(html, true);
-        helper.setSubject(mail.getSubject());
-        helper.setFrom(mail.getFrom());
-
-        javaMailSender.send(message);
-    }
-    **/
-	
+	 * Cette méthode permet de customiser le message envoyé en utilisant le template Thymeleaf indiqué
+	 * @param to
+	 * @param subject
+	 * @param templateModel
+	 * @throws MessagingException
+	 * @throws UnsupportedEncodingException
+	 */
 	 public void sendMessageUsingThymeleafTemplate(
 		        InternetAddress to, String subject, Map<String, Object> templateModel)
 		            throws MessagingException, UnsupportedEncodingException {
@@ -98,29 +55,29 @@ public class MailService{
 		        Context thymeleafContext = new Context();
 		        thymeleafContext.setVariables(templateModel);
 		        
-		        String htmlBody = thymeleafTemplateEngine.process("template-thymeleaf.html", thymeleafContext);
+		        String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
 
 		        sendHtmlMessage(to, subject, htmlBody);
 		    }
 	
+	/**
+	 * Cette méthode permet de créer un message HTML en renseignant le destinataire, le sujet, l'émetteur et en créant le htmlBody du mail 
+	 * @param to
+	 * @param subject
+	 * @param htmlBody
+	 * @throws MessagingException
+	 * @throws UnsupportedEncodingException
+	 */
 	public void sendHtmlMessage(InternetAddress to, String subject, String htmlBody) throws MessagingException, UnsupportedEncodingException {
         
-		//Context context = new Context();
-        //context.setVariables(mail.getProps());
-		
-		
-		
 		MimeMessage message = eMailSender.createMimeMessage();
-        //MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
-        //helper.addAttachment("template-cover.png", new ClassPathResource("javabydeveloper-email.PNG"));
-        
+                
 		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
      
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setFrom(new InternetAddress(mail,"Biblio"));
         
-        //String html = templateEngine.process("templates/email-template.html", context);
         helper.setText(htmlBody, true);
 
         eMailSender.send(message);
