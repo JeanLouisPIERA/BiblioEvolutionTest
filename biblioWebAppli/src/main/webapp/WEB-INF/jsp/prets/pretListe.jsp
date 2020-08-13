@@ -117,12 +117,6 @@
 								        	href="/prets/prolongation/${pret.numPret}">Prolonger</a>
 								          </c:if>
 								          </td>
-								          <td>
-								          <c:if test="${pret.pretStatut.getCode() != 'CLOTURE'}">
-								          	<a type="button"  class="btn btn-danger" 
-								        	href="/prets/cloture/${pret.numPret}">Cloturer</a>
-								          </c:if>
-					        	      	  </td>
 					    				 </tr>
 				   					</c:forEach>
 								</tbody>

@@ -96,27 +96,7 @@ public class PretMetierImpl implements IPretMetier{
 		return response.getBody(); 
 	}
 
-	/**
-	 * @param numPret
-	 * @return
-	 * @throws EntityNotFoundException
-	 */
-	@Override
-	public Pret cloturerPret(Long numPret){
-		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
-    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-    	headers.setContentType(MediaType.APPLICATION_JSON);
-    	
-    	HttpEntity<?> requestEntity = 
-       	     new HttpEntity<>(headers);
-		
-		String url = uRL+"/cloture/"+numPret;
-    	
-		ResponseEntity<Pret> response = restTemplate.exchange(url , HttpMethod.PUT, requestEntity, Pret.class);
 	
-		return response.getBody(); 
-	}
-
 	/**
 	 * @param pretCriteria
 	 * @param pageable

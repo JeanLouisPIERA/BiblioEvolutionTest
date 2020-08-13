@@ -39,15 +39,6 @@ public interface IPretMetier {
 	 */
 	Pret prolongerPret(Long numPret);
 
-	/**
-	 * CRUD : UPDATE clôturer un prêt 
-	 * @param numPret
-	 * @return
-	 * @throws EntityNotFoundException 
-	 * @throws Exception
-	 */
-	Pret cloturerPret(Long numPret);
-	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
 	

@@ -114,24 +114,5 @@ public class PretController {
 	}
     
     
-    /**
-     * Permet de clôturer un prêt sans supprimer son enregistrement
-     * @param model
-     * @param numPret
-     * @return
-     */
-    @GetMapping("/prets/cloture/{numPret}")
-	public String cloturerPret(Model model, @PathVariable("numPret") Long numPret) {
-		try {
-			Pret pretACloturer = pretMetier.cloturerPret(numPret);
-			model.addAttribute(pretACloturer);
-		} catch (HttpClientErrorException e) {
-			model.addAttribute("error", e.getResponseBodyAsString());
-		     return"/error";
-		}
-		return "prets/pretCloture";
-	}
-    
-	
 
 }
