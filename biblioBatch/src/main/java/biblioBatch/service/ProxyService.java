@@ -107,7 +107,7 @@ public class ProxyService {
 	         model.put("nomLivre", nomLivre);
 	         model.put("nomAuteur", nomAuteur);
 	          
-	         mailService.sendMessageUsingThymeleafTemplate(new InternetAddress(mailTo,nomUser), subject, model);
+	         mailService.sendMessageUsingThymeleafTemplate(mailTo, nomUser, subject, model);
     	
 	    	}
     

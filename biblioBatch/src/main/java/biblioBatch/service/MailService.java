@@ -39,6 +39,8 @@ public class MailService{
 	private String mail;
 	@Value("${application.template}")
 	private String template;
+	@Value("${application.nameFrom}")
+	private String nameFrom;
 	
 	/**
 	 * Cette méthode permet de customiser le message envoyé en utilisant le template Thymeleaf indiqué
@@ -49,7 +51,7 @@ public class MailService{
 	 * @throws UnsupportedEncodingException
 	 */
 	 public void sendMessageUsingThymeleafTemplate(
-		        InternetAddress to, String subject, Map<String, Object> templateModel)
+		        String to, String name, String subject, Map<String, Object> templateModel)
 		            throws MessagingException, UnsupportedEncodingException {
 		                
 		        Context thymeleafContext = new Context();
@@ -57,7 +59,7 @@ public class MailService{
 		        
 		        String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
 
-		        sendHtmlMessage(to, subject, htmlBody);
+		        sendHtmlMessage(to, name, subject, htmlBody);
 		    }
 	
 	/**
@@ -68,15 +70,15 @@ public class MailService{
 	 * @throws MessagingException
 	 * @throws UnsupportedEncodingException
 	 */
-	public void sendHtmlMessage(InternetAddress to, String subject, String htmlBody) throws MessagingException, UnsupportedEncodingException {
+	public void sendHtmlMessage(String to, String name, String subject, String htmlBody) throws MessagingException, UnsupportedEncodingException {
         
 		MimeMessage message = eMailSender.createMimeMessage();
                 
 		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
      
-        helper.setTo(to);
+        helper.setTo(new InternetAddress(to, name));
         helper.setSubject(subject);
-        helper.setFrom(new InternetAddress(mail,"Biblio"));
+        helper.setFrom(new InternetAddress(mail,nameFrom));
         
         helper.setText(htmlBody, true);
 

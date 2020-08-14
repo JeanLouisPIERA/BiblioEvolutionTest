@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- META SECTION -->
+    <title>Biblio Search Categorie</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- END META SECTION -->
+    
+    <!--  BEGIN STYLE -->
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            padding: 1px;
+        }
+    </style>
+    <!--  END STYLE -->
+
+</head>
+<body>
+<form action="#" th:action="@{/categories}" th:object="${search}">
+    <label for="search_input">Search:</label> 
+    <input name="search"
+            id="search"/>
+    
+    <div th:if="${not #lists.isEmpty(search)}">
+        <h2>Resultat Recherche</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>nom</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="categorie : ${pageCategories.content}">
+                <td th:text="${categorie.numCategorie}">Text ...</td>
+                <td th:text="${categorie.nomCategorie}">Text ...</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+    <ul class=nav>
+    <li th:each="p:${pages}">
+    <a th:text="${p}" th:href="@{categories(page=${p})}></a>
+    </li>
+    </ul>
+    </div>
+</form>
+</body>
+</html>
