@@ -52,6 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
      */
     @Bean
     public Docket SwaggerConfig() {
+    	System.out.println("swagger="+enableSwagger);
         return new Docket(DocumentationType.SWAGGER_2)
                 .enable(enableSwagger)
                 .select()
@@ -64,6 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
      * @param web
      * @throws Exception
      */
+    
     @Override
     public void configure(WebSecurity web) throws Exception {
         if (enableSwagger)  
@@ -74,6 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                                    "/swagger-ui.html",
                                    "/webjars/**");
     }
+    
+    
     /**
      * Methode de WebMvcConfigurer qui permet d'accéder à SWAGGER
      * @param registry
@@ -81,8 +85,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         if (enableSwagger) {
-            registry.addResourceHandler("swagger-ui.html").addResourceLocations("${prop.swagger.resource.location}");
-            registry.addResourceHandler("/webjars/**").addResourceLocations("${prop.webjars.resource.location}");
+            registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+            registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         }
       }
     
