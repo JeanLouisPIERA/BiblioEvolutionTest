@@ -16,10 +16,12 @@ Cet projet multi-modulaires MAVEN est un projet académique dans le cadre du par
 Il doit permettre aux abonnés et aux employés d'une bibliothèque municipale de bénéficier de services en ligne.
 
 Il se présente sous 3 modules :
-	- l'API "biblioWebServiceRest" qui gère l'ensemble des services de création, modification, consultation et/ou suppression des 	comptes utilisateurs, catégories de livres, livres et prêts. Elle n'est pas directement accessible abonnés et employés. Une 	documentation SWAGGER a été installée
-	 	- une application Web "biblioWebAppli" permet aux abonnés de se connecter pour consulter l'ensemble des livres disponibles, 	faire des sélections, emprunter un ou plusieurs ouvrages, consulter ses prêts et prolonger la durée d'un prêt
-	 	
- 	- une application batch "biblioBatch" qui permet de récupérer à intervalles réguliers la liste des prêts échus dont le livre 	n'a pas été restitué et d'adresser un mail de relance aux abonnés retardataires
+
+- l'API "biblioWebServiceRest" qui gère l'ensemble des services de création, modification, consultation et/ou suppression des comptes utilisateurs, catégories de livres, livres et prêts. Elle n'est pas directement accessible abonnés et employés. Une documentation SWAGGER a été installée,
+
+- une application Web "biblioWebAppli" permet aux abonnés de se connecter pour consulter l'ensemble des livres disponibles, faire des sélections, emprunter un ou plusieurs ouvrages, consulter ses prêts et prolonger la durée d'un prêt,
+
+- une application batch "biblioBatch" qui permet de récupérer à intervalles réguliers la liste des prêts échus dont le livre n'a pas été restitué et d'adresser un mail de relance aux abonnés retardataires
  	
 Les données ne sont accessibles aux modules Web et Batch qu'au travers de l'API.
  
