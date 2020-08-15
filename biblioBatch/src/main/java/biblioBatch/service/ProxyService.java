@@ -4,6 +4,7 @@
 package biblioBatch.service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,10 +48,7 @@ public class ProxyService {
 	private String password;
     @Value("${application.uRLPret}")
 	private String uRL;
-    @Value("${application.mail}")
-	private String mailFrom;
-    @Value("${application.subject}")
-    private String subject;
+    
 	
 	/**
 	 * Cette méthode permet d'obtenir la liste des prêts échus à la date du batch
@@ -76,42 +74,5 @@ public class ProxyService {
 	}
 	
 	
-	/**
-	 * Cette méthode permet d'envoyer une série de mails à partir de la liste des prêts échus récupérée dans l'API Biblio
-     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService
-     * Gestion de la date en LocalDateTime gérée par Thymeleaf
-     * Gestion de new InternetAddress pour le destinataire
-     * Importation du sujet depuis application.properties
-	 * @throws MessagingException
-	 * @throws IOException
-	 */
-    public void sendMailsList() throws MessagingException, IOException {
-    	
-    	Pret[] relancePretsList = this.relancePretsEchus(); 
-    	
-    	for (Pret pretARelancer : relancePretsList) {
-	    	String mailTo = pretARelancer.getUser().getAdresseMail(); 
-	    	
-	    	Long numPret= pretARelancer.getNumPret();
-	    	LocalDateTime echeance = pretARelancer.getDateRetourPrevue().atStartOfDay(); 
-	    	LocalDateTime debut = pretARelancer.getDatePret().atStartOfDay(); 
-	    	String nomUser = pretARelancer.getUser().getUsername();
-	    	String nomLivre = pretARelancer.getLivre().getTitre(); 
-	    	String nomAuteur = pretARelancer.getLivre().getAuteur(); 
-	    	
-	         Map<String, Object> model = new HashMap<String, Object>();
-	         model.put("numPret", numPret);
-	         model.put("debut", debut);
-	         model.put("echeance", echeance);
-	         model.put("nomUser", nomUser);
-	         model.put("nomLivre", nomLivre);
-	         model.put("nomAuteur", nomAuteur);
-	          
-	         mailService.sendMessageUsingThymeleafTemplate(mailTo, nomUser, subject, model);
-    	
-	    	}
-    
-    }
-    
 
 }
