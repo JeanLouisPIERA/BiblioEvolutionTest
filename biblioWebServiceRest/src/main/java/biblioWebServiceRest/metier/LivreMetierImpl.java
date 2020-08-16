@@ -153,7 +153,7 @@ public class LivreMetierImpl implements ILivreMetier{
 		Integer nbExemplairesIndisponibles = livreToUpdate.get().getNbExemplaires()-livreToUpdate.get().getNbExemplairesDisponibles();
 		if(livreUpdates.getNbExemplaires()<0) 
 			throw new WrongNumberException("Le nombre total d'exemplaires de la référence de livre à mettre à jour doit au moins être égale à 0");
-		if(livreToUpdate.get().getNbExemplairesDisponibles()- (livreUpdates.getNbExemplaires())>0) throw new WrongNumberException("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
+		if(livreToUpdate.get().getNbExemplairesDisponibles()- (livreUpdates.getNbExemplaires())>0 || livreToUpdate.get().getNbExemplairesDisponibles()<0) throw new WrongNumberException("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
 		livreToUpdate.get().setNbExemplaires(livreUpdates.getNbExemplaires());
 		livreToUpdate.get().setNbExemplairesDisponibles(livreUpdates.getNbExemplaires()-nbExemplairesIndisponibles);
 		

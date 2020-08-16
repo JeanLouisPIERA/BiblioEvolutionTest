@@ -104,9 +104,10 @@ public class CategorieRestService {
 	@ApiOperation(value = "Suppression d'une référence de categorie de livres en refencement", response = Categorie.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "La demande de suppression de cette catégorie a été correctement effectuée"),
-	        @ApiResponse(code = 404, message = "Ressource inexistante")
+			@ApiResponse(code = 412, message = "Vous ne pouvez pas supprimer cette categorie qui contient des livres"), 
+	        @ApiResponse(code = 404, message = "La catégorie que vous voulez supprimer n'existe pas")
 	})
-	@DeleteMapping(value="/categories/{numCategorie}", produces = "application/text")
+	@DeleteMapping(value="/categories/{numCategorie}")
 	public ResponseEntity<String> deleteCategorie(@PathVariable (value="numCategorie", required=true) Long numCategorie) throws EntityNotFoundException, EntityNotDeletableException {
 		categorieMetier.deleteCategorie(numCategorie);
 		return new ResponseEntity<String>("La categorie de cette reference a ete supprimee", HttpStatus.OK);

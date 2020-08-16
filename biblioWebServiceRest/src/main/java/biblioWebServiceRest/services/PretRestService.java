@@ -72,6 +72,7 @@ public class PretRestService {
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le prêt a été créé"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 423, message = "Il n'y a plus d'exemplaire disponible de ce livre")
 	})
 	@PostMapping(value="/prets", produces = "application/json", consumes = "application/json")
 	public ResponseEntity<Pret> createPret(@Valid @RequestBody PretDTO pretDTO) throws EntityNotFoundException, BookNotAvailableException{
@@ -96,6 +97,7 @@ public class PretRestService {
 	@ApiResponses(value = {
 	        @ApiResponse(code = 202, message = "Le prêt a été prolongé"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 423, message = "Le statut de ce pret de livre ne permet pas sa prolongation")
 	})
 	@PutMapping(value="/prets/prolongation/{numPret}", produces="application/json")
 	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {

@@ -83,10 +83,10 @@ public class ExceptionHandlerControllerAdvice {
 	@ExceptionHandler (EntityNotDeletableException.class)
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.PRECONDITION_FAILED)
-	public ExceptionReponse handleCustomException(EntityNotDeletableException ex2) {
+	public ExceptionReponse handleCustomException(EntityNotDeletableException ex3) {
 		ExceptionReponse exceptionReponse = new ExceptionReponse();
 		exceptionReponse.setLocalDate(LocalDate.now());
-		exceptionReponse.setMessageErreur(ex2.getMessage());
+		exceptionReponse.setMessageErreur(ex3.getMessage());
 		exceptionReponse.setStatusCode(HttpStatus.PRECONDITION_FAILED.value());
 		return exceptionReponse;
 		

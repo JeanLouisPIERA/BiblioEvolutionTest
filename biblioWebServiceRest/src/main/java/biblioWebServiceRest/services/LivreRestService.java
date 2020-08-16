@@ -87,7 +87,8 @@ public class LivreRestService {
 	        @ApiResponse(code = 400, message = "Les termes de la requête de création n'ont pas été validés : "
     		+ "la saisie ne doit des champs ne doit pas être nulle ou vide, le nom de l'auteur et le titre doivent comprendre entre 5 et 25 caractères alphabétiques "
     		+ "et le nombre d'exemplaires et la référence de la catégorie doivent être des nombres entiers non nuls."),
-	        @ApiResponse(code = 404, message = "Ressource inexistante")
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 409, message = "Ce livre a déjà été référencé")
 	})
 	@PostMapping(value="/livres", produces = "application/json")
 	public ResponseEntity<Livre> createLivre(@Valid @RequestBody LivreDTO livreDTO) throws EntityNotFoundException, EntityAlreadyExistsException {
@@ -115,8 +116,9 @@ public class LivreRestService {
 	@ApiOperation(value = "Mise à jour d'une référence de livre exitante (Titre, nom de l'auteur, catégorie, nombre d'exemplaires existants)", response = Livre.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le livre a été mis à jour"),
-	        @ApiResponse(code = 400, message = "Requête incomplete : il faut remplir tous les champs requis"),
-	        @ApiResponse(code = 404, message = "Ressource inexistante")
+	        @ApiResponse(code = 400, message = "Le nombre total d'exemplaires de la référence de livre à mettre à jour n'est pas correct"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 409, message = "Ce livre a déjà été référencé")
 	})
 	@PutMapping(value="/livres/{numLivre}", produces = "application/json")
 	public ResponseEntity<Livre> updateLivre(@PathVariable Long numLivre, @Valid @RequestBody LivreDTO livreDTO) throws EntityNotFoundException, WrongNumberException, EntityAlreadyExistsException{
@@ -139,8 +141,9 @@ public class LivreRestService {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "La demande de suppression de ce livre a été correctement effectuée"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 412, message = "Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours"),
 	})
-	@DeleteMapping(value="/livres/{numLivre}", produces = "application/text")
+	@DeleteMapping(value="/livres/{numLivre}")
 	public ResponseEntity<String> deleteLivre(@PathVariable Long numLivre) throws EntityNotFoundException, EntityNotDeletableException{
 		livreMetier.deleteLivre(numLivre);
 		return new ResponseEntity<String>("Le livre de cette référence a été supprimé", HttpStatus.OK);
