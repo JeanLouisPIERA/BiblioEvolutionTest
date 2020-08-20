@@ -14,6 +14,7 @@ import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 
+
 public interface IPretMetier {
 		
 	/**
@@ -24,6 +25,7 @@ public interface IPretMetier {
 	 * @throws BadRequestException 
 	 * @throws BookNotAvailableException 
 	 * @throws EntityNotFoundException 
+	 * 
 	 * @throws Exception
 	 */
 	Pret createPret(PretDTO pretDTO) throws EntityNotFoundException, BookNotAvailableException;

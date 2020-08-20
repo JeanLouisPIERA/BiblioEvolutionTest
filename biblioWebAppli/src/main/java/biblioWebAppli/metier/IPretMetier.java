@@ -7,8 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.PretCriteria;
-import biblioWebAppli.dto.PretDTO;
 import biblioWebAppli.objets.Pret;
+
 
 
 
@@ -17,18 +17,6 @@ import biblioWebAppli.objets.Pret;
  *
  */
 public interface IPretMetier {
-	
-	/**
-	 * CRUD : CREATE Créer le prêt de l'exemplaire disponible d'un livre
-	 * @param titre
-	 * @param username
-	 * @return
-	 * @throws BadRequestException 
-	 * @throws BookNotAvailableException 
-	 * @throws EntityNotFoundException 
-	 * @throws Exception
-	 */
-	Pret createPret(PretDTO pretDTO);
 	
 	/**
 	 * CRUD : UPDATE prolonger la durée d'un prêt encours ou échu 

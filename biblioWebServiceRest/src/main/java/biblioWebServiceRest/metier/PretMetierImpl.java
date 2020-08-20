@@ -21,12 +21,14 @@ import biblioWebServiceRest.configurations.ApplicationPropertiesConfiguration;
 import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
+import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.dao.specs.PretSpecification;
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
+import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -45,6 +47,8 @@ public class PretMetierImpl implements IPretMetier {
 	@Autowired
 	private IUserRepository userRepository;
 	@Autowired
+	private IRoleRepository roleRepository;
+	@Autowired
 	ApplicationPropertiesConfiguration appProperties;
 	@Autowired
 	PretMapper pretMapper;
@@ -62,6 +66,7 @@ public class PretMetierImpl implements IPretMetier {
 	 * @throws BadRequestException 
 	 * @throws BookNotAvailableException 
 	 * @throws EntityNotFoundException 
+	 * @throws MethodNotAllowedException 
 	 */
 	@Override
 	public Pret createPret(PretDTO pretDTO) throws EntityNotFoundException, BookNotAvailableException {
@@ -74,7 +79,8 @@ public class PretMetierImpl implements IPretMetier {
 		
 	Optional<User> emprunteur = userRepository.findById(pretDTO.getIdUser());
 	if(!emprunteur.isPresent()) 
-		throw new EntityNotFoundException ("Aucun utlisateur ne correspond à votre identification de l'emprunteur ");
+		throw new EntityNotFoundException ("Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
+	
 		
 	Pret newPret = new Pret();
 	

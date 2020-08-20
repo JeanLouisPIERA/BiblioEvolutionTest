@@ -105,12 +105,7 @@
 								          <td>${livre.nbExemplaires}</td>
 								          <td>${livre.nbExemplairesDisponibles}</td>
 								          <td>${livre.categorie.getNomCategorie()}</td>
-								          <td>
-								          <c:if test="${livre.nbExemplairesDisponibles > 0}">
-								            <a type="button"  class="btn btn-success" 
-								        	href="/prets/livre/${livre.numLivre}">Emprunter</a>
-								          </c:if>
-								          </td>
+								          
 								          
 								          
 					        	      	  

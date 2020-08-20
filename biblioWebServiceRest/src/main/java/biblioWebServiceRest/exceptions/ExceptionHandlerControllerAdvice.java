@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException.MethodNotAllowed;
 
 /**
  * Cette classe permet de centraliser et généraliser les méthodes @ExceptionHandler 
@@ -110,5 +111,10 @@ public class ExceptionHandlerControllerAdvice {
 		return exceptionReponse;
 		
 	}
+	
+	
+	
+	
+	
 	
 }

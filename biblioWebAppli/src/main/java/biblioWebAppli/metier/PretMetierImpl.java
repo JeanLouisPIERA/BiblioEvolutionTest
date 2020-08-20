@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.PretCriteria;
 
-import biblioWebAppli.dto.PretDTO;
+
 
 import biblioWebAppli.objets.Pret;
 
@@ -55,24 +55,7 @@ public class PretMetierImpl implements IPretMetier{
     @Value("${application.uRLPret}")
 	private String uRL;
 
-	/**
-	 * @param pretDTO
-	 * @return
-	 * @throws EntityNotFoundException
-	 * @throws BookNotAvailableException
-	 */
-	@Override
-	public Pret createPret(PretDTO pretDTO) {
-		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
-    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-    	headers.setContentType(MediaType.APPLICATION_JSON);
-    	
-    	HttpEntity<PretDTO> requestEntity = new HttpEntity<>(pretDTO, headers);
-    	ResponseEntity<Pret> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, Pret.class);
-			System.out.println(response.getStatusCodeValue());
-			
-    	return response.getBody();
-	}
+	
 
 	/**
 	 * @param numPret

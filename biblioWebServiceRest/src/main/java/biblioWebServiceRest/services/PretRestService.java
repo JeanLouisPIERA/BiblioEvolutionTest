@@ -65,6 +65,7 @@ public class PretRestService {
 	 * @return
 	 * @throws BookNotAvailableException 
 	 * @throws EntityNotFoundException 
+	 * @throws MethodNotAllowedException 
 	 * @throws BadRequestException 
 	 * @throws Exception
 	 */

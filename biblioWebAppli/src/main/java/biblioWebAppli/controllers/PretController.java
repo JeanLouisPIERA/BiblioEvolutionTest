@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import biblioWebAppli.criteria.PretCriteria;
 
-import biblioWebAppli.dto.PretDTO;
+
 
 
 import biblioWebAppli.metier.IPretMetier;
@@ -70,31 +70,6 @@ public class PretController {
     }
     
  
-    /**
-     * Permet de valider l'enregistrement d'un nouveau pret
-     * @param model
-     * @param pretDTO
-     * @return
-     */
-    @GetMapping("/prets/livre/{numLivre}")
-    public String createPret(Model model, @PathVariable Long numLivre){
-        try {
-        	PretDTO pretDTO = new PretDTO();
-        	pretDTO.setNumLivre(numLivre);
-        	pretDTO.setIdUser(idUser);
-        	model.addAttribute("pretDTO", pretDTO);
-			Pret pretToCreate = pretMetier.createPret(pretDTO);
-			model.addAttribute(pretToCreate);
-		} catch (HttpClientErrorException e) {
-			model.addAttribute("error", e.getResponseBodyAsString());
-		     return"/error";
-		}
-		return "prets/pretConfirmation";
-        
-    }
-
-
-
 	/**
 	 * Permet de prolonger la durée d'un prêt
 	 * @param numPret
