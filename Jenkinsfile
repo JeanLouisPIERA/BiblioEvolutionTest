@@ -1,3 +1,5 @@
+pipeline {
+
 properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '10']]])
 
 stage('build') {
@@ -26,7 +28,7 @@ if (branch_deployment_environment) {
             }
         }
         node {
-            sh "echo Deploying to ${branch_deployment_environment}"
+            bat "echo Deploying to ${branch_deployment_environment}"
             //TODO specify the deployment
         }
     }
@@ -34,7 +36,7 @@ if (branch_deployment_environment) {
     if (branch_deployment_environment != "prod") {
         stage('integration tests') {
             node {
-                sh "echo Running integration tests in ${branch_deployment_environment}"
+                bat "echo Running integration tests in ${branch_deployment_environment}"
                 //TODO do the actual tests
             }
         }
@@ -120,11 +122,12 @@ def mvn(String goals) {
     def javaHome = tool "JDK1.8.0_102"
 
     withEnv(["JAVA_HOME=${javaHome}", "PATH+MAVEN=${mvnHome}/bin"]) {
-        sh "mvn -B ${goals}"
+        bat "mvn -B ${goals}"
     }
 }
 
 def version() {
     def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
     return matcher ? matcher[0][1] : null
+}
 }
