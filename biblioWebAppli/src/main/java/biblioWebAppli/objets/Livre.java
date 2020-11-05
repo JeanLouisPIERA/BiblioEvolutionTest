@@ -3,11 +3,6 @@
  */
 package biblioWebAppli.objets;
 
-
-
-
-
-
 public class Livre {
 	
 	private Long numLivre; 

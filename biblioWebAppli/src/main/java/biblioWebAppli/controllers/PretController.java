@@ -69,6 +69,7 @@ public class PretController {
         return "prets/pretListe";
     }
     
+    
  
 	/**
 	 * Permet de prolonger la durée d'un prêt
