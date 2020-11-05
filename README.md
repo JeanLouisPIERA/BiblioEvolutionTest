@@ -5,11 +5,21 @@
 
 Notre projet sera basé sur deux branches : master et develop. Ces deux branches sont strictement interdites en écriture aux développeurs.
 
-La branche master est le miroir de la production. Il est donc logique que l'on ne puisse y pousser les modifications directement.
+La branche master est le miroir de la production. Dans cette branche on merge les branche releases et hotfix qui ont été testées. 
 
-La branche develop centralise toutes les nouvelles fonctionnalités qui seront livrées dans la prochaine version. On ne doit pas y faire des livraisons directement
+A partir de la branche master, on crée la branche develop qui centralise toutes les nouvelles fonctionnalités features qui seront livrées dans la prochaine version. On ne doit pas y faire directement des livraisons de version
 
-La branche ticket1 est une branche feature ("de fonctionnalité") créée à partir de sa branche parente develop à laquelle elle sera mergée lorsque le bug du ticket1 sera corrigé.  
+On créée une branche feature à partir de la branche develop pour développer une fonctionnalité précise à partir d'une issue (use case).
+
+A partir de la branche develop quand on a un nombre suffisant de features stables, on va merger sur la branche release une version qu'il faudra tester avant de la merger sur la branche master.
+
+Quand on identifie un bug rapide sur la branche master ou une branche release, on créee une branche hotfix qui sera mergée sur la branche release ou master.
+
+Les branches feature, release et hotfix commencent toutes par un prefixe (feature/, release/, hotfix/)
+
+La convention de "branch naming" est celle du HYPHEN SEPARATORS (-):
+- les branches features  : issue tracker ID + courte description de la fonctionnalité
+- les branches release et hotfix : v.(nombreMajeur).(nombreMineur).(nombreBug). La version de départ sur la branche master est la version 1.0.0-SNAPSHOT
 
 # Présentation :
 
