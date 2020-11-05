@@ -1,6 +1,18 @@
 
 # BiblioTest (Duplicate de Biblio)
 
+# Stratégie GitFlow :
+
+Notre projet sera basé sur deux branches : master et develop. Ces deux branches sont strictement interdites en écriture aux développeurs.
+
+La branche master est le miroir de la production. Il est donc logique que l'on ne puisse y pousser les modifications directement.
+
+La branche develop centralise toutes les nouvelles fonctionnalités qui seront livrées dans la prochaine version. On ne doit pas y faire des livraisons directement
+
+La branche ticket1 est une branche feature ("de fonctionnalité") créée à partir de sa branche parente develop à laquelle elle sera mergée lorsque le bug du ticket1 sera corrigé.  
+
+# Présentation :
+
 Projet 7 développé dans le cadre du parcours académique Développeur Java OPENCLASSROOMS : Système de suivi des prêts d’ouvrage d’une bibliothèque municipale incluant une application web ouverte aux usagers, un web service et un batch des relances par mail 
 
 # Références :
