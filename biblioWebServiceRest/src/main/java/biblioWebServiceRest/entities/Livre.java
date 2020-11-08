@@ -51,6 +51,9 @@ public class Livre implements Serializable{
 	@JsonIgnore
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	private Collection<Pret> prets;
+	@JsonIgnore
+	@OneToMany(mappedBy="reservation", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	private Collection<Reservation> reservations;
 	
 	public Livre() {
 		super();
@@ -76,6 +79,21 @@ public class Livre implements Serializable{
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 		this.categorie = categorie;
 		this.prets = prets;
+	}
+	
+	
+
+	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
+			Categorie categorie, Collection<Pret> prets, Collection<Reservation> reservations) {
+		super();
+		this.numLivre = numLivre;
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+		this.categorie = categorie;
+		this.prets = prets;
+		this.reservations = reservations;
 	}
 
 	public Long getNumLivre() {
@@ -132,6 +150,14 @@ public class Livre implements Serializable{
 
 	public void setPrets(Collection<Pret> prets) {
 		this.prets = prets;
+	}
+
+	public Collection<Reservation> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(Collection<Reservation> reservations) {
+		this.reservations = reservations;
 	}
 
 	
