@@ -14,6 +14,8 @@ public interface IReservationMetier {
 		
 	/**
 	 * CRUD : CREATE Créer la réservation d'un exemplaire d'un livre qui n'a aucun exemplaire disponible
+	 * Le livre à emprunter n'a aucun exemplaire en stock = réservation IMPOSSIBLE
+	 * Il y a un exemplaire à emprunter pour le livre et la liste de reservations est vide = réservation IMPOSSIBLE
 	 * La réservation ne doit pas faire passer le nombre de réservations en cours > 2x le nombre d'exmplaires = réservation IMPOSSIBLE
 	 * La réservation ne doit pas porter sur un livre qui a déjà été emprunté = réservation REFUSEE
 	 * @param reservationDTO
@@ -38,16 +40,32 @@ public interface IReservationMetier {
 	 */
 	Reservation livrerReservation(Long numReservation) ;
 	
+	/**
+	 * CRUD : DELETE un emprunteur supprime volontairement une réservation
+	 * @param numReservation
+	 * @return
+	 */
+	Reservation deleteReservation(Long numReservation);
+	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
 	
 	/**
-	 * Afficher les réservations : recherce les prêts par ReservarionCriteria
+	 * Afficher toutes les réservations en cours: recherche les réservations par ReservationCriteria
 	 * @param reservationCriteria
 	 * @param pageable
 	 * @return
 	 */
-	 Page<Reservation> searchByCriteria(ReservationCriteria reservationCriteria, Pageable pageable);
+	 Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria, Pageable pageable);
+	 
+	 
+	 /**
+	  * Afficher ses propres réservations
+	  * pour chaque ouvrage, il est indiqué la prochaine date de retour prévue et sa position dans la liste d’attente
+	  * @param pageable
+	  * @return
+	  */
+	 Page<Reservation> searchMyReservations(Pageable pageable);
 	 
 	 /**
 	  * Identifie et change le statut des réservations pour lesquelles il faut informer l'utilisateur 
@@ -62,6 +80,9 @@ public interface IReservationMetier {
 	  * @return
 	  */
 	 List<Reservation> searchAndUpdateReservationsAnnulées(); 
+	 
+	 
+	 
 	 
 	
 }
