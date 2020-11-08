@@ -78,8 +78,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 		newReservation.setLivre(livreToRent.get());
 		newReservation.setUser(emprunteur);
 		
-		LocalDate datePret = LocalDate.now();
-		newReservation.setDatePret(datePret);
+		LocalDate dateReservation = LocalDate.now();
+		newReservation.setDateReservation(dateReservation);
 		
 		newReservation.setReservationStatut(ReservationStatut.ENREGISTREE);
 		
