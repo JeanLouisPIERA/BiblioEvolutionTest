@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 		private Long numReservation;
 		
 		@ApiModelProperty(notes= "Date de la réservation")
-		private LocalDate datePret;
+		private LocalDate dateReservation;
 		
 		@Enumerated
 		@ApiModelProperty(notes= "Statut de la réservation peut être "
@@ -42,15 +42,22 @@ import io.swagger.annotations.ApiModelProperty;
 		@JoinColumn(name="livre_num_livre")
 		private Livre livre;
 
-		public Reservation(Long numReservation, LocalDate datePret, ReservationStatut reservationStatut, User user,
-				Livre livre) {
+		public Reservation(Long numReservation, LocalDate dateReservation, ReservationStatut reservationStatut,
+				User user, Livre livre) {
 			super();
 			this.numReservation = numReservation;
-			this.datePret = datePret;
+			this.dateReservation = dateReservation;
 			this.reservationStatut = reservationStatut;
 			this.user = user;
 			this.livre = livre;
 		}
+
+
+		public Reservation() {
+			super();
+		}
+
+
 
 		public Long getNumReservation() {
 			return numReservation;
@@ -60,13 +67,16 @@ import io.swagger.annotations.ApiModelProperty;
 			this.numReservation = numReservation;
 		}
 
-		public LocalDate getDatePret() {
-			return datePret;
+
+		public LocalDate getDateReservation() {
+			return dateReservation;
 		}
 
-		public void setDatePret(LocalDate datePret) {
-			this.datePret = datePret;
+
+		public void setDateReservation(LocalDate dateReservation) {
+			this.dateReservation = dateReservation;
 		}
+
 
 		public ReservationStatut getReservationStatut() {
 			return reservationStatut;

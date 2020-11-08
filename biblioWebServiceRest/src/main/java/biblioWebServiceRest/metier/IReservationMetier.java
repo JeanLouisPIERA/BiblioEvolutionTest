@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import biblioWebServiceRest.criteria.ReservationCriteria;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Reservation;
+import biblioWebServiceRest.exceptions.BookAvailableException;
+import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityNotFoundException;
 
 public interface IReservationMetier {
 	
@@ -20,9 +23,12 @@ public interface IReservationMetier {
 	 * La réservation ne doit pas porter sur un livre qui a déjà été emprunté = réservation REFUSEE
 	 * @param reservationDTO
 	 * @return
+	 * @throws EntityNotFoundException 
+	 * @throws BookNotAvailableException 
+	 * @throws BookAvailableException 
 	 */
 	
-	Reservation createReservation(ReservationDTO reservationDTO) ;
+	Reservation createReservation(ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException ;
 	
 	/**
 	 * CRUD : UPDATE notifier la réservation pour indiquer que l'exemplaire du livre demandé est disponible pour l'emprunteur
