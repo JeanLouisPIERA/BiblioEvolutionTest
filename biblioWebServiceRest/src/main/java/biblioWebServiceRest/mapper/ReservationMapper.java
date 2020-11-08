@@ -6,11 +6,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ValueMapping;
 
 import biblioWebServiceRest.dto.LivreDTO;
+import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.Livre;
+import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.User;
+
+
 
 @Mapper(componentModel="spring")
 public interface ReservationMapper {
@@ -21,9 +25,10 @@ public interface ReservationMapper {
 	@ValueMapping(source = "ReservationStatut.LIVREE", target = "ReservationStatut.LIVREE")
 	@ValueMapping(source = "ReservationStatut.NOTIFIEE", target = "ReservationStatut.NOTIFIEEE")
 	@ValueMapping(source = "ReservationStatut.REFUSEE", target = "ReservationStatut.REFUSEE")
-	ReservationDTO resvationToReservationDTO(Reservation entity);
+	ReservationDTO reservationToReservationDTO(Reservation entity);
 	
 	Reservation reservationDTOToReservation(ReservationDTO dto);
+	Pret pretDTOToPret(PretDTO dto);
 	
 	LivreDTO livreToLivreDTO(Livre entity);
 	Livre livreDTOToLivre(LivreDTO dto);
