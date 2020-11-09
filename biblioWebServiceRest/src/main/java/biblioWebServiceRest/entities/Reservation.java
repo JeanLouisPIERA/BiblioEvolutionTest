@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 	@Table(name="reservation")
-	public class Reservation implements Serializable{
+	public class Reservation implements Serializable, Comparable<Reservation>{
 		
 		@Id @GeneratedValue
 		@ApiModelProperty(notes = "ID de la réservation generee dans la base de donnees")
@@ -100,6 +100,13 @@ import io.swagger.annotations.ApiModelProperty;
 
 		public void setLivre(Livre livre) {
 			this.livre = livre;
+		}
+
+
+		@Override
+		public int compareTo(Reservation reservation) {
+			return (this.numReservation.intValue() - reservation.numReservation.intValue());
+			
 		}
 		
 	

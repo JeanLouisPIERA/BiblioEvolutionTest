@@ -12,6 +12,7 @@ import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.RentAlreadyExistsException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
 
 public interface IReservationMetier {
 	
@@ -37,8 +38,10 @@ public interface IReservationMetier {
 	 * ReservationStatut = NOTIFIEE
 	 * @param numReservation
 	 * @return
+	 * @throws EntityNotFoundException 
+	 * @throws WrongNumberException 
 	 */
-	Reservation notifierReservation(Long numReservation) ;
+	Reservation notifierReservation(Long numReservation) throws EntityNotFoundException, WrongNumberException ;
 
 	/**
 	 * CRUD : UPDATE modifier le statut de la réservation lorsque le livre réservé a été emprunté

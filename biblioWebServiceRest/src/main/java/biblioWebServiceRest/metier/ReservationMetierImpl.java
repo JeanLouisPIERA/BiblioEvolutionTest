@@ -1,8 +1,11 @@
 package biblioWebServiceRest.metier;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.transaction.Transactional;
 
@@ -30,6 +33,7 @@ import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.RentAlreadyExistsException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
 import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.mapper.PretMapper;
 import biblioWebServiceRest.mapper.ReservationMapper;
@@ -93,9 +97,32 @@ public class ReservationMetierImpl implements IReservationMetier{
 	}
 
 	@Override
-	public Reservation notifierReservation(Long numReservation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Reservation notifierReservation(Long numReservation) throws EntityNotFoundException, WrongNumberException {
+		Optional<Reservation> searchedReservation = reservationRepository.findById(numReservation);
+		if(!searchedReservation.isPresent())
+			throw new EntityNotFoundException("Cette réservation n'existe pas");
+		if(!searchedReservation.get().getReservationStatut().equals(ReservationStatut.ENREGISTREE))
+			throw new WrongNumberException("Le statut de cette réservation ne permet pas de la notifier");
+		
+		Livre livreToRent = searchedReservation.get().getLivre(); 
+		List<Reservation> reservationsList = new ArrayList<Reservation>();
+		
+		if(livreToRent.getNbExemplairesDisponibles()>=1) {
+		livreToRent.getReservations().forEach((reservation)->{
+			if(reservation.getReservationStatut().equals(ReservationStatut.ENREGISTREE))
+				reservationsList.add(reservation); 
+			});
+		Collections.sort(reservationsList);
+			if(reservationsList.indexOf(searchedReservation.get())==0)
+				{ 
+				searchedReservation.get().setReservationStatut(ReservationStatut.NOTIFIEE);
+				} 
+			else 
+				{
+				searchedReservation.get().setReservationStatut(ReservationStatut.ENREGISTREE);
+				}
+			}
+		return searchedReservation.get();
 	}
 
 	@Override
