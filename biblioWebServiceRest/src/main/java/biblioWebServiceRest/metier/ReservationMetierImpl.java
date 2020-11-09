@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+
 import biblioWebServiceRest.configurations.ApplicationPropertiesConfiguration;
 import biblioWebServiceRest.criteria.ReservationCriteria;
 import biblioWebServiceRest.dao.ILivreRepository;
@@ -21,14 +22,14 @@ import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.entities.User;
+import biblioWebServiceRest.exceptions.BiblioException;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
-import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.RentAlreadyExistsException;
 import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.mapper.PretMapper;
 import biblioWebServiceRest.mapper.ReservationMapper;
@@ -55,33 +56,32 @@ public class ReservationMetierImpl implements IReservationMetier{
 	PretMapper pretMapper;
 	@Autowired
 	LivreMapper livreMapper; 
+	
 
 	@Override
-	public Reservation createReservation(ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException {
+	public Reservation createReservation(ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, RentAlreadyExistsException {
 		Optional<Livre> livreToRent = livreRepository.findById(reservationDTO.getNumLivre());
+		Optional<User> user = userRepository.findById(reservationDTO.getIdUser());
+		if(!user.isPresent()) 
+			throw new EntityNotFoundException ("EMPRUNTEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
+				
+		Optional<Pret> pret = pretRepository.findByUserAndLivre(user.get(), livreToRent.get());
+		if(pret.isPresent())
+			 throw new RentAlreadyExistsException ("RESERVATION REFUSEE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");	
+		
 		if(!livreToRent.isPresent()) 
-			throw new EntityNotFoundException ("Aucun enregistrement de livre ne correspond à votre demande");
+			throw new EntityNotFoundException ("OUVRAGE INCONNU = Aucun enregistrement de livre ne correspond à votre demande");
 		if(livreToRent.get().getNbExemplaires()==0)
 			throw new BookNotAvailableException ("RESERVATION IMPOSSIBLE = Il n'y a aucun exemplaire à emprunter pour cette référence de livre");
 		if(livreToRent.get().getNbExemplairesDisponibles() >0) 
 			throw new BookAvailableException ("RESERVATION IMPOSSIBLE = Vous pouvez emprunter immédiatement un exemplaire disponible de ce livre");
 		if((livreToRent.get().getReservations().size()+1)>=(2*(livreToRent.get().getNbExemplaires())))
 			throw new BookNotAvailableException ("RESERVATION IMPOSSIBLE : le nombre de réservations en cours maximum est atteint");
-		
-		Optional<User> user = userRepository.findById(reservationDTO.getIdUser());
-		if(!user.isPresent()) 
-			throw new EntityNotFoundException ("Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
-				
-		User emprunteur = user.get();
-		livreToRent.get().getPrets().forEach((pret)->{
-			if(pret.getUser().equals(emprunteur)) 
-				throw new RuntimeException ("RESERVATION REFUSEE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");
-			});
-		
+			
 		Reservation newReservation = new Reservation();
 		
 		newReservation.setLivre(livreToRent.get());
-		newReservation.setUser(emprunteur);
+		newReservation.setUser(user.get());
 		
 		LocalDate dateReservation = LocalDate.now();
 		newReservation.setDateReservation(dateReservation);

@@ -17,6 +17,7 @@ import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.RentAlreadyExistsException;
 import biblioWebServiceRest.mapper.ReservationMapper;
 import biblioWebServiceRest.metier.IReservationMetier;
 import io.swagger.annotations.Api;
@@ -45,15 +46,19 @@ public class ReservationRestService {
 	 * @throws EntityNotFoundException
 	 * @throws BookNotAvailableException
 	 * @throws BookAvailableException
+	 * @throws RentAlreadyExistsException 
 	 */
 	@ApiOperation(value = "Enregistrement d'une nouvelle réservation", response = Reservation.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "La réservation a été créée"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 423, message = "Il n'y a plus d'exemplaire disponible de ce livre")
+	        @ApiResponse(code = 406, message = "Vous ne pouvez pas réserver un livre que vous avez déjà emprunté"),
+	        @ApiResponse(code = 417, message = "Vous ne pouvez pas réserver un livre dont un exemplaire est disponible au prêt"),
+	        @ApiResponse(code = 423, message = "Il n'existe aucun exemplaire de ce livre, la réservation est impossible")
+	        
 	})
 	@PostMapping(value="/reservations", produces = "application/json", consumes = "application/json")
-	public ResponseEntity<Reservation> createReservation(@Valid @RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException{
+	public ResponseEntity<Reservation> createReservation(@Valid @RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, RentAlreadyExistsException{
 		Reservation newReservation = reservationMetier.createReservation(reservationDTO);
 		return new ResponseEntity<Reservation>(newReservation, HttpStatus.CREATED);
 	}

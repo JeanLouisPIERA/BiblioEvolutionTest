@@ -132,7 +132,17 @@ public class ExceptionHandlerControllerAdvice {
 	}
 	
 	
-	
+	@ExceptionHandler (RentAlreadyExistsException.class)
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE)
+	public ExceptionReponse handleCustomException(RentAlreadyExistsException ex5) {
+		ExceptionReponse exceptionReponse = new ExceptionReponse();
+		exceptionReponse.setLocalDate(LocalDate.now());
+		exceptionReponse.setMessageErreur(ex5.getMessage());
+		exceptionReponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+		return exceptionReponse;
+		
+	}
 	
 	
 	
