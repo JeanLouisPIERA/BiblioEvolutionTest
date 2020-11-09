@@ -17,6 +17,7 @@ public class ApplicationPropertiesConfiguration {
 
     private int dureePret;
     private int dureeProlongation;
+    private int dureeNotification;
 	/**
 	 * @return the dureePret
 	 */
@@ -40,7 +41,15 @@ public class ApplicationPropertiesConfiguration {
 	 */
 	public void setDureeProlongation(int dureeProlongation) {
 		this.dureeProlongation = dureeProlongation;
+	}
+	public int getDureeNotification() {
+		return dureeNotification;
+	}
+	public void setDureeNotification(int dureeNotification) {
+		this.dureeNotification = dureeNotification;
 	} 
+	
+	
 
     
 }

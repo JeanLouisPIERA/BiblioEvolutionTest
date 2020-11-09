@@ -24,6 +24,12 @@ import io.swagger.annotations.ApiModelProperty;
 		@ApiModelProperty(notes= "Date de la réservation")
 		private LocalDate dateReservation;
 		
+		@ApiModelProperty(notes= "Date de notification")
+		private LocalDate dateNotification;
+		
+		@ApiModelProperty(notes= "Date de fin de notification")
+		private LocalDate dateDeadline;
+		
 		@Enumerated
 		@ApiModelProperty(notes= "Statut de la réservation peut être "
 				+ "ENREGISTREE : si le nombre de réservations en cours est < 2 x le nombre d'emplaires et si pas de prêt en cours pour ce livvre, "
@@ -42,16 +48,17 @@ import io.swagger.annotations.ApiModelProperty;
 		@JoinColumn(name="livre_num_livre")
 		private Livre livre;
 
-		public Reservation(Long numReservation, LocalDate dateReservation, ReservationStatut reservationStatut,
-				User user, Livre livre) {
+		public Reservation(Long numReservation, LocalDate dateReservation, LocalDate dateNotification,
+				LocalDate dateDeadline, ReservationStatut reservationStatut, User user, Livre livre) {
 			super();
 			this.numReservation = numReservation;
 			this.dateReservation = dateReservation;
+			this.dateNotification = dateNotification;
+			this.dateDeadline = dateDeadline;
 			this.reservationStatut = reservationStatut;
 			this.user = user;
 			this.livre = livre;
 		}
-
 
 		public Reservation() {
 			super();
@@ -101,7 +108,22 @@ import io.swagger.annotations.ApiModelProperty;
 		public void setLivre(Livre livre) {
 			this.livre = livre;
 		}
+		
+		public LocalDate getDateNotification() {
+			return dateNotification;
+		}
 
+		public void setDateNotification(LocalDate dateNotification) {
+			this.dateNotification = dateNotification;
+		}
+
+		public LocalDate getDateDeadline() {
+			return dateDeadline;
+		}
+
+		public void setDateDeadline(LocalDate dateDeadline) {
+			this.dateDeadline = dateDeadline;
+		}
 
 		@Override
 		public int compareTo(Reservation reservation) {

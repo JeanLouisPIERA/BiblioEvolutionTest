@@ -80,6 +80,8 @@ ALTER TABLE public.livre OWNER TO postgres;
 CREATE TABLE public.reservation (
     num_reservation bigint NOT NULL,
     date_reservation date,
+    date_notification date,
+    date_deadline date,
     reservation_statut integer,
     livre_num_livre bigint,
     user_id bigint

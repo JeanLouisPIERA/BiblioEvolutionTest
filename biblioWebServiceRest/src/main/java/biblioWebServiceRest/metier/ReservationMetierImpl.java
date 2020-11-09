@@ -116,6 +116,11 @@ public class ReservationMetierImpl implements IReservationMetier{
 			if(reservationsList.indexOf(searchedReservation.get())==0)
 				{ 
 				searchedReservation.get().setReservationStatut(ReservationStatut.NOTIFIEE);
+				livreToRent.setNbExemplairesDisponibles(livreToRent.getNbExemplairesDisponibles()-1);
+				LocalDate dateNotification = LocalDate.now();
+				searchedReservation.get().setDateNotification(dateNotification);
+				LocalDate dateDeadline = dateNotification.plusDays(appProperties.getDureeNotification());
+				searchedReservation.get().setDateDeadline(dateDeadline);
 				} 
 			else 
 				{
