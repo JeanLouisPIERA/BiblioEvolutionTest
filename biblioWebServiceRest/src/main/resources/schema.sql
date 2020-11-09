@@ -8,7 +8,7 @@
 -- Started on 2020-08-09 18:21:34
 
 
-
+DROP TABLE IF EXISTS public.reservation; 
 DROP TABLE IF EXISTS public.pret; 
 DROP TABLE IF EXISTS public.utilisateur; 
 DROP TABLE IF EXISTS public.role;
@@ -75,6 +75,18 @@ CREATE TABLE public.livre (
 
 
 ALTER TABLE public.livre OWNER TO postgres;
+
+
+CREATE TABLE public.reservation (
+    num_reservation bigint NOT NULL,
+    date_reservation date,
+    reservation_statut integer,
+    livre_num_livre bigint,
+    user_id bigint
+);
+
+
+ALTER TABLE public.reservation OWNER TO postgres;
 
 --
 -- TOC entry 206 (class 1259 OID 339470)
@@ -213,7 +225,10 @@ ALTER TABLE ONLY public.hibernate_sequences
 ALTER TABLE ONLY public.livre
     ADD CONSTRAINT livre_pkey PRIMARY KEY (num_livre);
 
-
+ALTER TABLE ONLY public.reservation
+    ADD CONSTRAINT reservation_pkey PRIMARY KEY (num_reservation);
+    
+    
 --
 -- TOC entry 2724 (class 2606 OID 339495)
 -- Name: pret pret_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
@@ -250,6 +265,10 @@ ALTER TABLE ONLY public.utilisateur
     ADD CONSTRAINT utilisateur_pkey PRIMARY KEY (id_user);
 
 
+ALTER TABLE ONLY public.reservation
+    ADD CONSTRAINT fk64sut2lvpx80t9we8mcui2tu6 FOREIGN KEY (user_id) REFERENCES public.utilisateur(id_user);
+    
+    
 --
 -- TOC entry 2730 (class 2606 OID 339502)
 -- Name: pret fk64sut2lvpx80t9we8mcui2tu6; Type: FK CONSTRAINT; Schema: public; Owner: postgres
@@ -259,6 +278,8 @@ ALTER TABLE ONLY public.pret
     ADD CONSTRAINT fk64sut2lvpx80t9we8mcui2tu6 FOREIGN KEY (user_id) REFERENCES public.utilisateur(id_user);
 
 
+ALTER TABLE ONLY public.reservation
+    ADD CONSTRAINT fk7ejoe8ji4sgypnthjfkdi3kpw FOREIGN KEY (livre_num_livre) REFERENCES public.livre(num_livre);    
 --
 -- TOC entry 2731 (class 2606 OID 339507)
 -- Name: pret fk7ejoe8ji4sgypnthjfkdi3kpw; Type: FK CONSTRAINT; Schema: public; Owner: postgres

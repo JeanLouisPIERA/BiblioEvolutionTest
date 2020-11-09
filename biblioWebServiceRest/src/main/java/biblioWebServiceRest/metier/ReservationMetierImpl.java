@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import biblioWebServiceRest.configurations.ApplicationPropertiesConfiguration;
 import biblioWebServiceRest.criteria.ReservationCriteria;
@@ -30,6 +33,8 @@ import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.mapper.PretMapper;
 import biblioWebServiceRest.mapper.ReservationMapper;
 
+@Service
+@Transactional
 public class ReservationMetierImpl implements IReservationMetier{
 	
 	@Autowired

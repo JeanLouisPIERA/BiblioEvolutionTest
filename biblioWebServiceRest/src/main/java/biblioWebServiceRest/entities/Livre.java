@@ -52,7 +52,7 @@ public class Livre implements Serializable{
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	private Collection<Pret> prets;
 	@JsonIgnore
-	@OneToMany(mappedBy="reservation", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	private Collection<Reservation> reservations;
 	
 	public Livre() {
