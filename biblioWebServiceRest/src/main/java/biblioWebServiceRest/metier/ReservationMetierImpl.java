@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javax.transaction.Transactional;
 
@@ -22,13 +21,13 @@ import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.IReservationRepository;
 import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
+import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.entities.User;
-import biblioWebServiceRest.exceptions.BiblioException;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -60,6 +59,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 	PretMapper pretMapper;
 	@Autowired
 	LivreMapper livreMapper; 
+	@Autowired
+	IPretMetier pretMetier;
 	
 
 	@Override
@@ -67,11 +68,11 @@ public class ReservationMetierImpl implements IReservationMetier{
 		Optional<Livre> livreToRent = livreRepository.findById(reservationDTO.getNumLivre());
 		Optional<User> user = userRepository.findById(reservationDTO.getIdUser());
 		if(!user.isPresent()) 
-			throw new EntityNotFoundException ("EMPRUNTEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
+			throw new EntityNotFoundException ("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
 				
 		Optional<Pret> pret = pretRepository.findByUserAndLivre(user.get(), livreToRent.get());
 		if(pret.isPresent())
-			 throw new RentAlreadyExistsException ("RESERVATION REFUSEE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");	
+			 throw new RentAlreadyExistsException ("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");	
 		
 		if(!livreToRent.isPresent()) 
 			throw new EntityNotFoundException ("OUVRAGE INCONNU = Aucun enregistrement de livre ne correspond à votre demande");
@@ -100,9 +101,9 @@ public class ReservationMetierImpl implements IReservationMetier{
 	public Reservation notifierReservation(Long numReservation) throws EntityNotFoundException, WrongNumberException {
 		Optional<Reservation> searchedReservation = reservationRepository.findById(numReservation);
 		if(!searchedReservation.isPresent())
-			throw new EntityNotFoundException("Cette réservation n'existe pas");
+			throw new EntityNotFoundException("RESERVATION INCONNUE : Cette réservation n'existe pas");
 		if(!searchedReservation.get().getReservationStatut().equals(ReservationStatut.ENREGISTREE))
-			throw new WrongNumberException("Le statut de cette réservation ne permet pas de la notifier");
+			throw new WrongNumberException("NOTIFICATION IMPOSSIBLE = Le statut de cette réservation ne permet pas de la notifier");
 		
 		Livre livreToRent = searchedReservation.get().getLivre(); 
 		List<Reservation> reservationsList = new ArrayList<Reservation>();
@@ -122,18 +123,30 @@ public class ReservationMetierImpl implements IReservationMetier{
 				LocalDate dateDeadline = dateNotification.plusDays(appProperties.getDureeNotification());
 				searchedReservation.get().setDateDeadline(dateDeadline);
 				} 
-			else 
-				{
-				searchedReservation.get().setReservationStatut(ReservationStatut.ENREGISTREE);
-				}
 			}
 		return searchedReservation.get();
 	}
 
 	@Override
-	public Reservation livrerReservation(Long numReservation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Reservation livrerReservationAndCreerPret(Long numReservation) throws EntityNotFoundException, WrongNumberException, BookNotAvailableException {
+		Optional<Reservation> searchedReservation = reservationRepository.findById(numReservation);
+		if(!searchedReservation.isPresent())
+			throw new EntityNotFoundException("RESERVATION INCONNUE = Cette réservation n'existe pas");
+		if(!searchedReservation.get().getReservationStatut().equals(ReservationStatut.NOTIFIEE))
+			throw new WrongNumberException("LIVRAISON IMPOSSIBLE = Le statut de cette réservation ne permet pas de la notifier");
+		if(searchedReservation.get().getDateDeadline().isBefore(LocalDate.now())) {
+			searchedReservation.get().setReservationStatut(ReservationStatut.ANNULEE);
+			throw new BookNotAvailableException("LIVRAISON ANNULEE = La date limite de votre réservation pour le pret du livre est dépassée");
+		}
+		searchedReservation.get().setReservationStatut(ReservationStatut.LIVREE);
+		
+		searchedReservation.get().getLivre().setNbExemplairesDisponibles(searchedReservation.get().getLivre().getNbExemplairesDisponibles()+1);
+		PretDTO pretDTO = new PretDTO();
+		pretDTO.setIdUser(searchedReservation.get().getUser().getIdUser());
+		pretDTO.setNumLivre(searchedReservation.get().getLivre().getNumLivre());
+		pretMetier.createPret(pretDTO);
+		
+		return searchedReservation.get();
 	}
 
 	@Override

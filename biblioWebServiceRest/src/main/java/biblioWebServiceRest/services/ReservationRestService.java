@@ -64,34 +64,57 @@ public class ReservationRestService {
 		return new ResponseEntity<Reservation>(newReservation, HttpStatus.CREATED);
 	}
 	
-	
 	/**
 	 * Cette méthode permet de  modifier le statut d'une réservation ENREGISTREE pour le passer à NOTIFIEE
 	 * Lorsque le livre qui fait l'objet de la réservation a un exemplaire disponible et que toutes les autres réservations
 	 * dont le statut est ENREGISTREE ont une date de création postérieure à la réservation, la réservation passe en statut NOTIFIEE
 	 * Toutes les réservations au statut notifiée font l'obejt d'un envoi de mail 
-	 * Gestion DTO
-	 * @param numPret
+	 * @param numReservation
 	 * @return
-	 * @throws BookNotAvailableException 
-	 * @throws EntityNotFoundException 
-	 * @throws WrongNumberException 
-	 * @throws Exception
-	 * @see biblioWebServiceRest.metier.IPretMetier#prolongerPret(java.lang.Long)
+	 * @throws EntityNotFoundException
+	 * @throws BookNotAvailableException
+	 * @throws WrongNumberException
 	 */
 	@ApiOperation(value = "Notification d'une réservation en cours pour envoi d'un mail demandant à saisir le pret", response = Reservation.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 202, message = "Le statut de la réservation a été passé à NOTIFIEE"),
+	        @ApiResponse(code = 400, message = "Le statut de cette réservation ne permet pas de la notifier"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 423, message = "Le statut de cette réservation de livre ne permet pas sa notification")
+	        
 	})
 	@PutMapping(value="/reservations/notification/{numReservation}", produces="application/json")
 	public ResponseEntity<Reservation> notifierPret(@PathVariable Long numReservation) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
 		
-		//Pret prolongationPret = pretMetier.prolongerPret(numPret);
 		Reservation notificationReservation = reservationMetier.notifierReservation(numReservation);
 		return new ResponseEntity<Reservation>(notificationReservation, HttpStatus.ACCEPTED);
 	
 	}
+	
+	/**
+	 * Cette méthode permet de  modifier le statut d'une réservation NOTIFIEE pour le passer à LIVREE
+	 * Lorsque le livre qui fait l'objet de la réservation NOTIFIEE par mail est emprunté dans un délai de 48 heures 
+	 * suite à l'envoi du mail de notification :
+	 * *la réservation est passée en statut LIVREE
+	 * *le pret du livre est créé automatiquement
+	 * Si le délai de 48 heures est dépassé une exception BookNotAvaiable est levée et la réservation est passée en statut
+	 * REFUSEE 
+	 */
+	@ApiOperation(value = "Livraison d'une réservation notifiée et création d'un pret pour le livre correspondant", response = Reservation.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 202, message = "Le statut de la réservation a été passé à LIVREE"),
+	        @ApiResponse(code = 400, message = "Le statit de cette livraison ne permet pas de la livrer"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 423, message = "La date limite pour livrer cette réservation a été dépassée")
+	        
+	})
+	@PutMapping(value="/reservations/livraison/{numReservation}", produces="application/json")
+	public ResponseEntity<Reservation> livrerPret(@PathVariable Long numReservation) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
+		
+		Reservation livraisonReservation = reservationMetier.livrerReservationAndCreerPret(numReservation);
+		return new ResponseEntity<Reservation>(livraisonReservation, HttpStatus.ACCEPTED);
+	
+	}
+	
+	
 
 }

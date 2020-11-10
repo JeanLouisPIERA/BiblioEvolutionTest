@@ -32,12 +32,12 @@ import io.swagger.annotations.ApiModelProperty;
 		
 		@Enumerated
 		@ApiModelProperty(notes= "Statut de la réservation peut être "
-				+ "ENREGISTREE : si le nombre de réservations en cours est < 2 x le nombre d'emplaires et si pas de prêt en cours pour ce livvre, "
-				+ "IMPOSSIBLE : si le nombre de réservations en cours est > 2 x le nombre d'emplaires,"
-				+ " REFUSEE : s'il existe un pret de ce livre en cours pour cet utilisateur,"
+				+ " ENREGISTREE : si le nombre de réservations en cours est < 2 x le nombre d'emplaires et si pas de prêt en cours pour ce livvre, "
+				+ " SUPPRIMEE : si l'utilisateur renonce à emprunter le livre,"
 				+ " NOTIFIEE : quand le livre est disponible,"
 				+ " LIVREE : quand le livre est emprunté,"
-				+ " ANNULEE : si le livre n'est pas emprunté dans les 48 heures qui suivent sa notification")
+				+ " ANNULEE : si le livre n'est pas emprunté dans les 48 heures qui suivent sa notification"
+				+ " IMPOSSIBLE : si les conditions d'enregistrement ne sont pas remplies ****** C'est une exception, pas un statut******")
 		private ReservationStatut reservationStatut;
 		
 		@ManyToOne

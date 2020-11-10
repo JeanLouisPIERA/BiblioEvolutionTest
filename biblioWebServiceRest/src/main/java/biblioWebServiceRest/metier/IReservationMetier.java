@@ -48,8 +48,11 @@ public interface IReservationMetier {
 	 * ReservationStatut = LIVREE
 	 * @param numReservation
 	 * @return
+	 * @throws EntityNotFoundException 
+	 * @throws WrongNumberException 
+	 * @throws BookNotAvailableException 
 	 */
-	Reservation livrerReservation(Long numReservation) ;
+	Reservation livrerReservationAndCreerPret(Long numReservation) throws EntityNotFoundException, WrongNumberException, BookNotAvailableException ;
 	
 	/**
 	 * CRUD : DELETE un emprunteur supprime volontairement une réservation

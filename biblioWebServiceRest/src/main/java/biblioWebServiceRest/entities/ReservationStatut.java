@@ -6,8 +6,7 @@ package biblioWebServiceRest.entities;
 public enum ReservationStatut {
 	
 	ENREGISTREE("ENREGISTREE", "réservation enregistrée"),
-	IMPOSSIBLE("IMPOSSIBLE", "réservation impossible"), 
-	REFUSEE("REFUSEE", "réservation refusée"), 
+	SUPPRIMEE("SUPPRIMEE", "réservation supprimée"), 
 	NOTIFIEE("NOTIFIEE", "réservation notifiée"),
 	LIVREE("LIVREE", "réservation livrée"),
 	ANNULEE("ANNULEE", "réservation annulée");
@@ -49,10 +48,8 @@ public enum ReservationStatut {
 	public String toString() {
 		if(this==ENREGISTREE) {
 			return "Réservation enregistrée";
-		}else if(this==IMPOSSIBLE) {
-			return "Réservation impossible";
-		}else if(this==REFUSEE) {
-			return "Réservation refusée";
+		}else if(this==SUPPRIMEE) {
+			return "Réservation supprimée";
 		}else if(this==NOTIFIEE) {
 			return "Réservation notifiée";
 		}else if(this==LIVREE) {
