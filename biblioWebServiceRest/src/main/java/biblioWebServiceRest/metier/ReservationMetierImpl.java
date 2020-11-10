@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
@@ -21,6 +22,7 @@ import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.IReservationRepository;
 import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
+import biblioWebServiceRest.dao.specs.ReservationSpecification;
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Livre;
@@ -169,8 +171,10 @@ public class ReservationMetierImpl implements IReservationMetier{
 	@Override
 	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria,
 			Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		Specification<Reservation> reservationSpecification = new ReservationSpecification(reservationCriteria);
+		System.out.println("spec"+ reservationSpecification.toString());
+		Page<Reservation> reservations = reservationRepository.findAll(reservationSpecification, pageable);
+		return reservations;
 	}
 
 	@Override
@@ -178,11 +182,27 @@ public class ReservationMetierImpl implements IReservationMetier{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	@Override
-	public List<Reservation> searchAndNotifierReservations() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Reservation> searchAndNotifierReservations() throws EntityNotFoundException, WrongNumberException {
+		List<Reservation> allReservations = reservationRepository.findAll(); 
+		List<Reservation> reservationsANotifier = new ArrayList<Reservation>();
+		for (Reservation reservation : allReservations) {
+			if(reservation.getReservationStatut().equals(ReservationStatut.NOTIFIEE)) {
+				reservationsANotifier.add(reservation);
+			}
+			if (reservation.getReservationStatut().equals(ReservationStatut.ENREGISTREE) && reservation.getLivre().getNbExemplairesDisponibles()>=1)
+				{
+					Reservation reservationPostNotif = this.notifierReservation(reservation.getNumReservation()); //tru-catch pour neutraliser les exceptions
+					System.out.println(reservationPostNotif.getNumReservation());
+					if(reservationPostNotif.getReservationStatut().equals(ReservationStatut.NOTIFIEE))
+					{
+						reservationsANotifier.add(reservationPostNotif); 
+					}	
+				}
+		}
+		return reservationsANotifier; 
 	}
 
 	@Override

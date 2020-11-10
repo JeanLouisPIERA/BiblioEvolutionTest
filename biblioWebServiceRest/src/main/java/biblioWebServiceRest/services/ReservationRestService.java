@@ -1,18 +1,28 @@
 package biblioWebServiceRest.services;
 
+import java.util.List;
+
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import biblioWebServiceRest.criteria.PretCriteria;
+import biblioWebServiceRest.criteria.ReservationCriteria;
 import biblioWebServiceRest.dto.ReservationDTO;
+import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
@@ -94,7 +104,7 @@ public class ReservationRestService {
 	 * Ce endpoint permet de  modifier le statut d'une réservation NOTIFIEE pour le passer à LIVREE
 	 * Lorsque le livre qui fait l'objet de la réservation NOTIFIEE par mail est emprunté dans un délai de 48 heures 
 	 * suite à l'envoi du mail de notification :
-	 * *la réservation est passée en statut LIVREE
+	 * *la réservation est passée en statut LIVREE   
 	 * *le pret du livre est créé automatiquement
 	 * Si le délai de 48 heures est dépassé une exception BookNotAvaiable est levée et la réservation est passée en statut
 	 * REFUSEE 
@@ -141,5 +151,40 @@ public class ReservationRestService {
 		return new ResponseEntity<Reservation>(suppressionReservation, HttpStatus.ACCEPTED);
 	
 	}
-
+	
+	/**
+	 * endpoint pour la recherche Multicritères des reservations enregistrées 
+	 * @param reservationCriteria
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	@ApiOperation(value = "Recherche multi-critères d'une ou plusieurs reservations", response = Reservation.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@GetMapping(value="/reservations", produces="application/json")
+	public ResponseEntity<Page<Reservation>> searchAllReservationsByCriteria(@PathParam("reservationCriteria")ReservationCriteria reservationCriteria, @RequestParam int page, @RequestParam int size ) {
+		Page<Reservation> reservations = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, PageRequest.of(page, size));
+		return new ResponseEntity<Page<Reservation>>(reservations, HttpStatus.OK);
+	}
+	
+	/**
+	 * Endpoint pour éditer la liste des réservations A NOTIFIER
+	 * @return
+	 * @throws EntityNotFoundException  
+	 * @throws WrongNumberException
+	 */
+	@ApiOperation(value = "Recherche des réservations en statut NOTIFIEE", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@GetMapping(value="/reservations/notifiees", produces="application/json")
+	public ResponseEntity<List<Reservation>> selectReservationANotifier() throws EntityNotFoundException, WrongNumberException {
+		List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
+		return new ResponseEntity<List<Reservation>>(reservationsANotifierList, HttpStatus.OK); 
+	}
+	
 }

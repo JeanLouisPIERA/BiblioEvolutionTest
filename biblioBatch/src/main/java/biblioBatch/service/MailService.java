@@ -37,13 +37,17 @@ public class MailService{
 	
 	@Value("${application.mail}")
 	private String mail;
+	
 	@Value("${application.template}")
 	private String template;
+	@Value("${application.template.R}")
+	private String templateR;
+	
 	@Value("${application.nameFrom}")
 	private String nameFrom;
 	
 	/**
-	 * Cette méthode permet de customiser le message envoyé en utilisant le template Thymeleaf indiqué
+	 * Cette méthode permet de customiser le message RELANCE PRETS envoyé en utilisant le template Thymeleaf indiqué
 	 * @param to
 	 * @param subject
 	 * @param templateModel
@@ -61,6 +65,28 @@ public class MailService{
 
 		        sendHtmlMessage(to, name, subject, htmlBody);
 		    }
+	 
+	 /**
+		 * Cette méthode permet de customiser le message NOTIFICATION RESERVATIONS envoyé en utilisant le template Thymeleaf indiqué
+		 * @param to
+		 * @param subject
+		 * @param templateModel
+		 * @throws MessagingException
+		 * @throws UnsupportedEncodingException
+		 */
+		 public void sendMessageUsingThymeleafTemplateR(
+			        String to, String name, String subject, Map<String, Object> templateModel)
+			            throws MessagingException, UnsupportedEncodingException {
+			                
+			        Context thymeleafContext = new Context();
+			        thymeleafContext.setVariables(templateModel);
+			        
+			        String htmlBody = thymeleafTemplateEngine.process(templateR, thymeleafContext);
+
+			        sendHtmlMessage(to, name, subject, htmlBody);
+			    }
+	 
+	 
 	
 	/**
 	 * Cette méthode permet de créer un message HTML en renseignant le destinataire, le sujet, l'émetteur et en créant le htmlBody du mail 
@@ -85,6 +111,6 @@ public class MailService{
         eMailSender.send(message);
     }
 
-    
+	
     
 }

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import biblioBatch.objets.Pret;
+import biblioBatch.objets.Reservation;
 
 
 /**
@@ -48,6 +49,8 @@ public class ProxyService {
 	private String password;
     @Value("${application.uRLPret}")
 	private String uRL;
+    @Value("${application.uRLReservation}")
+	private String uRLR;
     
 	
 	/**
@@ -71,6 +74,27 @@ public class ProxyService {
     	Pret[] pretsEchusList = response.getBody(); 
     
 		return pretsEchusList;
+	}
+	
+	public Reservation[] notificationReservations() {
+		
+		String url = uRLR + "/notifiees";
+		
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username, password);
+		
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<?> requestEntity = 
+    	     new HttpEntity<>(headers);
+    	
+    	ResponseEntity<Reservation[]> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Reservation[].class);
+    	
+    	Reservation[] reservationsNotifieesList = response.getBody(); 
+    
+		return reservationsNotifieesList;
+		
+		
 	}
 	
 	

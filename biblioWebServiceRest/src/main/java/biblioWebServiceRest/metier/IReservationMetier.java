@@ -88,8 +88,11 @@ public interface IReservationMetier {
 	  * qu'un exemplaire du livre demandé est disponible
 	  * ET que leur tour est venu pour emprunter dans les 48 heures qui suivent la notification
 	  * @return
+	 * @throws WrongNumberException 
+	 * @throws EntityNotFoundException 
+	 * @throws BookNotAvailableException 
 	  */
-	 List<Reservation> searchAndNotifierReservations();
+	 List<Reservation> searchAndNotifierReservations() throws EntityNotFoundException, WrongNumberException;
 	 
 	 /**
 	  * Identifie et change le statut des réservations si le livre n'est pas emprunté dans les 48 heures qui suivent sa notification
