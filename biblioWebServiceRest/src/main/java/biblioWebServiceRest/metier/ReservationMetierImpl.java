@@ -150,9 +150,20 @@ public class ReservationMetierImpl implements IReservationMetier{
 	}
 
 	@Override
-	public Reservation deleteReservation(Long numReservation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Reservation suppressReservation(Long numReservation) throws EntityNotFoundException, WrongNumberException {
+		Optional<Reservation> searchedReservation = reservationRepository.findById(numReservation);
+		if(!searchedReservation.isPresent())
+			throw new EntityNotFoundException("RESERVATION INCONNUE = Cette réservation n'existe pas");
+		if(searchedReservation.get().getReservationStatut().equals(ReservationStatut.LIVREE)
+				|| searchedReservation.get().getReservationStatut().equals(ReservationStatut.ANNULEE)
+				|| searchedReservation.get().getReservationStatut().equals(ReservationStatut.SUPPRIMEE))
+			throw new WrongNumberException("SUPPRESSION IMPOSSIBLE = Le statut de cette réservation ne permet pas de la supprimer");
+		
+		searchedReservation.get().setReservationStatut(ReservationStatut.SUPPRIMEE);
+		LocalDate dateSuppression = LocalDate.now();
+		searchedReservation.get().setDateSuppression(dateSuppression);
+		
+		return searchedReservation.get();
 	}
 
 	@Override

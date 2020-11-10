@@ -37,7 +37,7 @@ public class ReservationRestService {
 	ReservationMapper reservationMapper; 
 	
 	/**
-	 * CRUD : CREATE Créer la réservation d'un exemplaire d'un livre qui n'a aucun exemplaire disponible
+	 * CRUD : CREATE ce endpoint permet de créer la réservation d'un exemplaire d'un livre qui n'a aucun exemplaire disponible
 	 * Le livre à emprunter n'a aucun exemplaire en stock = réservation IMPOSSIBLE
 	 * Il y a un exemplaire à emprunter pour le livre et la liste de reservations est vide = réservation IMPOSSIBLE
 	 * La réservation ne doit pas faire passer le nombre de réservations en cours > 2x le nombre d'exmplaires = réservation IMPOSSIBLE
@@ -65,7 +65,7 @@ public class ReservationRestService {
 	}
 	
 	/**
-	 * Cette méthode permet de  modifier le statut d'une réservation ENREGISTREE pour le passer à NOTIFIEE
+	 * Ce endpoint permet de  modifier le statut d'une réservation ENREGISTREE pour le passer à NOTIFIEE
 	 * Lorsque le livre qui fait l'objet de la réservation a un exemplaire disponible et que toutes les autres réservations
 	 * dont le statut est ENREGISTREE ont une date de création postérieure à la réservation, la réservation passe en statut NOTIFIEE
 	 * Toutes les réservations au statut notifiée font l'obejt d'un envoi de mail 
@@ -91,13 +91,18 @@ public class ReservationRestService {
 	}
 	
 	/**
-	 * Cette méthode permet de  modifier le statut d'une réservation NOTIFIEE pour le passer à LIVREE
+	 * Ce endpoint permet de  modifier le statut d'une réservation NOTIFIEE pour le passer à LIVREE
 	 * Lorsque le livre qui fait l'objet de la réservation NOTIFIEE par mail est emprunté dans un délai de 48 heures 
 	 * suite à l'envoi du mail de notification :
 	 * *la réservation est passée en statut LIVREE
 	 * *le pret du livre est créé automatiquement
 	 * Si le délai de 48 heures est dépassé une exception BookNotAvaiable est levée et la réservation est passée en statut
 	 * REFUSEE 
+	 * @param numReservation
+	 * @return
+	 * @throws EntityNotFoundException
+	 * @throws BookNotAvailableException
+	 * @throws WrongNumberException
 	 */
 	@ApiOperation(value = "Livraison d'une réservation notifiée et création d'un pret pour le livre correspondant", response = Reservation.class)
 	@ApiResponses(value = {
@@ -115,6 +120,26 @@ public class ReservationRestService {
 	
 	}
 	
+	/**
+	 * Ce endpoint permet de à l'utilisateur de modifier le statut d'une réservation ENREGISTREE ou NOTIFIEE pour le passer à SUPPRIMEE
+	 * Mais la réservation reste persistée : elle n'est pas delete de la base de données
+	 * Cela permet de conserver l'information 
+	 * * pour des analyses statistiques par exemple 
+	 * * ou pour confirmer à l'utilisateur que sa demande de suppression de réservation a bien été prise en compte
+	 * * ou pour justifier la suppression par l'utilisateur (en cas de mise en place d'un malus pour abus de réservations sans suite)
+	 */
+	@ApiOperation(value = "Suppression d'une réservation enregistrée ou notifiée", response = Reservation.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 202, message = "Le statut de la réservation a été passé à SUPPRIMEE"),
+	        @ApiResponse(code = 400, message = "Le statut de cette livraison ne permet pas de la SUPPRIMER"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@PutMapping(value="/reservations/suppression/{numReservation}", produces="application/json")
+	public ResponseEntity<Reservation> suppressPret(@PathVariable Long numReservation) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
+		
+		Reservation suppressionReservation = reservationMetier.suppressReservation(numReservation);
+		return new ResponseEntity<Reservation>(suppressionReservation, HttpStatus.ACCEPTED);
 	
+	}
 
 }

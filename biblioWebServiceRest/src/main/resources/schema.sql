@@ -82,6 +82,7 @@ CREATE TABLE public.reservation (
     date_reservation date,
     date_notification date,
     date_deadline date,
+    date_suppression date,
     reservation_statut integer,
     livre_num_livre bigint,
     user_id bigint

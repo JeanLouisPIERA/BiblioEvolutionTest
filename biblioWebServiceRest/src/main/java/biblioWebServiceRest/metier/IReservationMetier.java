@@ -58,8 +58,10 @@ public interface IReservationMetier {
 	 * CRUD : DELETE un emprunteur supprime volontairement une réservation
 	 * @param numReservation
 	 * @return
+	 * @throws EntityNotFoundException 
+	 * @throws WrongNumberException 
 	 */
-	Reservation deleteReservation(Long numReservation);
+	Reservation suppressReservation(Long numReservation) throws EntityNotFoundException, WrongNumberException;
 	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
