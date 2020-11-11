@@ -65,6 +65,12 @@ public interface IPretMetier {
 	 List<Pret> searchAndUpdatePretsEchus(); 
 	 
 	 
+	 /**
+	  * Identifie et change le statut des prets à échoir dans une semaine
+	  * Retourne la liste des prets à échoir
+	  * @return
+	  */
+	 List<Pret> searchAndUpdatePretsAEchoir();
 		
 		
 }

@@ -190,6 +190,14 @@ public class PretMetierImpl implements IPretMetier {
 		}
 		return pretsEchus; 
 	}
+
+	@Override
+	public List<Pret> searchAndUpdatePretsAEchoir() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 	
 	
 	
