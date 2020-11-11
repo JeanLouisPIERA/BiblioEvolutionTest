@@ -13,6 +13,7 @@ import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
 
 
 public interface IPretMetier {
@@ -36,8 +37,9 @@ public interface IPretMetier {
 	 * @return
 	 * @throws EntityNotFoundException 
 	 * @throws BookNotAvailableException 
+	 * @throws WrongNumberException 
 	 */
-	Pret prolongerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException;
+	Pret prolongerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException;
 
 	/**
 	 * CRUD : UPDATE clôturer un prêt 

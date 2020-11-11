@@ -33,6 +33,7 @@ import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
 import biblioWebServiceRest.mapper.PretMapper;
 import biblioWebServiceRest.metier.IPretMetier;
 import io.swagger.annotations.Api;
@@ -91,17 +92,19 @@ public class PretRestService {
 	 * @return
 	 * @throws BookNotAvailableException 
 	 * @throws EntityNotFoundException 
+	 * @throws WrongNumberException 
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.IPretMetier#prolongerPret(java.lang.Long)
 	 */
 	@ApiOperation(value = "Prolongation de la durée d'un prêt en cours (exclusion des prets déjà prolongés ou échus non prolongés)", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 202, message = "Le prêt a été prolongé"),
+	        @ApiResponse(code = 400, message = "La date limite pour prolonger votre prêt est dépassée"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 423, message = "Le statut de ce pret de livre ne permet pas sa prolongation")
 	})
 	@PutMapping(value="/prets/prolongation/{numPret}", produces="application/json")
-	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {
+	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
 		
 		Pret prolongationPret = pretMetier.prolongerPret(numPret);
 		return new ResponseEntity<Pret>(prolongationPret, HttpStatus.ACCEPTED);

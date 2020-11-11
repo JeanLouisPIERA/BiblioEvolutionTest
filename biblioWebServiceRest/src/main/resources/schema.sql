@@ -8,7 +8,7 @@
 -- Started on 2020-08-09 18:21:34
 
 
-
+DROP TABLE IF EXISTS public.reservation; 
 DROP TABLE IF EXISTS public.pret; 
 DROP TABLE IF EXISTS public.utilisateur; 
 DROP TABLE IF EXISTS public.role;

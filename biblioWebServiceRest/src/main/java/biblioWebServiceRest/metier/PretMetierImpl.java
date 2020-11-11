@@ -32,6 +32,7 @@ import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
 import biblioWebServiceRest.mapper.LivreMapper;
 import biblioWebServiceRest.mapper.PretMapper;
 
@@ -108,15 +109,24 @@ public class PretMetierImpl implements IPretMetier {
 	 * @return
 	 * @throws EntityNotFoundException 
 	 * @throws BookNotAvailableException 
+	 * @throws WrongNumberException 
 	 */
 	@Override
-	public Pret prolongerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException {
+	public Pret prolongerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
 		Optional<Pret> pretAProlonger = pretRepository.findById(numPret);
+		
 		if(!pretAProlonger.isPresent()) 
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 		
-		if(!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)) 
+		if(
+				!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS) ||
+				!pretAProlonger.get().getPretStatut().equals(PretStatut.AECHOIR)	
+				) 
 			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
+		
+		if(pretAProlonger.get().getDateRetourPrevue().isAfter(LocalDate.now()))
+			throw new WrongNumberException("La date limite pour prolonger votre prêt est dépassée");
+
 		
 		/*
 		 * La date de départ d'un prêt prolonge n'est pas la date de la saisie de sa prolongation mais la date d'échéance
@@ -193,8 +203,19 @@ public class PretMetierImpl implements IPretMetier {
 
 	@Override
 	public List<Pret> searchAndUpdatePretsAEchoir() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Pret> allPrets = pretRepository.findAll(); 
+		List<Pret> pretsAEchoir = new ArrayList<Pret>();
+		LocalDate dateDebutPretsAEchoir = LocalDate.now().minusDays(appProperties.getDureeAEchoir());
+		for (Pret pret : allPrets) {
+			if (	LocalDate.now().isAfter(dateDebutPretsAEchoir)&&
+					LocalDate.now().isBefore(pret.getDateRetourPrevue()) &&
+					!pret.getPretStatut().equals(PretStatut.CLOTURE))
+				{pret.setPretStatut(PretStatut.AECHOIR);
+				pretsAEchoir.add(pret); 
+			pretRepository.save(pret);
+				}
+		}
+		return pretsAEchoir; 
 	}
 	
 	
