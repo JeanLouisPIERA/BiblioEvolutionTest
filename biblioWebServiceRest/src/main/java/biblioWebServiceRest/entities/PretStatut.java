@@ -7,9 +7,9 @@ public enum PretStatut {
 	
 	ENCOURS("ENCOURS", "Prêt en cours"),
 	ECHU("ECHU", "Prêt échu"),
-	AECHOIR("AECHOIR", "Prêt à échoir"),
 	PROLONGE("PROLONGE", "Prêt prolongé"), 
-	CLOTURE("CLOTURE", "Livre restitué");
+	CLOTURE("CLOTURE", "Livre restitué"),
+	AECHOIR("AECHOIR", "Prêt à échoir");
 	
 	 private String code;
 	 private String text;

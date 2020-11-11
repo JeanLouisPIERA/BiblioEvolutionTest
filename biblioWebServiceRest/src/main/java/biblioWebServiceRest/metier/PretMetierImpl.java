@@ -119,12 +119,12 @@ public class PretMetierImpl implements IPretMetier {
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 		
 		if(
-				!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS) ||
+				!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS) &&
 				!pretAProlonger.get().getPretStatut().equals(PretStatut.AECHOIR)	
 				) 
 			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
 		
-		if(pretAProlonger.get().getDateRetourPrevue().isAfter(LocalDate.now()))
+		if(pretAProlonger.get().getDateRetourPrevue().isBefore(LocalDate.now()))
 			throw new WrongNumberException("La date limite pour prolonger votre prêt est dépassée");
 
 		
@@ -170,7 +170,7 @@ public class PretMetierImpl implements IPretMetier {
 	}
 	
 	/**
-	 * Recherche multi-critères des prets enregistrés 
+	 * Recherche multi-critères des prets enregistrés      
 	 * @param pretCriteria
 	 * @return
 	 */
@@ -205,11 +205,13 @@ public class PretMetierImpl implements IPretMetier {
 	public List<Pret> searchAndUpdatePretsAEchoir() {
 		List<Pret> allPrets = pretRepository.findAll(); 
 		List<Pret> pretsAEchoir = new ArrayList<Pret>();
-		LocalDate dateDebutPretsAEchoir = LocalDate.now().minusDays(appProperties.getDureeAEchoir());
 		for (Pret pret : allPrets) {
+			LocalDate dateDebutPretsAEchoir = pret.getDateRetourPrevue().minusDays(appProperties.getDureeAEchoir());
+			System.out.println("DATE DE DEBUT PRETS A ECHOIR = " + dateDebutPretsAEchoir);
 			if (	LocalDate.now().isAfter(dateDebutPretsAEchoir)&&
 					LocalDate.now().isBefore(pret.getDateRetourPrevue()) &&
-					!pret.getPretStatut().equals(PretStatut.CLOTURE))
+					pret.getPretStatut().equals(PretStatut.ENCOURS)
+					)
 				{pret.setPretStatut(PretStatut.AECHOIR);
 				pretsAEchoir.add(pret); 
 			pretRepository.save(pret);

@@ -161,7 +161,7 @@ public class PretRestService {
 	 * @return
 	 * @see biblioWebServiceRest.metier.IPretMetier#selectPretsEchus(org.springframework.data.domain.Pageable)
 	 */
-	@ApiOperation(value = "Recherche des prets échus (date retour supérieure à date de la requête)", response = Pret.class)
+	@ApiOperation(value = "Recherche des prets échus (date de requête supérieure à date prévue de retour)", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
@@ -172,7 +172,21 @@ public class PretRestService {
 		return new ResponseEntity<List<Pret>>(pretsEchusListe, HttpStatus.OK); 
 	}
 	
-	
+	/**
+	 * @param pageable
+	 * @return
+	 * @see biblioWebServiceRest.metier.IPretMetier#selectPretsEchus(org.springframework.data.domain.Pageable)
+	 */
+	@ApiOperation(value = "Recherche et update statut des prets à échoir (date de requête à moins d'une semaine de la date de retour)", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@GetMapping(value="/prets/aechoir", produces="application/json")
+	public ResponseEntity<List<Pret>> selectPretsAEchoir() {
+		List<Pret> pretsAEchoirListe = pretMetier.searchAndUpdatePretsAEchoir();
+		return new ResponseEntity<List<Pret>>(pretsAEchoirListe, HttpStatus.OK); 
+	}
 	
 
 }
