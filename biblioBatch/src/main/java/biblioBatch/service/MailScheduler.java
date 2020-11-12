@@ -35,8 +35,11 @@ public class MailScheduler {
 	
 	@Value("${application.mail}")
 	private String mailFrom;
+	
     @Value("${application.subject}")
     private String subject;	
+    @Value("${application.subject.Rappel}")
+    private String subjectRappel;	
     
     	/**
     	 * Cette méthode permet de créer le modèle à peupler à partir de la liste de réponse de l'API 
@@ -82,6 +85,43 @@ public class MailScheduler {
  		    	}
  	    
  	    }
+ 	 	
+ 	 	/**
+ 		 * Cette méthode permet d'envoyer une série de mails à partir de la liste des prêts échus récupérée dans l'API Biblio
+ 	     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService
+ 	     * Gestion de la date en LocalDateTime gérée par Thymeleaf
+ 	     * Gestion de new InternetAddress pour le destinataire
+ 	     * Importation du sujet depuis application.properties
+ 		 * @throws MessagingException
+ 		 * @throws UnsupportedEncodingException 
+ 		 * @throws IOException
+ 		 */
+ 		
+ 		
+ 	 	@Scheduled(cron= "${application.cron}")
+ 	    public void sendMailsRappelList() throws MessagingException, UnsupportedEncodingException{
+ 	    	
+ 	    	Pret[] relancePretsAEchoirList = proxyService.relancePretsAEchoir(); 
+ 	    	
+ 	    	for (Pret pretAEchoir : relancePretsAEchoirList) {
+ 		    	String mailTo = pretAEchoir.getUser().getAdresseMail(); 
+ 		    	String nomUser = pretAEchoir.getUser().getUsername();
+ 		    	
+ 		    	this.populateModel("numPretAEchoir", pretAEchoir.getNumPret()); 
+ 		    	this.populateModel("echeanceAEchoir", pretAEchoir.getDateRetourPrevue().atStartOfDay()); 
+ 		    	this.populateModel("debutAEchoir", pretAEchoir.getDatePret().atStartOfDay()); 
+ 		    	this.populateModel("nomUserAEchoir", nomUser); 
+ 		    	this.populateModel("nomLivreAEchoir", pretAEchoir.getLivre().getTitre()); 
+ 		    	this.populateModel("nomAuteurAEchoir", pretAEchoir.getLivre().getAuteur()); 
+ 		    	
+ 		          
+ 		         mailService.sendMessageUsingThymeleafTemplateRappel(mailTo, nomUser, subjectRappel, model);
+ 	    	
+ 		    	}
+ 	    
+ 	    }
+ 	 	
+ 	 	
  	    
     }
 

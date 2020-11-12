@@ -37,8 +37,12 @@ public class MailService{
 	
 	@Value("${application.mail}")
 	private String mail;
+	
 	@Value("${application.template}")
 	private String template;
+	@Value("${application.template.Rappel}")
+	private String templateRappel;
+	
 	@Value("${application.nameFrom}")
 	private String nameFrom;
 	
@@ -61,6 +65,26 @@ public class MailService{
 
 		        sendHtmlMessage(to, name, subject, htmlBody);
 		    }
+	 
+	 /**
+		 * Cette méthode permet de customiser le message envoyé en utilisant le template Thymeleaf indiqué
+		 * @param to
+		 * @param subject
+		 * @param templateModel
+		 * @throws MessagingException
+		 * @throws UnsupportedEncodingException
+		 */
+		 public void sendMessageUsingThymeleafTemplateRappel(
+			        String to, String name, String subject, Map<String, Object> templateModel)
+			            throws MessagingException, UnsupportedEncodingException {
+			                
+			        Context thymeleafContext = new Context();
+			        thymeleafContext.setVariables(templateModel);
+			        
+			        String htmlBody = thymeleafTemplateEngine.process(templateRappel, thymeleafContext);
+
+			        sendHtmlMessage(to, name, subject, htmlBody);
+			    }
 	
 	/**
 	 * Cette méthode permet de créer un message HTML en renseignant le destinataire, le sujet, l'émetteur et en créant le htmlBody du mail 

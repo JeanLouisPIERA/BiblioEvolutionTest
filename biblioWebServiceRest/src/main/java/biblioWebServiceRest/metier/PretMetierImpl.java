@@ -192,11 +192,11 @@ public class PretMetierImpl implements IPretMetier {
 		List<Pret> allPrets = pretRepository.findAll(); 
 		List<Pret> pretsEchus = new ArrayList<Pret>();
 		for (Pret pret : allPrets) {
-			if (pret.getDateRetourPrevue().isBefore(LocalDate.now()) && !pret.getPretStatut().equals(PretStatut.CLOTURE))
-				{pret.setPretStatut(PretStatut.ECHU);
-				pretsEchus.add(pret); 
-			pretRepository.save(pret);
-				}
+			  if (pret.getDateRetourPrevue().isBefore(LocalDate.now()) && !pret.getPretStatut().equals(PretStatut.CLOTURE))
+					{pret.setPretStatut(PretStatut.ECHU);
+					pretsEchus.add(pret); 
+					pretRepository.save(pret);
+					}
 		}
 		return pretsEchus; 
 	}
@@ -206,16 +206,24 @@ public class PretMetierImpl implements IPretMetier {
 		List<Pret> allPrets = pretRepository.findAll(); 
 		List<Pret> pretsAEchoir = new ArrayList<Pret>();
 		for (Pret pret : allPrets) {
+			if(pret.getPretStatut().equals(PretStatut.AECHOIR)) {
+				pretsAEchoir.add(pret);
+			} else {
 			LocalDate dateDebutPretsAEchoir = pret.getDateRetourPrevue().minusDays(appProperties.getDureeAEchoir());
 			System.out.println("DATE DE DEBUT PRETS A ECHOIR = " + dateDebutPretsAEchoir);
-			if (	LocalDate.now().isAfter(dateDebutPretsAEchoir)&&
+			if (LocalDate.now().isAfter(dateDebutPretsAEchoir)&&
+				LocalDate.now().isBefore(pret.getDateRetourPrevue()) &&
+				pret.getPretStatut().equals(PretStatut.PROLONGE))
+			{pretsAEchoir.add(pret);
+			} else if (	LocalDate.now().isAfter(dateDebutPretsAEchoir)&&
 					LocalDate.now().isBefore(pret.getDateRetourPrevue()) &&
 					pret.getPretStatut().equals(PretStatut.ENCOURS)
 					)
 				{pret.setPretStatut(PretStatut.AECHOIR);
 				pretsAEchoir.add(pret); 
-			pretRepository.save(pret);
+				pretRepository.save(pret);
 				}
+			}
 		}
 		return pretsAEchoir; 
 	}
