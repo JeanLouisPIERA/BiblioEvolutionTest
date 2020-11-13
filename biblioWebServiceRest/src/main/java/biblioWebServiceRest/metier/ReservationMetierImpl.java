@@ -185,7 +185,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 	
 	@Override
 	public List<Reservation> searchAndNotifierReservations() throws EntityNotFoundException, WrongNumberException {
-		//TODO Refactor du findBy avec OrderedBy
+		//TODO Refactor du findBy avec OrderedBy  
 		List<Reservation> allReservations = reservationRepository.findAll(); 
 		List<Reservation> reservationsANotifier = new ArrayList<Reservation>();
 		for (Reservation reservation : allReservations) {
