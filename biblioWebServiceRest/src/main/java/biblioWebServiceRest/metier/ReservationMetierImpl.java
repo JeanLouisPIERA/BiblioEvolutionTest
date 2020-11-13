@@ -2,6 +2,7 @@ package biblioWebServiceRest.metier;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -185,17 +186,17 @@ public class ReservationMetierImpl implements IReservationMetier{
 	
 	@Override
 	public List<Reservation> searchAndNotifierReservations() throws EntityNotFoundException, WrongNumberException {
-		//TODO Refactor du findBy avec OrderedBy    
-		List<Reservation> allReservations = reservationRepository.findAll(); 
 		List<Reservation> reservationsANotifier = new ArrayList<Reservation>();
-		for (Reservation reservation : allReservations) {
-			if(reservation.getReservationStatut().equals(ReservationStatut.NOTIFIEE)) {
-				reservationsANotifier.add(reservation);
-			}
-			if (reservation.getReservationStatut().equals(ReservationStatut.ENREGISTREE) && reservation.getLivre().getNbExemplairesDisponibles()>=1)
-				{
-					Reservation reservationPostNotif = this.notifierReservation(reservation.getNumReservation()); //tru-catch pour neutraliser les exceptions
-					System.out.println(reservationPostNotif.getNumReservation());
+		
+		Optional<List<Reservation>> reservationsAlreadyNotifiees = reservationRepository.findAllByReservationStatut(ReservationStatut.NOTIFIEE); 
+		if(reservationsAlreadyNotifiees.isPresent()) {
+		reservationsANotifier.addAll(reservationsAlreadyNotifiees.get());
+		}	
+		
+		Optional<List<Reservation>> reservationsEnregistreesSelectionnees = reservationRepository.findAllByReservationStatutAndLivreNombreExemplairesDisponiblesNamedParams(ReservationStatut.ENREGISTREE, 1);
+		if(reservationsEnregistreesSelectionnees.isPresent()) {
+			for (Reservation reservation : reservationsEnregistreesSelectionnees.get()) {
+					Reservation reservationPostNotif = this.notifierReservation(reservation.getNumReservation());
 					if(reservationPostNotif.getReservationStatut().equals(ReservationStatut.NOTIFIEE))
 					{
 						reservationsANotifier.add(reservationPostNotif); 
