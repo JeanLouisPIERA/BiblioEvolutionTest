@@ -124,6 +124,11 @@ public class PretMetierImpl implements IPretMetier {
 				) 
 			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
 		
+		/*COMMENTAIRE HOTFIX 1.0.1 : Dans la version d'origine, il n'y avait pas de bug 
+		 * Un prêt à prolonger ne pouvait pas avoir une date de retour postérieure à la date de traitement
+		 * Donc un utilisateur qui recevait un mail pour un pret ECHU ne pouvait pas le prolonger
+		 * En revanche la seconde partie du bug existait bien puisqu'il ne recevait un mail qu'après la date de retour
+		 */
 		if(pretAProlonger.get().getDateRetourPrevue().isBefore(LocalDate.now()))
 			throw new WrongNumberException("La date limite pour prolonger votre prêt est dépassée");
 
@@ -189,48 +194,69 @@ public class PretMetierImpl implements IPretMetier {
 	 */
 	@Override
 	public List<Pret> searchAndUpdatePretsEchus() {
+		/*
+		 * COMMENTAIRE HOTIX 1.0.1 : on maintient cette 1ère méthode pour envoyer un mail aux utilisateurs dont le pret est échu
+		 * c'est à dire qu'à la date de traitement la date de retour est dépassée et le livre n'est toujours pas restitué
+		 * Seuls les prêts cloturés qui sont dans ce cas sont exclus
+		 */
 		List<Pret> pretsEchus = new ArrayList<Pret>();
-		List<Pret> pretsNonCloturesDateEcheanceBeforeToday = pretRepository.findAllByPretStatutAndDateEcheanceBeforeThisDate(
+		Optional<List<Pret>> pretsNonCloturesDateEcheanceBeforeToday = pretRepository.findAllByOtherPretStatutAndDateEcheanceBeforeThisDate(
 				PretStatut.CLOTURE, 
 				LocalDate.now());
-		for(Pret pretEchu : pretsNonCloturesDateEcheanceBeforeToday)
-				{pretEchu.setPretStatut(PretStatut.ECHU);
+		if(pretsNonCloturesDateEcheanceBeforeToday.isPresent())
+		{
+			for(Pret pretEchu : pretsNonCloturesDateEcheanceBeforeToday.get())
+				{
+				pretEchu.setPretStatut(PretStatut.ECHU);
 				pretsEchus.add(pretEchu);
 				pretRepository.save(pretEchu);
 				}
-		return pretsEchus; 
 		}
+		return pretsEchus; 
+	}
 
 	@Override
 	public List<Pret> searchAndUpdatePretsAEchoir() {
-		List<Pret> allPrets = pretRepository.findAll(); 
+		/*
+		 * COMMENTAIRE HOTFIX 1.0.1 : on ajoute cette méthode pour identifier les prets qui viennent à échéance 
+		 * Un mail sera envoyé en batch aux utilisateurs concernés en leur demandant de :
+		 * 1/ restituer l'ouvrage avant la date d'échéance si le prêt est déjà prolongé
+		 * 2/ prolonger le pret ou restituer l'ouvrage avant la date d'échéance si le prêt n'a jamais été prolongé. Dans ce cas, 
+		 * le statut du pret est passé en pret A ECHOIR
+		 * La durée de sélection des prêts qui viennent à échéance est ici de 48 heures et elle peut être modifiée 
+		 * dans application.properties
+		 */
 		List<Pret> pretsAEchoir = new ArrayList<Pret>();
-		for (Pret pret : allPrets) {
-			if(pret.getPretStatut().equals(PretStatut.AECHOIR)) {
-				pretsAEchoir.add(pret);
-			} else {
-			LocalDate dateDebutPretsAEchoir = pret.getDateRetourPrevue().minusDays(appProperties.getDureeAEchoir());
-			System.out.println("DATE DE DEBUT PRETS A ECHOIR = " + dateDebutPretsAEchoir);
-			if (LocalDate.now().isAfter(dateDebutPretsAEchoir)&&
-				LocalDate.now().isBefore(pret.getDateRetourPrevue()) &&
-				pret.getPretStatut().equals(PretStatut.PROLONGE))
-			{pretsAEchoir.add(pret);
-			} else if (	LocalDate.now().isAfter(dateDebutPretsAEchoir)&&
-					LocalDate.now().isBefore(pret.getDateRetourPrevue()) &&
-					pret.getPretStatut().equals(PretStatut.ENCOURS)
-					)
-				{pret.setPretStatut(PretStatut.AECHOIR);
-				pretsAEchoir.add(pret); 
-				pretRepository.save(pret);
+		
+		Optional<List<Pret>> pretsAlreadyAEchoir = pretRepository.findAllByPretStatut(PretStatut.AECHOIR);
+		if(pretsAlreadyAEchoir.isPresent()) {
+		pretsAEchoir.addAll(pretsAlreadyAEchoir.get());
+		}
+		
+		Optional<List<Pret>> pretsProlongesOuEncoursAEchoir = pretRepository.findAllByPretStatutAndDateEcheanceAfterThisDate(PretStatut.PROLONGE, PretStatut.ENCOURS,LocalDate.now());
+		if(pretsProlongesOuEncoursAEchoir.isPresent()) {
+			for (Pret pretProlongeOuEncoursAEchoir : pretsProlongesOuEncoursAEchoir.get()) {
+			LocalDate dateDebutPretProlongeOuEncoursAEchoir = pretProlongeOuEncoursAEchoir.getDateRetourPrevue().minusDays(appProperties.getDureeAEchoir());
+				if (LocalDate.now().isAfter(dateDebutPretProlongeOuEncoursAEchoir) && 
+						pretProlongeOuEncoursAEchoir.getPretStatut().equals(PretStatut.PROLONGE)) {
+					pretsAEchoir.add(pretProlongeOuEncoursAEchoir);
+				} else if (LocalDate.now().isAfter(dateDebutPretProlongeOuEncoursAEchoir) && 
+						pretProlongeOuEncoursAEchoir.getPretStatut().equals(PretStatut.ENCOURS))
+				{
+					pretProlongeOuEncoursAEchoir.setPretStatut(PretStatut.AECHOIR);
+					pretsAEchoir.add(pretProlongeOuEncoursAEchoir);
+					pretRepository.save(pretProlongeOuEncoursAEchoir);
 				}
 			}
 		}
 		return pretsAEchoir; 
-	}
+		}
+		
+	}	
+		
 	
 	
 	
 	
 	
-	
-}
+

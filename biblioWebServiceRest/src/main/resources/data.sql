@@ -72,8 +72,8 @@ INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_
 --
 
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (25, '2020-10-05', NULL, '2020-11-05', 1, 10, 1);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (26, '2020-09-14', NULL, '2020-11-14', 2, 11, 2);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (27, '2020-10-14', NULL, '2020-11-14', 0, 12, 3);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (26, '2020-09-15', NULL, '2020-11-15', 2, 11, 2);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (27, '2020-10-15', NULL, '2020-11-15', 0, 12, 3);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (28, '2020-09-15','2020-09-30', '2020-10-15', 3, 13, 3);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (29, '2020-10-15', NULL, '2020-12-15', 2, 12, 2);
 

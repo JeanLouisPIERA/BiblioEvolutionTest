@@ -31,7 +31,11 @@
     </p>
     
     <p>
-      Vous disposez de 48 heures pour proroger votre prêt pour une durée de 1 mois <b> UNIQUEMENT</b> 
+      Vous avez donc jusqu'au 
+      <b>
+      <span th:text="${#temporals.format(echeanceAEchoir, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
+      </b>
+      pour proroger votre prêtpour une durée de 1 mois <b> UNIQUEMENT</b> 
       si vous n'avez pas déjà prorogé votre prêt le mois dernier,. <br/>
       </p>
     
