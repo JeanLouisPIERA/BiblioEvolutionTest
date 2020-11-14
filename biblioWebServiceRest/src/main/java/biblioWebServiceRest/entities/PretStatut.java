@@ -8,7 +8,8 @@ public enum PretStatut {
 	ENCOURS("ENCOURS", "Prêt en cours"),
 	ECHU("ECHU", "Prêt échu"),
 	PROLONGE("PROLONGE", "Prêt prolongé"), 
-	CLOTURE("CLOTURE", "Livre restitué");
+	CLOTURE("CLOTURE", "Livre restitué"),
+	AECHOIR("AECHOIR", "Prêt à échoir");
 	
 	 private String code;
 	 private String text;
@@ -49,6 +50,8 @@ public enum PretStatut {
 			return "Pret en-cours";
 		}else if(this==ECHU) {
 			return "Pret échu";
+		}else if(this==AECHOIR) {
+			return "Pret à échoir";	
 		}else if(this==PROLONGE) {
 			return "Pret prolongé";
 		}else if(this==CLOTURE) {
