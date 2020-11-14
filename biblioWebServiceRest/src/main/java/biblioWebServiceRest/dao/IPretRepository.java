@@ -3,6 +3,9 @@
  */
 package biblioWebServiceRest.dao;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,10 +20,10 @@ import biblioWebServiceRest.entities.PretStatut;
 
 @Repository
 public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecificationExecutor<Pret>{
-	/**
-	@Query("select pret from Pret pret where pret.pretStatut like :pretStatut")
-	   Page<Pret> findByPretStatutNamedParams(@Param("pretStatut")PretStatut pretStatut, Pageable pageable);
-**/
+	
+	@Query("select pret from Pret pret where (pret.pretStatut <> ?1)" + "AND (pret.dateRetourPrevue < ?2)")
+	   List<Pret> findAllByPretStatutAndDateEcheanceBeforeThisDate(PretStatut pretStatut, LocalDate date);
+	
 	
 	
 }

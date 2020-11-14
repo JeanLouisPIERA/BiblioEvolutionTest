@@ -189,17 +189,17 @@ public class PretMetierImpl implements IPretMetier {
 	 */
 	@Override
 	public List<Pret> searchAndUpdatePretsEchus() {
-		List<Pret> allPrets = pretRepository.findAll(); 
 		List<Pret> pretsEchus = new ArrayList<Pret>();
-		for (Pret pret : allPrets) {
-			  if (pret.getDateRetourPrevue().isBefore(LocalDate.now()) && !pret.getPretStatut().equals(PretStatut.CLOTURE))
-					{pret.setPretStatut(PretStatut.ECHU);
-					pretsEchus.add(pret); 
-					pretRepository.save(pret);
-					}
-		}
+		List<Pret> pretsNonCloturesDateEcheanceBeforeToday = pretRepository.findAllByPretStatutAndDateEcheanceBeforeThisDate(
+				PretStatut.CLOTURE, 
+				LocalDate.now());
+		for(Pret pretEchu : pretsNonCloturesDateEcheanceBeforeToday)
+				{pretEchu.setPretStatut(PretStatut.ECHU);
+				pretsEchus.add(pretEchu);
+				pretRepository.save(pretEchu);
+				}
 		return pretsEchus; 
-	}
+		}
 
 	@Override
 	public List<Pret> searchAndUpdatePretsAEchoir() {
