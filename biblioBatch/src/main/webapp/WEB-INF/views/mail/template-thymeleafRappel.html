@@ -1,0 +1,61 @@
+<!-- DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml"-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Template du email de relance des prêts à échoir</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+    <!-- use the font -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 20px;
+        }
+    </style>
+</head>
+ <body>
+ 	<p>
+      Objet: votre prêt N°
+      <span th:text="${numPretAEchoir}"></span>
+      enregistré le 
+      <span th:text="${#temporals.format(debutAEchoir, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
+    </p>
+    <p th:text="${'Bonjour ' + nomUserAEchoir}"></p>
+    <p>
+      Votre emprunt de livre rappelé en objet vient à échéance le :
+      <b>
+      <span th:text="${#temporals.format(echeanceAEchoir, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
+      </b>
+    </p>
+    
+    <p>
+      Vous avez donc jusqu'au 
+      <b>
+      <span th:text="${#temporals.format(echeanceAEchoir, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
+      </b>
+      pour proroger votre prêtpour une durée de 1 mois <b> UNIQUEMENT</b> 
+      si vous n'avez pas déjà prorogé votre prêt le mois dernier,. <br/>
+      </p>
+    
+    <p>
+      Sinon, merci de ramener à la bibliothèque <b> au plus tard le jour de l'échéance </b> l'ouvrage suivant :
+      <br></br>
+      <b>
+      <span th:text="${nomLivreAEchoir}"></span>
+      </b>
+      de
+      <span th:text="${nomAuteurAEchoir}"></span> (auteur)
+    </p>
+    
+    <p>
+      Avec nos remerciements <br/>
+      </p>
+      <p>
+      L'équipe Biblio
+    </p>
+    
+    
+  </body>
+</html>

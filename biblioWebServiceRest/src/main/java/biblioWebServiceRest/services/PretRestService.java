@@ -33,6 +33,7 @@ import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
 import biblioWebServiceRest.mapper.PretMapper;
 import biblioWebServiceRest.metier.IPretMetier;
 import io.swagger.annotations.Api;
@@ -91,17 +92,19 @@ public class PretRestService {
 	 * @return
 	 * @throws BookNotAvailableException 
 	 * @throws EntityNotFoundException 
+	 * @throws WrongNumberException 
 	 * @throws Exception
 	 * @see biblioWebServiceRest.metier.IPretMetier#prolongerPret(java.lang.Long)
 	 */
 	@ApiOperation(value = "Prolongation de la durée d'un prêt en cours (exclusion des prets déjà prolongés ou échus non prolongés)", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 202, message = "Le prêt a été prolongé"),
+	        @ApiResponse(code = 400, message = "La date limite pour prolonger votre prêt est dépassée"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	        @ApiResponse(code = 423, message = "Le statut de ce pret de livre ne permet pas sa prolongation")
 	})
 	@PutMapping(value="/prets/prolongation/{numPret}", produces="application/json")
-	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {
+	public ResponseEntity<Pret> prolongerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
 		
 		Pret prolongationPret = pretMetier.prolongerPret(numPret);
 		return new ResponseEntity<Pret>(prolongationPret, HttpStatus.ACCEPTED);
@@ -158,7 +161,7 @@ public class PretRestService {
 	 * @return
 	 * @see biblioWebServiceRest.metier.IPretMetier#selectPretsEchus(org.springframework.data.domain.Pageable)
 	 */
-	@ApiOperation(value = "Recherche des prets échus (date retour supérieure à date de la requête)", response = Pret.class)
+	@ApiOperation(value = "Recherche des prets échus (date de requête supérieure à date prévue de retour)", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
@@ -169,7 +172,21 @@ public class PretRestService {
 		return new ResponseEntity<List<Pret>>(pretsEchusListe, HttpStatus.OK); 
 	}
 	
-	
+	/**
+	 * @param pageable
+	 * @return
+	 * @see biblioWebServiceRest.metier.IPretMetier#selectPretsEchus(org.springframework.data.domain.Pageable)
+	 */
+	@ApiOperation(value = "Recherche et update statut des prets à échoir (date de requête à moins d'une semaine de la date de retour)", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@GetMapping(value="/prets/aechoir", produces="application/json")
+	public ResponseEntity<List<Pret>> selectPretsAEchoir() {
+		List<Pret> pretsAEchoirListe = pretMetier.searchAndUpdatePretsAEchoir();
+		return new ResponseEntity<List<Pret>>(pretsAEchoirListe, HttpStatus.OK); 
+	}
 	
 
 }

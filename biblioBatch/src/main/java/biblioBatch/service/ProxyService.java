@@ -73,6 +73,27 @@ public class ProxyService {
 		return pretsEchusList;
 	}
 	
-	
+	/**
+	 * Cette méthode permet d'obtenir la liste des prêts à échoir à la date du batch
+	 * @return
+	 */
+	public Pret[] relancePretsAEchoir() {
+		
+		String url1 = uRL + "/aechoir";
+		
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username, password);
+		
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<?> requestEntity = 
+    	     new HttpEntity<>(headers);
+    	
+    	ResponseEntity<Pret[]> response = restTemplate.exchange(url1, HttpMethod.GET, requestEntity, Pret[].class);
+    	
+    	Pret[] pretsAEchoirList = response.getBody(); 
+    
+		return pretsAEchoirList;
+	}
 
 }
