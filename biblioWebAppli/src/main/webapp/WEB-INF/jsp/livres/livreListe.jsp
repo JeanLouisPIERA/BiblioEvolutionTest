@@ -65,6 +65,11 @@
 				 <input type="text" name="nomCategorie" value="${livreCriteria.nomCategorie}"/>
 				 </fieldset>
 				
+				
+				<fieldset class="form-group">
+				 <label>Nombre d'exemplaires disponibles :</label>
+				 <input type="text" name="nbExemplairesDisponibles" value="${livreCriteria.nbExemplairesDisponibles}"/>
+				 </fieldset>
 		
 				 <button class="btn-sm btn-primary">Valider</button>
 				 </fieldset> 

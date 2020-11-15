@@ -14,6 +14,8 @@ public class ReservationCriteria {
 	private String auteur;
 	private String nomCategorieLivre;
 	private String code;
+	private Integer nbExemplairesDisponibles;
+	
 	public Long getNumReservation() {
 		return numReservation;
 	}
@@ -61,6 +63,12 @@ public class ReservationCriteria {
 	}
 	public void setCode(String code) {
 		this.code = code;
+	}
+	public Integer getNbExemplairesDisponibles() {
+		return nbExemplairesDisponibles;
+	}
+	public void setNbExemplairesDisponibles(Integer nbExemplairesDisponibles) {
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 	} 
 	
 	

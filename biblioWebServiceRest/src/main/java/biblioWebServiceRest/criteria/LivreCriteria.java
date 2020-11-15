@@ -17,6 +17,7 @@ public class LivreCriteria {
 	private String titre; 
 	private String auteur;
 	private String nomCategorie;
+	private Integer nbExemplairesDisponibles;
 	
 	/**
 	 * @return the numLivre
@@ -66,4 +67,12 @@ public class LivreCriteria {
 	public void setNomCategorie(String nomCategorie) {
 		this.nomCategorie = nomCategorie;
 	}
+	public Integer getNbExemplairesDisponibles() {
+		return nbExemplairesDisponibles;
+	}
+	public void setNbExemplairesDisponibles(Integer nbExemplairesDisponibles) {
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+	}
+	
+	
 }

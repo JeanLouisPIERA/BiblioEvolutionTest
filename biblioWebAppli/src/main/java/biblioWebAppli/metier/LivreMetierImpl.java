@@ -64,6 +64,7 @@ public class LivreMetierImpl implements ILivreMetier {
     	        .queryParam("titre", livreCriteria.getTitre())
     	        .queryParam("auteur", livreCriteria.getAuteur())
     	        .queryParam("nomCategorie", livreCriteria.getNomCategorie())
+    	        .queryParam("nbExemplairesDisponibles", livreCriteria.getNbExemplairesDisponibles())
     	        .queryParam("page", pageable.getPageNumber())
     	        .queryParam("size", pageable.getPageSize());
     	
