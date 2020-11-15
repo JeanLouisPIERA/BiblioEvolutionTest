@@ -59,8 +59,18 @@ public class ReservationMetierImpl implements IReservationMetier {
 
 	@Override
 	public Reservation livrerReservationAndCreerPret(Long numReservation) {
-		// TODO Auto-generated method stub
-		return null;
+		HttpHeaders headers = new HttpHeaders();
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<?> requestEntity = 
+       	     new HttpEntity<>(headers);
+		
+		String url = uRL+"/livraison/"+numReservation;
+    	
+		ResponseEntity<Reservation> response = restTemplate.exchange(url , HttpMethod.PUT, requestEntity, Reservation.class);
+		
+		return response.getBody(); 
 	}
 
 	@Override
