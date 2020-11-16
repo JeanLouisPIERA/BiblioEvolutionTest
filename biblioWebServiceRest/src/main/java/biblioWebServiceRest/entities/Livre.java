@@ -4,7 +4,9 @@
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,16 +46,22 @@ public class Livre implements Serializable{
 	private Integer nbExemplaires;
 	@ApiModelProperty(notes= "Nombre d'exemplaires de l'ouvrage actuellement disponibles au pret")
 	private Integer nbExemplairesDisponibles;
+	// TICKET 1 : WEB APPLI 
+	@ApiModelProperty(notes= "Date de retour prévue la plus proche d'un exemplaire de ce livre")
+	private LocalDate dateRetourPrevuePlusProche;
+	// TICKET 1 : WEB APPLI
+	@ApiModelProperty(notes= "Nombre de réservations en cours")
+	private Integer nbReservationsEnCours;
 	@ApiModelProperty(notes= "Categorie de l'ouvrage")
 	@ManyToOne 
 	@JoinColumn(name="num_categorie")
 	private Categorie categorie;
 	@JsonIgnore
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
-	private Collection<Pret> prets;
+	private List<Pret> prets;
 	@JsonIgnore
 	@OneToMany(mappedBy="livre", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
-	private Collection<Reservation> reservations;
+	private List<Reservation> reservations;
 	
 	public Livre() {
 		super();
@@ -70,7 +78,7 @@ public class Livre implements Serializable{
 	}
 
 	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
-			Categorie categorie, Collection<Pret> prets) {
+			Categorie categorie, List<Pret> prets) {
 		super();
 		this.numLivre = numLivre;
 		this.titre = titre;
@@ -84,13 +92,31 @@ public class Livre implements Serializable{
 	
 
 	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
-			Categorie categorie, Collection<Pret> prets, Collection<Reservation> reservations) {
+			Categorie categorie, List<Pret> prets, List<Reservation> reservations) {
 		super();
 		this.numLivre = numLivre;
 		this.titre = titre;
 		this.auteur = auteur;
 		this.nbExemplaires = nbExemplaires;
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+		this.categorie = categorie;
+		this.prets = prets;
+		this.reservations = reservations;
+	}
+	
+	
+
+	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
+			LocalDate dateRetourPrevuePlusProche, Integer nbReservationsEnCours, Categorie categorie, List<Pret> prets,
+			List<Reservation> reservations) {
+		super();
+		this.numLivre = numLivre;
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
+		this.nbReservationsEnCours = nbReservationsEnCours;
 		this.categorie = categorie;
 		this.prets = prets;
 		this.reservations = reservations;
@@ -136,6 +162,14 @@ public class Livre implements Serializable{
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 	}
 
+	public Integer getNbReservationsEnCours() {
+		return nbReservationsEnCours;
+	}
+
+	public void setNbReservationsEnCours(Integer nbReservationsEnCours) {
+		this.nbReservationsEnCours = nbReservationsEnCours;
+	}
+
 	public Categorie getCategorie() {
 		return categorie;
 	}
@@ -144,23 +178,30 @@ public class Livre implements Serializable{
 		this.categorie = categorie;
 	}
 
-	public Collection<Pret> getPrets() {
+	public List<Pret> getPrets() {
 		return prets;
 	}
 
-	public void setPrets(Collection<Pret> prets) {
+	public void setPrets(List<Pret> prets) {
 		this.prets = prets;
 	}
 
-	public Collection<Reservation> getReservations() {
+	public List<Reservation> getReservations() {
 		return reservations;
 	}
 
-	public void setReservations(Collection<Reservation> reservations) {
+	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
 	}
 
-	
+	public LocalDate getDateRetourPrevuePlusProche() {
+		return dateRetourPrevuePlusProche;
+	}
+
+	public void setDateRetourPrevuePlusProche(LocalDate dateRetourPrevuePlusProche) {
+		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
+	}
+
 	
 
 }

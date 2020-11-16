@@ -3,6 +3,8 @@
  */
 package biblioWebAppli.objets;
 
+import java.time.LocalDate;
+
 public class Livre {
 	
 	private Long numLivre; 
@@ -16,6 +18,10 @@ public class Livre {
 	private Integer nbExemplairesDisponibles;
 	
 	private Categorie categorie;
+	
+	private LocalDate dateRetourPrevuePlusProche;
+	
+	private Integer nbReservationsEnCours;
 
 	/**
 	 * @return the numLivre
@@ -99,6 +105,22 @@ public class Livre {
 	 */
 	public void setCategorie(Categorie categorie) {
 		this.categorie = categorie;
+	}
+
+	public LocalDate getDateRetourPrevuePlusProche() {
+		return dateRetourPrevuePlusProche;
+	}
+
+	public void setDateRetourPrevuePlusProche(LocalDate dateRetourPrevuePlusProche) {
+		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
+	}
+
+	public Integer getNbReservationsEnCours() {
+		return nbReservationsEnCours;
+	}
+
+	public void setNbReservationsEnCours(Integer nbReservationsEnCours) {
+		this.nbReservationsEnCours = nbReservationsEnCours;
 	}
 	
 	

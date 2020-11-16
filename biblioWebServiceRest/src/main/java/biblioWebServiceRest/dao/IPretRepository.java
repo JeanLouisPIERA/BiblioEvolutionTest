@@ -29,4 +29,5 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 
 	Optional<Pret> findByUserAndLivre(User user, Livre livre);
 	
+	
 }

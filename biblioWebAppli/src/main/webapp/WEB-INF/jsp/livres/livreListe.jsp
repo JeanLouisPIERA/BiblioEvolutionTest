@@ -99,6 +99,8 @@
 									      <th>Nombre d'exemplaires</th>
 									      <th>Exemplaires disponibles</th>
 									      <th>Catégorie</th>
+									      <th>Date de retour la plus proche</th>
+									      <th>Nombre de réservations en cours</th>
 								     </tr>
 								     </thead>
 								     <tbody>
@@ -110,7 +112,16 @@
 								          <td>${livre.nbExemplaires}</td>
 								          <td>${livre.nbExemplairesDisponibles}</td>
 								          <td>${livre.categorie.getNomCategorie()}</td>
-								          
+								          <td>
+								          <c:if test="${livre.nbExemplairesDisponibles==0}"> 
+								          ${livre.dateRetourPrevuePlusProche}
+								          </c:if>
+								          </td>
+								          <td>
+								          <c:if test="${livre.nbExemplairesDisponibles==0}"> 
+								          ${livre.nbReservationsEnCours}
+								          </c:if>
+								          </td>
 								          
 								          
 					        	      	  

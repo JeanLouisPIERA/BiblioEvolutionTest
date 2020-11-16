@@ -4,10 +4,14 @@
 
 package biblioWebServiceRest.metier;
 
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,10 +22,13 @@ import org.springframework.stereotype.Service;
 import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
+import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
+import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -37,6 +44,8 @@ public class LivreMetierImpl implements ILivreMetier{
 	@Autowired
 	private ICategorieRepository categorieRepository; 
 	@Autowired
+	private IPretRepository pretRepository;
+	@Autowired
 	private LivreMapper livreMapper;
 	
 	/**
@@ -46,6 +55,25 @@ public class LivreMetierImpl implements ILivreMetier{
 	 */
 	@Override
 	public Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable) {
+		//TICKET 1 Fonctionnalité 1 WebAppli : extraction de tous les livres éligibles à la réservation
+		Optional<List<Livre>> livresList = livreRepository.findAllByNbExemplairesDisponibles(0);
+		//TICKET 1 Fonctionnalité 1 WebAppli : on recherche la date de retour de prêt la plus proche et on la met à jour 
+		if(livresList.isPresent()) {
+			for(Livre livre : livresList.get()) {
+				List<Pret> prets = livre.getPrets();
+				Collections.sort(prets);
+				for(Pret pret : prets) {
+					if(prets.indexOf(pret)==0)
+						{ livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue());
+						}
+				}
+				//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
+				List<Reservation> reservations = livre.getReservations();
+				livre.setNbReservationsEnCours(reservations.size());
+				livreRepository.save(livre);
+				
+			}
+		}
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		Page<Livre> livres = livreRepository.findAll(livreSpecification, pageable);
 		return livres;

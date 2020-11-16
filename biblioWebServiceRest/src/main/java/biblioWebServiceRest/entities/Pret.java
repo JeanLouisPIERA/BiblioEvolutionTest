@@ -19,7 +19,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 @Table(name="pret")
-public class Pret implements Serializable{
+public class Pret implements Serializable, Comparable<Pret>{
 	
 	@Id
 	@GeneratedValue
@@ -121,6 +121,11 @@ public class Pret implements Serializable{
 
 	public void setLivre(Livre livre) {
 		this.livre = livre;
+	}
+
+	@Override
+	public int compareTo(Pret pret) {
+		return (this.dateRetourPrevue.compareTo(pret.dateRetourPrevue));
 	}
 
 }
