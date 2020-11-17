@@ -24,6 +24,7 @@ import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
+import biblioWebServiceRest.dao.IReservationRepository;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
@@ -31,6 +32,7 @@ import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Reservation;
+import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -49,6 +51,46 @@ public class LivreMetierImpl implements ILivreMetier{
 	private IPretRepository pretRepository;
 	@Autowired
 	private LivreMapper livreMapper;
+	@Autowired
+	private IReservationRepository reservationRepository;
+	
+	
+	// TICKET 2 FONCTIONNALITE APPLI WEB N°2
+	// Création de cette méthode utilisée dans les classes métier Livre par searchByLivreCriteria 
+	// et Reservation par searchAllReservationsByCriteria 
+	@Override
+	public void miseAJourLivres() {
+	//TICKET 1 Fonctionnalité 1 WebAppli : extraction de tous les livres éligibles à la réservation
+			Optional<List<Livre>> livresList = livreRepository.findAllByNbExemplairesDisponibles(0);
+			//TICKET 1 Fonctionnalité 1 WebAppli : on recherche la date de retour de prêt la plus proche et on la met à jour   
+			if(livresList.isPresent()) {
+				for(Livre livre : livresList.get()) {
+					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndPretStatutOrPretStatut(
+							livre, 
+							PretStatut.ENCOURS, 
+							PretStatut.PROLONGE);
+					if(pretsListe.isPresent()) {
+						Collections.sort(pretsListe.get());
+						for(Pret pret : pretsListe.get()) {
+							if(pretsListe.get().indexOf(pret)==0)
+								{ livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue());
+								}
+						}
+					}
+					 
+					//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
+					Optional<List<Reservation>> reservations = reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
+					if(reservations.isPresent()) {
+						livre.setNbReservationsEnCours(reservations.get().size());}
+					else {
+						livre.setNbReservationsEnCours(0);
+					}
+					livreRepository.save(livre);
+				}
+			}
+	}
+	
+	
 	
 	/**
 	 * Recherche multicritères des livres enregistrés
@@ -57,31 +99,8 @@ public class LivreMetierImpl implements ILivreMetier{
 	 */
 	@Override
 	public Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable) {
-		//TICKET 1 Fonctionnalité 1 WebAppli : extraction de tous les livres éligibles à la réservation
-		Optional<List<Livre>> livresList = livreRepository.findAllByNbExemplairesDisponibles(0);
-		//TICKET 1 Fonctionnalité 1 WebAppli : on recherche la date de retour de prêt la plus proche et on la met à jour   
-		if(livresList.isPresent()) {
-			for(Livre livre : livresList.get()) {
-				Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndPretStatutOrPretStatut(
-						livre, 
-						PretStatut.ENCOURS, 
-						PretStatut.PROLONGE);
-				if(pretsListe.isPresent()) {
-					Collections.sort(pretsListe.get());
-					for(Pret pret : pretsListe.get()) {
-						if(pretsListe.get().indexOf(pret)==0)
-							{ livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue());
-							}
-					}
-				}
-				 
-				//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
-				List<Reservation> reservations = livre.getReservations();
-				livre.setNbReservationsEnCours(reservations.size());
-				livreRepository.save(livre);
-				
-			}
-		}
+		// TICKET 2 FONCTIONNALITE APPLI WEB N°2
+		this.miseAJourLivres();
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		Page<Livre> livres = livreRepository.findAll(livreSpecification, pageable);
 		return livres;

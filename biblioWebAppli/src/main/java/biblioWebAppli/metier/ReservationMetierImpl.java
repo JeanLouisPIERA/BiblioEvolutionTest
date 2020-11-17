@@ -1,5 +1,7 @@
 package biblioWebAppli.metier;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,8 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.ReservationCriteria;
 import biblioWebAppli.dto.ReservationDTO;
-import biblioWebAppli.objets.Pret;
 import biblioWebAppli.objets.Reservation;
+import biblioWebAppli.objets.User;
 
 @Service
 public class ReservationMetierImpl implements IReservationMetier {
@@ -29,6 +31,8 @@ public class ReservationMetierImpl implements IReservationMetier {
     private RestTemplate restTemplate;
 	@Autowired
     private HttpHeadersFactory httpHeadersFactory; 
+	@Autowired
+	private IUserMetier userMetier;
     
     
     @Value("${application.username}")
@@ -43,11 +47,20 @@ public class ReservationMetierImpl implements IReservationMetier {
 	private String uRL;
 
 	@Override
-	public Reservation createReservation(ReservationDTO reservationDTO) {
-		HttpHeaders headers = new HttpHeaders();
+	public Reservation createReservation(Long numLivre) throws FileNotFoundException, IOException  {
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
-
+    	
+    	ReservationDTO reservationDTO = new ReservationDTO();
+    	
+    	reservationDTO.setNumLivre(numLivre);
+    	
+    	User user = userMetier.findByUsernameAndPassword(username, password);
+    	reservationDTO.setIdUser(user.getIdUser());
+    	System.out.println(user.getUsername());
+    	System.out.println(user.getIdUser());
+    	
     	HttpEntity<ReservationDTO> requestEntity = new HttpEntity<>(reservationDTO, headers);
     	ResponseEntity<Reservation> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, Reservation.class);
 			System.out.println(response.getStatusCodeValue());
@@ -57,7 +70,7 @@ public class ReservationMetierImpl implements IReservationMetier {
 
 	@Override
 	public Reservation notifierReservation(Long numReservation) {
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
@@ -73,7 +86,7 @@ public class ReservationMetierImpl implements IReservationMetier {
 
 	@Override
 	public Reservation livrerReservationAndCreerPret(Long numReservation) {
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	
@@ -89,7 +102,7 @@ public class ReservationMetierImpl implements IReservationMetier {
 
 	@Override
 	public Reservation suppressReservation(Long numReservation) {
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
     	

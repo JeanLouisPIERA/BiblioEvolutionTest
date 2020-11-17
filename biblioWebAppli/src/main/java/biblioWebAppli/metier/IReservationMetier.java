@@ -1,12 +1,14 @@
 package biblioWebAppli.metier;
 
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.ReservationCriteria;
-import biblioWebAppli.dto.ReservationDTO;
 import biblioWebAppli.objets.Reservation;
 
 
@@ -20,15 +22,13 @@ public interface IReservationMetier {
 	 * Il y a un exemplaire à emprunter pour le livre et la liste de reservations est vide = réservation IMPOSSIBLE
 	 * La réservation ne doit pas faire passer le nombre de réservations en cours > 2x le nombre d'exmplaires = réservation IMPOSSIBLE
 	 * La réservation ne doit pas porter sur un livre qui a déjà été emprunté = réservation REFUSEE
-	 * @param reservationDTO
+	 * @param numLivre
 	 * @return
-	 * @throws EntityNotFoundException 
-	 * @throws BookNotAvailableException 
-	 * @throws BookAvailableException 
-	 * @throws RentAlreadyExistsException 
+	 * @throws FileNotFoundException
+	 * @throws IOException
 	 */
-	
-	Reservation createReservation(ReservationDTO reservationDTO); 
+
+	Reservation createReservation(Long numLivre) throws FileNotFoundException, IOException; 
 	
 	/**
 	 * CRUD : UPDATE notifier la réservation pour indiquer que l'exemplaire du livre demandé est disponible pour l'emprunteur

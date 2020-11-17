@@ -43,6 +43,9 @@ import io.swagger.annotations.ApiModelProperty;
 				+ " IMPOSSIBLE : si les conditions d'enregistrement ne sont pas remplies ****** C'est une exception, pas un statut******")
 		private ReservationStatut reservationStatut;
 		
+		@ApiModelProperty(notes= "Rang de la réservation parmi les autres réservations du livre réservé")
+		private Integer rangReservation;
+		
 		@ManyToOne
 		@JoinColumn(name="user_id")
 		private User user;
@@ -66,6 +69,27 @@ import io.swagger.annotations.ApiModelProperty;
 			this.user = user;
 			this.livre = livre;
 		}
+		
+		
+
+
+
+		public Reservation(Long numReservation, LocalDate dateReservation, LocalDate dateNotification,
+				LocalDate dateDeadline, LocalDate dateSuppression, ReservationStatut reservationStatut,
+				Integer rangReservation, User user, Livre livre) {
+			super();
+			this.numReservation = numReservation;
+			this.dateReservation = dateReservation;
+			this.dateNotification = dateNotification;
+			this.dateDeadline = dateDeadline;
+			this.dateSuppression = dateSuppression;
+			this.reservationStatut = reservationStatut;
+			this.rangReservation = rangReservation;
+			this.user = user;
+			this.livre = livre;
+		}
+
+
 
 
 
@@ -151,6 +175,24 @@ import io.swagger.annotations.ApiModelProperty;
 			return (this.numReservation.intValue() - reservation.numReservation.intValue());
 			
 		}
+
+
+
+
+
+		public Integer getRangReservation() {
+			return rangReservation;
+		}
+
+
+
+
+
+		public void setRangReservation(Integer rangReservation) {
+			this.rangReservation = rangReservation;
+		}
+		
+		
 		
 	
 

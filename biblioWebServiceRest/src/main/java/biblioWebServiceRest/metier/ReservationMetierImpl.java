@@ -28,6 +28,7 @@ import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.entities.User;
@@ -64,6 +65,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 	LivreMapper livreMapper; 
 	@Autowired
 	IPretMetier pretMetier;
+	@Autowired
+	ILivreMetier livreMetier;
 	
 
 	@Override
@@ -152,6 +155,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 		return searchedReservation.get();
 	}
 
+	//TiCKET 2 FONCTIONNALITE APPLIWEB N°4 : PERMET DE SUPPRIMER UNE RESERVATION
 	@Override
 	public Reservation suppressReservation(Long numReservation) throws EntityNotFoundException, WrongNumberException {
 		Optional<Reservation> searchedReservation = reservationRepository.findById(numReservation);
@@ -168,20 +172,36 @@ public class ReservationMetierImpl implements IReservationMetier{
 		
 		return searchedReservation.get();
 	}
-
+	
+	//TICKET 2 FONCTIONNALITE APPLIWEB N°2
+	//PERMET DE METTRE A JOUR LE RANG DE LA RESERVATION APRES AVOIR MIS A JOUR LA TAILLE DE LA LISTE DES RESERVATIONS PAR LIVRE
 	@Override
-	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria,
-			Pageable pageable) {
-		Specification<Reservation> reservationSpecification = new ReservationSpecification(reservationCriteria);
-		System.out.println("spec"+ reservationSpecification.toString());
-		Page<Reservation> reservations = reservationRepository.findAll(reservationSpecification, pageable);
-		return reservations;
+	public void determinerRangReservation() {
+		livreMetier.miseAJourLivres();
+		Optional<List<Reservation>> reservationsList = reservationRepository.findAllByReservationStatut(ReservationStatut.ENREGISTREE);
+		if(reservationsList.isPresent()) {
+			for(Reservation reservation : reservationsList.get()) {
+				Livre livreReserve = reservation.getLivre();
+				List<Reservation> reservationsLivreReserveList = livreReserve.getReservations();
+				Collections.sort(reservationsLivreReserveList);
+				Integer rangReservation = reservationsLivreReserveList.indexOf(reservation)+1;
+				reservation.setRangReservation(rangReservation);
+				reservationRepository.save(reservation);
+			}
+		}
+				
 	}
 
 	@Override
-	public Page<Reservation> searchMyReservations(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria, Pageable pageable) {
+		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
+		this.determinerRangReservation();
+		Specification<Reservation> reservationSpecification = new ReservationSpecification(reservationCriteria);
+		System.out.println("spec"+ reservationSpecification.toString());
+		Page<Reservation> reservations = reservationRepository.findAll(
+				reservationSpecification, 
+				pageable);
+		return reservations;
 	}
 	
 	@Override

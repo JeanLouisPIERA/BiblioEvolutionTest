@@ -122,7 +122,12 @@
 								          ${livre.nbReservationsEnCours}
 								          </c:if>
 								          </td>
-								          
+								          <td>
+								          <c:if test="${livre.nbExemplairesDisponibles==0}">
+								          	<a type="button"  class="btn btn-success" 
+								        	href="/reservations/creation/${livre.numLivre}">Réserver</a>
+								          </c:if>
+								          </td>
 								          
 					        	      	  
 					    				 </tr>
