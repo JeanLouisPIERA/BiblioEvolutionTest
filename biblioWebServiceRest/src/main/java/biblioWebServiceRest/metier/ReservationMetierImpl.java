@@ -2,7 +2,6 @@ package biblioWebServiceRest.metier;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +27,6 @@ import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.entities.User;
@@ -53,8 +51,6 @@ public class ReservationMetierImpl implements IReservationMetier{
 	private ILivreRepository livreRepository;
 	@Autowired
 	private IUserRepository userRepository;
-	@Autowired
-	private IRoleRepository roleRepository;
 	@Autowired
 	ApplicationPropertiesConfiguration appProperties;
 	@Autowired
@@ -225,17 +221,5 @@ public class ReservationMetierImpl implements IReservationMetier{
 		}
 		return reservationsANotifier; 
 	}
-
-	@Override
-	public List<Reservation> searchAndUpdateReservationsAnnulées() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
-
-	
-	
-	
 
 }

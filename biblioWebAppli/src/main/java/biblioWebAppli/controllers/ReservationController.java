@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import biblioWebAppli.criteria.ReservationCriteria;
 import biblioWebAppli.metier.IReservationMetier;
-import biblioWebAppli.objets.Pret;
 import biblioWebAppli.objets.Reservation;
 
 @Controller

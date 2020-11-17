@@ -92,11 +92,6 @@ public interface IReservationMetier {
 	  */
 	 List<Reservation> searchAndNotifierReservations() throws EntityNotFoundException, WrongNumberException;
 	 
-	 /**
-	  * Identifie et change le statut des réservations si le livre n'est pas emprunté dans les 48 heures qui suivent sa notification
-	  * @return
-	  */
-	 List<Reservation> searchAndUpdateReservationsAnnulées(); 
 	 
 	 
 	 

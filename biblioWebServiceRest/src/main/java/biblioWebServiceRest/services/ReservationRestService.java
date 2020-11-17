@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.criteria.ReservationCriteria;
 import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Pret;
