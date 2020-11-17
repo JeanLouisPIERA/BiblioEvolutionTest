@@ -4,6 +4,7 @@
 package biblioWebServiceRest.dao;
 
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.User;
 
 
@@ -29,5 +31,6 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 
 	Optional<Pret> findByUserAndLivre(User user, Livre livre);
 	
+	Optional<List<Pret>> findAllByLivreAndPretStatutOrPretStatut(Livre livre, PretStatut pretStatut1, PretStatut pretStatut2);
 	
 }

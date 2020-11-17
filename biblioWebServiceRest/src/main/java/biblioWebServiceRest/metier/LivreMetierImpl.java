@@ -5,6 +5,7 @@
 package biblioWebServiceRest.metier;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
@@ -57,16 +59,22 @@ public class LivreMetierImpl implements ILivreMetier{
 	public Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable) {
 		//TICKET 1 Fonctionnalité 1 WebAppli : extraction de tous les livres éligibles à la réservation
 		Optional<List<Livre>> livresList = livreRepository.findAllByNbExemplairesDisponibles(0);
-		//TICKET 1 Fonctionnalité 1 WebAppli : on recherche la date de retour de prêt la plus proche et on la met à jour 
+		//TICKET 1 Fonctionnalité 1 WebAppli : on recherche la date de retour de prêt la plus proche et on la met à jour   
 		if(livresList.isPresent()) {
 			for(Livre livre : livresList.get()) {
-				List<Pret> prets = livre.getPrets();
-				Collections.sort(prets);
-				for(Pret pret : prets) {
-					if(prets.indexOf(pret)==0)
-						{ livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue());
-						}
+				Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndPretStatutOrPretStatut(
+						livre, 
+						PretStatut.ENCOURS, 
+						PretStatut.PROLONGE);
+				if(pretsListe.isPresent()) {
+					Collections.sort(pretsListe.get());
+					for(Pret pret : pretsListe.get()) {
+						if(pretsListe.get().indexOf(pret)==0)
+							{ livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue());
+							}
+					}
 				}
+				 
 				//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
 				List<Reservation> reservations = livre.getReservations();
 				livre.setNbReservationsEnCours(reservations.size());
