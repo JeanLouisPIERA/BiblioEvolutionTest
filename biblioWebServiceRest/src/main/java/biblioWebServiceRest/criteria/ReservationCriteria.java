@@ -1,6 +1,6 @@
 package biblioWebServiceRest.criteria;
 
-
+import biblioWebServiceRest.entities.ReservationStatut;
 
 public class ReservationCriteria {
 	
@@ -12,6 +12,10 @@ public class ReservationCriteria {
 	private String auteur;
 	private String nomCategorieLivre;
 	private String code;
+	private ReservationStatut reservationStatut;
+	
+	
+	
 	public Long getNumReservation() {
 		return numReservation;
 	}
@@ -59,7 +63,15 @@ public class ReservationCriteria {
 	}
 	public void setCode(String code) {
 		this.code = code;
-	} 
+	}
+	public ReservationStatut getReservationStatut() {
+		return reservationStatut;
+	}
+	public void setReservationStatut(ReservationStatut reservationStatut) {
+		this.reservationStatut = reservationStatut;
+	}
+	
+	
 	
 	
 	

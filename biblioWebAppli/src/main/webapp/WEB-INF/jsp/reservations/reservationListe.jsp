@@ -101,9 +101,6 @@
 								     </thead>
 								     <tbody>
 					   				 <c:forEach var="reservation" items="${reservations}">
-					   				 <c:if test="${reservation.reservationStatut.getCode() != 'SUPPRIMEE' 
-								          && reservation.reservationStatut.getCode() != 'LIVREE' 
-								          && reservation.reservationStatut.getCode() != 'ANNULEE'}">
 					   				 <tr>
 								          <td>${reservation.numReservation}</td>
 								          <td>${reservation.dateReservation}</td>
@@ -118,7 +115,6 @@
 								        	href="/reservations/suppression/${reservation.numReservation}">Supprimer</a>
 								          </td>
 					    				 </tr>
-					    				 </c:if>
 				   					</c:forEach>
 								</tbody>
 							</table>			
@@ -129,7 +125,7 @@
 					            <ul class="nav nav-pills">
 					                <c:forEach begin="0" end="${totalPages-1}" var="page">
 					                    <li class="page-item">
-					                        <a class="btn btn-info" href="prets?page=${page}&size=${size}" class="page-target">${page+1}</a>
+					                        <a class="btn btn-info" href="reservations?page=${page}&size=${size}" class="page-target">${page+1}</a>
 					                    </li>
 					                </c:forEach>
 				           		 </ul>

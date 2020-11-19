@@ -174,10 +174,7 @@ public class LivreMetierImpl implements ILivreMetier{
 			throw new EntityNotFoundException("Le livre à mettre à jour n'existe pas");
 		
 		Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
-		
-		
-		
-		
+	
 		/*
 		 * Si la modification du titre ou du nom de l'auteur créée une nouvelle combinaison déjà existante identifiée 
 		 * par la recherche via LivreCriteria, la mise à jour du livre est refusée pour respecter l'unicité des enregistrements
@@ -206,9 +203,6 @@ public class LivreMetierImpl implements ILivreMetier{
 		
 		livreToUpdate.get().setTitre(livreUpdates.getTitre());
 		livreToUpdate.get().setAuteur(livreUpdates.getAuteur());
-		
-		
-		
 				
 		/*
 		 * La mise à jour du nombre total d'exemplaires d'une référence de livre est inférieure au nombre des exemplaires

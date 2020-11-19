@@ -94,7 +94,7 @@
 									      <th>Date du Pret</th>
 									      <th>Date de Retour Prévue</th>
 									      <th>Date de Retour Effectif</th>
-									      <th>Disponibilité</th>
+									      <th>Statut du prêt</th>
 									      
 								     </tr>
 								     </thead>

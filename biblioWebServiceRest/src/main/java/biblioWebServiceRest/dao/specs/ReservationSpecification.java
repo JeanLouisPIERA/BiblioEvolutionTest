@@ -54,22 +54,22 @@ public class ReservationSpecification implements Specification<Reservation>{
             	System.out.println("Code2"+reservationCriteria.getNumLivre());
             	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), reservationCriteria.getNumLivre()));	
             }
-           
+           /*
             if (reservationCriteria.getCode()!= null) {
             	//System.out.println("Code1"+root.get("pretStatut").in("code").as(String.class));
             	//System.out.println("Code2"+pretCriteria.getCode());
             	predicates.getExpressions().add(builder.equal(root.get("pretStatut"),reservationCriteria.getCode()));			
             	
             }
-	        
-        	
-        /**	
-            if (pretCriteria.getPretStatut().getCode()!= null) {
+	        */
+        
+            if (reservationCriteria.getReservationStatut() != null) {
             	
-            	predicates.getExpressions().add(builder.equal(root.get("pretStatut").get("text"), pretCriteria.getPretStatut().getText()));			
+            	predicates.getExpressions().add(builder.equal(root.get("reservationStatut"), reservationCriteria.getReservationStatut()));			
             	
             }
-        **/
+            
+       
         return builder.and(predicates);
 		
 	}

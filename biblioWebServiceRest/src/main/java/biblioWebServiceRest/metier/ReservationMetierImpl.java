@@ -20,7 +20,6 @@ import biblioWebServiceRest.criteria.ReservationCriteria;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.IReservationRepository;
-import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.dao.specs.ReservationSpecification;
 import biblioWebServiceRest.dto.PretDTO;
@@ -99,7 +98,11 @@ public class ReservationMetierImpl implements IReservationMetier{
 		newReservation.setDateReservation(dateReservation);
 		
 		if(reservationsByUser.isPresent()) {
-			if(!reservationRepository.findAllByUserAndLivre(user.get(), livreToRent.get()).isPresent()){
+			if(!reservationRepository.findAllByUserAndLivreAndReservationStatutOrReservationStatut(
+					user.get(), 
+					livreToRent.get(),
+					ReservationStatut.ENREGISTREE,
+					ReservationStatut.NOTIFIEE).isPresent()){
 				newReservation.setRangReservation(reservationsByUser.get().size()+1);
 			}else {
 				newReservation.setRangReservation(reservationsByUser.get().size());
@@ -157,21 +160,25 @@ public class ReservationMetierImpl implements IReservationMetier{
 		}
 		
 		//PASSE EN STATUT ANNULEE TOUTES LES RESERVATIONS ENREGISTREES DE CET UTILISATEUR POUR CE LIVRE
-		for(Reservation reservationToDelete : reservationRepository.findAllByUserAndLivreAndReservationStatut(
+		Optional<List<Reservation>> reservationToDeleteList = reservationRepository.findAllByUserAndLivreAndReservationStatut(
 				searchedReservation.get().getUser(), 
 				searchedReservation.get().getLivre(),
-				ReservationStatut.ENREGISTREE).get()) {
-			reservationToDelete.setReservationStatut(ReservationStatut.ANNULEE);
+				ReservationStatut.ENREGISTREE);
+		if(reservationToDeleteList.isPresent()) {
+			for(Reservation reservationToDelete : reservationToDeleteList.get()) {
+				reservationToDelete.setReservationStatut(ReservationStatut.ANNULEE);
+			}
 		}
 		
 		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
 		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
 		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(searchedReservation.get().getLivre(), ReservationStatut.ENREGISTREE);
-		for(Reservation reservation : reservationList.get()) {
-			reservation.setRangReservation(reservation.getRangReservation()-1);
-			reservationRepository.save(reservation);
+		if(reservationList.isPresent()) {
+			for(Reservation reservation : reservationList.get()) {
+				reservation.setRangReservation(reservation.getRangReservation()-1);
+				reservationRepository.save(reservation);
+			}
 		}
-		
 		searchedReservation.get().setReservationStatut(ReservationStatut.LIVREE);
 		
 		searchedReservation.get().getLivre().setNbExemplairesDisponibles(searchedReservation.get().getLivre().getNbExemplairesDisponibles()+1);
@@ -195,25 +202,27 @@ public class ReservationMetierImpl implements IReservationMetier{
 			throw new WrongNumberException("SUPPRESSION IMPOSSIBLE = Le statut de cette réservation ne permet pas de la supprimer");
 		
 		//PASSE EN STATUT ANNULEE TOUTES LES RESERVATIONS ENREGISTREES DE CET UTILISATEUR POUR CE LIVRE
-		for(Reservation reservationToDelete : reservationRepository.findAllByUserAndLivreAndReservationStatut(
+		Optional<List<Reservation>> reservationToDeleteList = reservationRepository.findAllByUserAndLivreAndReservationStatut(
 				searchedReservation.get().getUser(), 
 				searchedReservation.get().getLivre(),
-				ReservationStatut.ENREGISTREE).get()) {
-			reservationToDelete.setReservationStatut(ReservationStatut.ANNULEE);
+				ReservationStatut.ENREGISTREE);
+		if(reservationToDeleteList.isPresent()) {
+			for(Reservation reservationToDelete : reservationToDeleteList.get() ) {
+				reservationToDelete.setReservationStatut(ReservationStatut.ANNULEE);
+			}
 		}
 		
 		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
 		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
 		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(searchedReservation.get().getLivre(), ReservationStatut.ENREGISTREE);
-		for(Reservation reservation : reservationList.get()) {
-			if(searchedReservation.get().getRangReservation()<reservation.getRangReservation()) {
-			reservation.setRangReservation(reservation.getRangReservation()-1);
-			reservationRepository.save(reservation);
+		if(reservationList.isPresent()) {
+			for(Reservation reservation : reservationList.get()) {
+				if(searchedReservation.get().getRangReservation()<reservation.getRangReservation()) {
+				reservation.setRangReservation(reservation.getRangReservation()-1);
+				reservationRepository.save(reservation);
+				}
 			}
 		}
-		
-		
-		
 		
 		searchedReservation.get().setReservationStatut(ReservationStatut.SUPPRIMEE);
 		LocalDate dateSuppression = LocalDate.now();
@@ -221,36 +230,11 @@ public class ReservationMetierImpl implements IReservationMetier{
 		
 		return reservationRepository.save(searchedReservation.get());
 	}
-	/*
-	//TICKET 2 FONCTIONNALITE APPLIWEB N°2
-	//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
-	@Override
-	public void determinerRangReservation() {
-		livreMetier.miseAJourLivres();
-		
-		Optional<List<Reservation>> reservationsList = reservationRepository.findAllByReservationStatut(ReservationStatut.ENREGISTREE);
-		if(reservationsList.isPresent()) {
-			for(Reservation reservation : reservationsList.get()) {
-				Livre livre = reservation.getLivre();
-				List<Reservation> listReservation = livre.getReservations();
-				Collections.sort(reservationsList.get());
-				Integer rangReservation = reservationsList.get().indexOf(reservation)+1;
-				reservation.setRangReservation(rangReservation);
-				reservationRepository.save(reservation);
-			}
-		}
-				
-	}
-	*/
-	
-	
-	
 	
 
 	@Override
 	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria, Pageable pageable) {
-		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
-		//this.determinerRangReservation();
+		reservationCriteria.setReservationStatut(ReservationStatut.ENREGISTREE);
 		Specification<Reservation> reservationSpecification = new ReservationSpecification(reservationCriteria);
 		System.out.println("spec"+ reservationSpecification.toString());
 		Page<Reservation> reservations = reservationRepository.findAll(

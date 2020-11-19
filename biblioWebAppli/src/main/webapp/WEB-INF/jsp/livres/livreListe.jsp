@@ -100,7 +100,7 @@
 									      <th>Exemplaires disponibles</th>
 									      <th>Catégorie</th>
 									      <th>Date de retour la plus proche</th>
-									      <th>Nombre d'utilisateurs ayant déjà réservé</th>
+									      <th>Réservations en cours : nombre d'utilisateurs inscrits</th>
 								     </tr>
 								     </thead>
 								     <tbody>
