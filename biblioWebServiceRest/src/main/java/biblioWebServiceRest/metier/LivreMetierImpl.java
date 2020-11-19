@@ -65,26 +65,37 @@ public class LivreMetierImpl implements ILivreMetier{
 			//TICKET 1 Fonctionnalité 1 WebAppli : on recherche la date de retour de prêt la plus proche et on la met à jour   
 			if(livresList.isPresent()) {
 				for(Livre livre : livresList.get()) {
-					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndPretStatutOrPretStatut(
+					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndNotPretStatut(
 							livre, 
-							PretStatut.ENCOURS, 
-							PretStatut.PROLONGE);
+							PretStatut.CLOTURE);
 					if(pretsListe.isPresent()) {
 						Collections.sort(pretsListe.get());
 						for(Pret pret : pretsListe.get()) {
-							if(pretsListe.get().indexOf(pret)==0)
-								{ livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue());
-								}
+							if(pretsListe.get().indexOf(pret)==0 && pret.getPretStatut().equals(PretStatut.ECHU))
+								{livre.setDateRetourPrevuePlusProche("Pret Echu - Livre non restitué");}
+							else if (pretsListe.get().indexOf(pret)==0)
+								{livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue().toString());
+							}
 						}
 					}
+				
 					 
 					//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
+					// le nombre d'utilisateurs ayant une réservation en cours
+					// le rang de la réservation dans la liste des réservations d'un livre
 					Optional<List<Reservation>> reservations = reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
-					if(reservations.isPresent()) {
-						livre.setNbReservationsEnCours(reservations.get().size());}
-					else {
-						livre.setNbReservationsEnCours(0);
-					}
+						if(reservations.isPresent()) {
+							livre.setNbReservationsEnCours(reservations.get().size());}
+						else {
+							livre.setNbReservationsEnCours(0);
+						}
+					Optional<List<Reservation>> reservationsByUser = reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
+						if(reservationsByUser.isPresent()) {
+							livre.setNbReservataires(reservationsByUser.get().size());}
+						else {
+							livre.setNbReservataires(0);
+						}
+					
 					livreRepository.save(livre);
 				}
 			}

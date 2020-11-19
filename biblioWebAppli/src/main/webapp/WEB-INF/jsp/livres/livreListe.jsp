@@ -100,7 +100,7 @@
 									      <th>Exemplaires disponibles</th>
 									      <th>Catégorie</th>
 									      <th>Date de retour la plus proche</th>
-									      <th>Nombre de réservations en cours</th>
+									      <th>Nombre d'utilisateurs ayant déjà réservé</th>
 								     </tr>
 								     </thead>
 								     <tbody>
@@ -119,7 +119,7 @@
 								          </td>
 								          <td>
 								          <c:if test="${livre.nbExemplairesDisponibles==0}"> 
-								          ${livre.nbReservationsEnCours}
+								          ${livre.nbReservataires}
 								          </c:if>
 								          </td>
 								          <td>

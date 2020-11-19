@@ -69,8 +69,9 @@ CREATE TABLE public.livre (
     auteur character varying(255),
     nb_exemplaires integer,
     nb_exemplaires_disponibles integer,
-    date_retour_prevue_plus_proche date,
+    date_retour_prevue_plus_proche character varying(255),
     nb_reservations_en_cours integer,
+    nb_reservataires integer,
     titre character varying(255),
     num_categorie bigint
 );

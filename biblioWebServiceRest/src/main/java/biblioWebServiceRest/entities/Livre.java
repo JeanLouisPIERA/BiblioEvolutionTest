@@ -48,10 +48,12 @@ public class Livre implements Serializable{
 	private Integer nbExemplairesDisponibles;
 	// TICKET 1 : WEB APPLI 
 	@ApiModelProperty(notes= "Date de retour prévue la plus proche d'un exemplaire de ce livre")
-	private LocalDate dateRetourPrevuePlusProche;
+	private String dateRetourPrevuePlusProche;
 	// TICKET 1 : WEB APPLI
 	@ApiModelProperty(notes= "Nombre de réservations en cours")
 	private Integer nbReservationsEnCours;
+	@ApiModelProperty(notes="Nombre d'utilisateurs dans la file d'attente des réservations en cours")
+	private Integer nbReservataires;
 	@ApiModelProperty(notes= "Categorie de l'ouvrage")
 	@ManyToOne 
 	@JoinColumn(name="num_categorie")
@@ -107,7 +109,7 @@ public class Livre implements Serializable{
 	
 
 	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
-			LocalDate dateRetourPrevuePlusProche, Integer nbReservationsEnCours, Categorie categorie, List<Pret> prets,
+			String dateRetourPrevuePlusProche, Integer nbReservationsEnCours, Categorie categorie, List<Pret> prets,
 			List<Reservation> reservations) {
 		super();
 		this.numLivre = numLivre;
@@ -117,6 +119,25 @@ public class Livre implements Serializable{
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
 		this.nbReservationsEnCours = nbReservationsEnCours;
+		this.categorie = categorie;
+		this.prets = prets;
+		this.reservations = reservations;
+	}
+	
+	
+
+	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
+			String dateRetourPrevuePlusProche, Integer nbReservationsEnCours, Integer nbReservataires,
+			Categorie categorie, List<Pret> prets, List<Reservation> reservations) {
+		super();
+		this.numLivre = numLivre;
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
+		this.nbReservationsEnCours = nbReservationsEnCours;
+		this.nbReservataires = nbReservataires;
 		this.categorie = categorie;
 		this.prets = prets;
 		this.reservations = reservations;
@@ -194,13 +215,23 @@ public class Livre implements Serializable{
 		this.reservations = reservations;
 	}
 
-	public LocalDate getDateRetourPrevuePlusProche() {
+	public String getDateRetourPrevuePlusProche() {
 		return dateRetourPrevuePlusProche;
 	}
 
-	public void setDateRetourPrevuePlusProche(LocalDate dateRetourPrevuePlusProche) {
+	public void setDateRetourPrevuePlusProche(String dateRetourPrevuePlusProche) {
 		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
 	}
+
+	public Integer getNbReservataires() {
+		return nbReservataires;
+	}
+
+	public void setNbReservataires(Integer nbReservataires) {
+		this.nbReservataires = nbReservataires;
+	}
+
+	
 
 	
 

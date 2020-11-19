@@ -168,7 +168,13 @@ import io.swagger.annotations.ApiModelProperty;
 			this.dateSuppression = dateSuppression;
 		}
 
+		public Integer getRangReservation() {
+			return rangReservation;
+		}
 
+		public void setRangReservation(Integer rangReservation) {
+			this.rangReservation = rangReservation;
+		}
 
 		@Override
 		public int compareTo(Reservation reservation) {
@@ -180,17 +186,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 
 
-		public Integer getRangReservation() {
-			return rangReservation;
-		}
-
-
-
-
-
-		public void setRangReservation(Integer rangReservation) {
-			this.rangReservation = rangReservation;
-		}
+		
 		
 		
 		

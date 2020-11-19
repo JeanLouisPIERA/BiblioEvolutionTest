@@ -10,8 +10,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import biblioWebServiceRest.entities.Livre;
@@ -31,6 +30,7 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 
 	Optional<Pret> findByUserAndLivre(User user, Livre livre);
 	
-	Optional<List<Pret>> findAllByLivreAndPretStatutOrPretStatut(Livre livre, PretStatut pretStatut1, PretStatut pretStatut2);
+	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)")
+	Optional<List<Pret>> findAllByLivreAndNotPretStatut(Livre livre1, PretStatut pretStatut);
 	
 }

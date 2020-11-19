@@ -21,6 +21,12 @@ public class Livre {
 	private Integer nbExemplairesDisponibles;
 	
 	private Categorie categorie;
+	
+	private String dateRetourPrevuePlusProche;
+	
+	private Integer nbReservationsEnCours;
+	
+	private Integer nbReservataires;
 
 	/**
 	 * @return the numLivre
@@ -104,6 +110,30 @@ public class Livre {
 	 */
 	public void setCategorie(Categorie categorie) {
 		this.categorie = categorie;
+	}
+
+	public String getDateRetourPrevuePlusProche() {
+		return dateRetourPrevuePlusProche;
+	}
+
+	public void setDateRetourPrevuePlusProche(String dateRetourPrevuePlusProche) {
+		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
+	}
+
+	public Integer getNbReservationsEnCours() {
+		return nbReservationsEnCours;
+	}
+
+	public void setNbReservationsEnCours(Integer nbReservationsEnCours) {
+		this.nbReservationsEnCours = nbReservationsEnCours;
+	}
+
+	public Integer getNbReservataires() {
+		return nbReservataires;
+	}
+
+	public void setNbReservataires(Integer nbReservataires) {
+		this.nbReservataires = nbReservataires;
 	}
 	
 	

@@ -65,13 +65,6 @@ public interface IReservationMetier {
 	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************
-	/**
-	 * Cette méthode utilise la méthode miseAJourLivres() de la classe métier pour mettre à jour la date de retour la plus proche 
-	 * pour tous les livres éligibles à la réservation et pour identifier le nombre de réservations en cours pour un livre 
-	 * Sur la base de la mise à jour du nombre de réservations en cours pour un luvre, elle détermine le rang de chaque réservation
-	 * appelée par la couche métier Réservation
-	 */
-	void determinerRangReservation();
 	
 	/**
 	 * Afficher toutes les réservations en cours: recherche les réservations par ReservationCriteria

@@ -15,6 +15,7 @@ import biblioWebServiceRest.dao.specs.ReservationSpecification;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.ReservationStatut;
+import biblioWebServiceRest.entities.User;
 
 public interface IReservationRepository extends JpaRepository<Reservation, Long>, JpaSpecificationExecutor<Reservation>{
 	
@@ -28,4 +29,18 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
 	Optional<List<Reservation>> findAllByLivreAndReservationStatutOrReservationStatut(Livre livre, 
 			ReservationStatut enregistree,
 			ReservationStatut notifiee);
+	
+	Optional<List<Reservation>> findAllByLivreAndReservationStatut(Livre livre, 
+			ReservationStatut enregistree);
+	
+	Optional<List<Reservation>> findAllByUserAndLivreAndReservationStatut(User user, Livre livre, ReservationStatut reservationStatut); 
+	
+	@Query("select reservation.user.idUser from Reservation reservation where (reservation.livre = ?1) " + " AND (reservation.reservationStatut = ?2 "+" or reservation.reservationStatut = ?3)" + " GROUP BY reservation.user.idUser")
+	Optional<List<Reservation>> findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(Livre livre, ReservationStatut reservationStatut1, ReservationStatut reservationStatut2);
+	
+	@Query("select reservation.livre.numLivre from Reservation reservation where (reservation.livre = ?1) " + " AND (reservation.reservationStatut = ?2)" + " GROUP BY reservation.livre.numLivre")
+	Optional<List<Reservation>> findAllByLivreGroupByUserAndReservationStatut(Livre livre, ReservationStatut reservationStatut1);
+	
+	Optional<List<Reservation>> findAllByUserAndLivre(User user, Livre livre);
+	
 }
