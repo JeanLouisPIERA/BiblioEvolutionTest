@@ -24,7 +24,7 @@ INSERT INTO public.categorie (num_categorie, nom_categorie) VALUES (9, 'Policier
 --
 
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (10, 'Balzac', 1, 0, 'Le Pere Goriot', 1);
-INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (11, 'Einstein', 2, 0, 'Comment je vois le monde', 2);
+INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (11, 'Einstein', 3, 0, 'Comment je vois le monde', 2);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (12, 'Collectif', 2, 0, 'Mathematiques au college', 3);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (13, 'Boudard', 2, 0, 'Physiologie des cloportes', 9);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (14, 'Jean Anouilh', 1, 1, 'La guerre de Troie n''aura pas lieu', 4);
@@ -57,8 +57,8 @@ INSERT INTO public.role (id, name) VALUES (2, 0);
 -- Data for Name: utilisateur; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_id) VALUES (1, 'Jean-Charles@hotmail.com', '$2a$10$O8YsVymxoY8D7Hs2Eegjgenw9tM23XexaPwVXsAnmv6Mn/Iars7FG', 'Jean-Charles', 2);
-INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_id) VALUES (2, 'Charlemagne@hotmail.com', '$2a$10$tm6MaYpRYfkNsW3lPSZB2.cFuJk6jwI2FJVrL3yfjffXNCEkeVLKC', 'Charlemagne', 2);
+INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_id) VALUES (1, 'Jean-Charles@hotmail.com', '$2a$10$D5I01lR8Ku3kqUTFdXi9aeU4Q24OdIAeOSK.t4xC/vLIEL8tL0OSC', 'Jean-Charles', 2);
+INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_id) VALUES (2, 'Charlemagne@hotmail.com', '$2a$10$D5I01lR8Ku3kqUTFdXi9aeU4Q24OdIAeOSK.t4xC/vLIEL8tL0OSC', 'Charlemagne', 2);
 INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_id) VALUES (3, 'Alexandre@hotmail.com', '$2a$10$D5I01lR8Ku3kqUTFdXi9aeU4Q24OdIAeOSK.t4xC/vLIEL8tL0OSC', 'Alexandre', 2);
 INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_id) VALUES (6, 'Tintin@hotmail.com', '$2a$10$D5I01lR8Ku3kqUTFdXi9aeU4Q24OdIAeOSK.t4xC/vLIEL8tL0OSC', 'Tintin', 2);
 INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_id) VALUES (7, 'Emilou@hotmail.com', '$2a$10$D5I01lR8Ku3kqUTFdXi9aeU4Q24OdIAeOSK.t4xC/vLIEL8tL0OSC', 'Emilou', 2);
@@ -76,17 +76,17 @@ INSERT INTO public.utilisateur (id_user, adresse_mail, password, username, role_
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (23, '2020-09-30', '2020-10-15', '2020-10-30', 3, 23, 3);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (24, '2020-10-04', NULL, '2020-11-04', 1, 20, 3);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (25, '2020-10-05', NULL, '2020-11-05', 1, 10, 1);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (26, '2020-09-30', NULL, '2020-11-30', 2, 11, 2);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (27, '2020-10-25', NULL, '2020-11-25', 0, 12, 3);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (26, '2020-09-30', NULL, '2020-11-30', 2, 11, 6);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (27, '2020-10-25', NULL, '2020-11-25', 0, 12, 8);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (28, '2020-10-25', NULL, '2020-12-25', 2, 13, 3);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (29, '2020-10-25', NULL, '2020-12-25', 2, 12, 2);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (29, '2020-10-25', NULL, '2020-12-25', 2, 12, 8);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (30, '2020-11-02', NULL, '2020-12-02', 0, 11, 1);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (31, '2020-11-10', NULL, '2020-12-10', 0, 13, 1);
-
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (32, '2020-11-12', NULL, '2020-12-12', 0, 11, 1);
 
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (1, '2020-11-02', NULL, NULL, NULL, 0, 1, 11, 6);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (2, '2020-11-08', NULL, NULL, NULL, 0, 2, 11, 7);
-INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (3, '2020-11-10', NULL, NULL, NULL, 0, 3, 11, 6);
+INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (3, '2020-11-10', NULL, NULL, NULL, 0, 3, 11, 8);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (4, '2020-11-02', NULL, NULL, NULL, 0, 1, 12, 6);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (5, '2020-11-08', NULL, NULL, NULL, 0, 2, 12, 7);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (6, '2020-11-10', NULL, NULL, NULL, 0, 3, 12, 8);

@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
@@ -41,8 +42,10 @@ public class LivreMetierImpl implements ILivreMetier {
     
     @Value("${application.uRLLivre}")
 	private String uRL;
-    @Value("${application.username}")
-	private String username;
+    @Value("${application.username1}")
+	private String username1;
+    @Value("${application.username2}")
+	private String username2;
 	@Value("${application.password}")
 	private String password;
 	
@@ -55,6 +58,8 @@ public class LivreMetierImpl implements ILivreMetier {
 	 */
 	@Override
 	public Page<Livre> searchByCriteria(LivreCriteria livreCriteria, Pageable pageable) {
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);

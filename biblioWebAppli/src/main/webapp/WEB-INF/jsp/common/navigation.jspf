@@ -21,18 +21,18 @@
 		     </div>
 		    
 		     <ul class="nav navbar-nav navbar-right">
-		
-				 <li>	         
-					    
-					        <form id="logoutForm" method="POST" action="${contextPath}/logout">
-					            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-					        </form>
-					
-					        <div><a onclick="document.forms['logoutForm'].submit()">Logout</a></div>
-					    
+		     
+		     
+		     <li>	         
+					    <c:if test="${pageContext.request.userPrincipal.name != null}">
+					        <div>${pageContext.request.userPrincipal.name} est connecté </div>
+					    </c:if>
 					  
 		         </li> 
-		         
+		     
+		
+				<li><a href="/logout">Logout</a></li>
+				 
 		     </ul>
 	    </div>
 	</div>

@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,8 +35,10 @@ public class ReservationMetierImpl implements IReservationMetier {
 	private IUserMetier userMetier;
     
     
-    @Value("${application.username}")
-	private String username;
+    @Value("${application.username1}")
+	private String username1;
+    @Value("${application.username2}")
+	private String username2;
 	@Value("${application.password}")
 	private String password;
 	@Value("${application.idUser}")
@@ -43,9 +46,13 @@ public class ReservationMetierImpl implements IReservationMetier {
 	
     @Value("${application.uRLReservation}")
 	private String uRL;
+    
+  
 
 	@Override
 	public Reservation createReservation(Long numLivre) throws FileNotFoundException, IOException  {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -69,6 +76,8 @@ public class ReservationMetierImpl implements IReservationMetier {
 	
 	@Override
 	public Reservation suppressReservation(Long numReservation) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -86,6 +95,8 @@ public class ReservationMetierImpl implements IReservationMetier {
 	@Override
 	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria,
 			Pageable pageable) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
 		
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);

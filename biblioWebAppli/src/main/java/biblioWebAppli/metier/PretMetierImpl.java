@@ -18,16 +18,15 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.PretCriteria;
-
-
-
 import biblioWebAppli.objets.Pret;
+
 
 
 
@@ -43,20 +42,22 @@ public class PretMetierImpl implements IPretMetier{
 	@Autowired
     private HttpHeadersFactory httpHeadersFactory; 
     
-    
+    /*
     @Value("${application.username}")
 	private String username;
+	*/
 	@Value("${application.password}")
 	private String password;
+	
 	@Value("${application.idUser}")
 	private Long idUser;
 	
-	
     @Value("${application.uRLPret}")
 	private String uRL;
-
-	
-
+    
+    
+    
+ 
 	/**
 	 * @param numPret
 	 * @return
@@ -65,6 +66,9 @@ public class PretMetierImpl implements IPretMetier{
 	 */
 	@Override
 	public Pret prolongerPret(Long numPret){
+		 
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
     	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     	headers.setContentType(MediaType.APPLICATION_JSON);
@@ -87,6 +91,8 @@ public class PretMetierImpl implements IPretMetier{
 	 */
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		System.out.println(username);
 		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
 		

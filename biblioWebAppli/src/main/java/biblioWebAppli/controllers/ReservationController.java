@@ -22,8 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import biblioWebAppli.criteria.ReservationCriteria;
+import biblioWebAppli.exceptions.ReservationsExceptionsMessage;
 import biblioWebAppli.metier.IReservationMetier;
 import biblioWebAppli.objets.Reservation;
+
+
 
 @Controller
 public class ReservationController {
@@ -32,6 +35,8 @@ public class ReservationController {
     private IReservationMetier reservationMetier;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    ReservationsExceptionsMessage reservationExceptionMessage;
     @Value("${application.idUser}")
 	private Long idUser;
     
@@ -75,7 +80,8 @@ public class ReservationController {
 			Reservation reservation = reservationMetier.createReservation(numLivre);
 			model.addAttribute(reservation);
 		} catch (HttpClientErrorException e) {
-			model.addAttribute("error", e.getResponseBodyAsString());
+			String errorMessage = reservationExceptionMessage.convertCodeStatusToExceptionMessage(e.getRawStatusCode());
+			model.addAttribute("error", errorMessage);
 		     return"/error";
 		}
 		return "reservations/reservationConfirmationCreation";
@@ -87,14 +93,14 @@ public class ReservationController {
      * @param numReservation
      * @return
      */
-    @GetMapping("/reservations/suppression/{numReservation}")
+    @GetMapping(value="/reservations/suppression/{numReservation}", consumes="application/json")
 	public String suppressReservation(Model model, @PathVariable("numReservation") Long numReservation) {
 		try {
 			Reservation reservation = reservationMetier.suppressReservation(numReservation);
 			model.addAttribute(reservation);
 		} catch (HttpClientErrorException e) {
-			model.addAttribute("error", e.getResponseBodyAsString());
-		     return"/error";
+			String errorMessage = reservationExceptionMessage.convertCodeStatusToExceptionMessage(e.getRawStatusCode());
+			model.addAttribute("error", errorMessage);
 		}
 		return "reservations/reservationConfirmationSuppression";
 	}

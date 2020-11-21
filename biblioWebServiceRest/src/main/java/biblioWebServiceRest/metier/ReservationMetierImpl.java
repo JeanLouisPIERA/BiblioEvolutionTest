@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -62,6 +63,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 	IPretMetier pretMetier;
 	@Autowired
 	ILivreMetier livreMetier;
+	@Value("${constante-multiplicateur}")
+	private Integer multiplicateur;
 	
 
 	@Override
@@ -85,7 +88,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
 		//PERMET DE RESPECTER LA REGLE DE GESTION ET DE GERER LE RANG DANS LA FILE D'ATTENTE
 		Optional<List<Reservation>> reservationsByUser = reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livreToRent.get(), ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
-		if(reservationsByUser.isPresent() && ((reservationsByUser.get().size())>=(2*(livreToRent.get().getNbExemplaires()))))
+		if(reservationsByUser.isPresent() && ((reservationsByUser.get().size())>=(multiplicateur*(livreToRent.get().getNbExemplaires()))))
 			throw new BookNotAvailableException ("RESERVATION IMPOSSIBLE : le nombre maximum d'utilisateurs ayant fait une réservation est atteint");
 			
 		Reservation newReservation = new Reservation();
