@@ -3,13 +3,16 @@
  */
 package biblioWebServiceRest.entities;
 
+
+
 public enum ReservationStatut {
 	
 	ENREGISTREE("ENREGISTREE", "réservation enregistrée"),
 	SUPPRIMEE("SUPPRIMEE", "réservation supprimée"), 
 	NOTIFIEE("NOTIFIEE", "réservation notifiée"),
 	LIVREE("LIVREE", "réservation livrée"),
-	ANNULEE("ANNULEE", "réservation annulée");
+	ANNULEE("ANNULEE", "réservation annulée"),
+	INCONNUE("INCONNUE", "statut réservation inconnu");
 	
 	 private String code;
 	 private String text;
@@ -56,8 +59,20 @@ public enum ReservationStatut {
 			return "Réservation livrée";
 		}else if(this==ANNULEE) {
 			return "Réservation annulée";	
+		}else if(this==INCONNUE) {
+			return "Statut Reservation Inconnu";	
 		}
 		return super.toString();
 	}
+	
+	
+	public static ReservationStatut fromValueCode(String code) {
+		try {
+	        return valueOf(code);
+	    } catch (IllegalArgumentException e) {
+	        return ReservationStatut.INCONNUE;
+	    }
+	}
+	
 
 }

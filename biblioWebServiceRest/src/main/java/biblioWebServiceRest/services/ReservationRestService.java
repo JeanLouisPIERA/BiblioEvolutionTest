@@ -25,6 +25,7 @@ import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.RentAlreadyExistsException;
 import biblioWebServiceRest.exceptions.WrongNumberException;
@@ -56,19 +57,20 @@ public class ReservationRestService {
 	 * @throws EntityNotFoundException
 	 * @throws BookNotAvailableException
 	 * @throws BookAvailableException
+	 * @throws EntityAlreadyExistsException 
 	 * @throws RentAlreadyExistsException 
 	 */
 	@ApiOperation(value = "Enregistrement d'une nouvelle réservation", response = Reservation.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "La réservation a été créée"),
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	        @ApiResponse(code = 406, message = "Vous ne pouvez pas réserver un livre que vous avez déjà emprunté"),
+	        @ApiResponse(code = 406, message = "Vous ne pouvez pas réserver un livre que vous avez déjà réservé ou emprunté"),
 	        @ApiResponse(code = 417, message = "Vous ne pouvez pas réserver un livre dont un exemplaire est disponible au prêt"),
 	        @ApiResponse(code = 423, message = "Il n'existe aucun exemplaire de ce livre, la réservation est impossible")
 	        
 	})
 	@PostMapping(value="/reservations", produces = "application/json", consumes = "application/json")
-	public ResponseEntity<Reservation> createReservation(@Valid @RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, RentAlreadyExistsException{
+	public ResponseEntity<Reservation> createReservation(@Valid @RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, EntityAlreadyExistsException, RentAlreadyExistsException{
 		Reservation newReservation = reservationMetier.createReservation(reservationDTO);
 		return new ResponseEntity<Reservation>(newReservation, HttpStatus.CREATED);
 	}
@@ -144,7 +146,7 @@ public class ReservationRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
 	@PutMapping(value="/reservations/suppression/{numReservation}", produces="application/json")
-	public ResponseEntity<Reservation> suppressPret(@PathVariable Long numReservation) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
+	public ResponseEntity<Reservation> suppressReservation(@PathVariable Long numReservation) throws EntityNotFoundException, BookNotAvailableException, WrongNumberException {
 		
 		Reservation suppressionReservation = reservationMetier.suppressReservation(numReservation);
 		return new ResponseEntity<Reservation>(suppressionReservation, HttpStatus.ACCEPTED);
@@ -165,6 +167,7 @@ public class ReservationRestService {
 	})
 	@GetMapping(value="/reservations", produces="application/json")
 	public ResponseEntity<Page<Reservation>> searchAllReservationsByCriteria(@PathParam("reservationCriteria")ReservationCriteria reservationCriteria, @RequestParam int page, @RequestParam int size ) {
+		System.out.println("controller="+reservationCriteria.getReservationStatutCode());
 		Page<Reservation> reservations = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Reservation>>(reservations, HttpStatus.OK);
 	}

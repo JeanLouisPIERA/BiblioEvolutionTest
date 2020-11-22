@@ -35,9 +35,14 @@ public class WebSecurityConfig { //extends WebSecurityConfigurerAdapter {
 	private String applicationUsername1;
 	@Value("${application.username2}")
 	private String applicationUsername2;
+	@Value("${application.username3}")
+	private String applicationUsername3;
+	@Value("${application.username4}")
+	private String applicationUsername4;
+	@Value("${application.username5}")
+	private String applicationUsername5;
 	@Value("${application.password}")
 	private String applicationPassword;
-	
 	
 	
     @Autowired
@@ -47,6 +52,15 @@ public class WebSecurityConfig { //extends WebSecurityConfigurerAdapter {
           .authorities("ROLE_USER");
     	
     	auth.inMemoryAuthentication().withUser(applicationUsername2).password(passwordEncoder().encode(applicationPassword))
+        .authorities("ROLE_USER");
+    	
+    	auth.inMemoryAuthentication().withUser(applicationUsername3).password(passwordEncoder().encode(applicationPassword))
+        .authorities("ROLE_USER");
+    	
+    	auth.inMemoryAuthentication().withUser(applicationUsername4).password(passwordEncoder().encode(applicationPassword))
+        .authorities("ROLE_USER");
+    	
+    	auth.inMemoryAuthentication().withUser(applicationUsername5).password(passwordEncoder().encode(applicationPassword))
         .authorities("ROLE_USER");
     }
     

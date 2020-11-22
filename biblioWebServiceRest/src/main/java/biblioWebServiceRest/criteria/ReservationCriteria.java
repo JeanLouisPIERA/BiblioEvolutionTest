@@ -6,13 +6,12 @@ public class ReservationCriteria {
 	
 	private Long numReservation;
 	private String username;
-	private Long userId; 
-	private Long numLivre; 
+	private Integer userId; 
+	private Integer numLivre; 
 	private String titre; 
 	private String auteur;
 	private String nomCategorieLivre;
-	private String code;
-	private ReservationStatut reservationStatut;
+	private String reservationStatutCode;
 	
 	
 	
@@ -28,16 +27,17 @@ public class ReservationCriteria {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public Long getUserId() {
+	
+	public Integer getUserId() {
 		return userId;
 	}
-	public void setUserId(Long userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
-	public Long getNumLivre() {
+	public Integer getNumLivre() {
 		return numLivre;
 	}
-	public void setNumLivre(Long numLivre) {
+	public void setNumLivre(Integer numLivre) {
 		this.numLivre = numLivre;
 	}
 	public String getTitre() {
@@ -58,18 +58,16 @@ public class ReservationCriteria {
 	public void setNomCategorieLivre(String nomCategorieLivre) {
 		this.nomCategorieLivre = nomCategorieLivre;
 	}
-	public String getCode() {
-		return code;
+	public String getReservationStatutCode() {
+		return reservationStatutCode;
 	}
-	public void setCode(String code) {
-		this.code = code;
+	public void setReservationStatutCode(String reservationStatutCode) {
+		this.reservationStatutCode = reservationStatutCode;
 	}
-	public ReservationStatut getReservationStatut() {
-		return reservationStatut;
-	}
-	public void setReservationStatut(ReservationStatut reservationStatut) {
-		this.reservationStatut = reservationStatut;
-	}
+	
+	
+	
+	
 	
 	
 	

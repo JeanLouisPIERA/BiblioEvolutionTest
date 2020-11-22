@@ -11,7 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +27,8 @@ import biblioWebAppli.criteria.ReservationCriteria;
 import biblioWebAppli.exceptions.ReservationsExceptionsMessage;
 import biblioWebAppli.metier.IReservationMetier;
 import biblioWebAppli.objets.Reservation;
+import biblioWebAppli.objets.ReservationStatut;
+import biblioWebAppli.objets.ReservationStatutConverter;
 
 
 
@@ -37,6 +41,8 @@ public class ReservationController {
     private ObjectMapper mapper;
     @Autowired
     ReservationsExceptionsMessage reservationExceptionMessage;
+    
+    
     @Value("${application.idUser}")
 	private Long idUser;
     
@@ -50,22 +56,41 @@ public class ReservationController {
      * @return
      */
     @RequestMapping(value="/reservations", method = RequestMethod.GET)
-    public String searchByCriteria(Model model, @PathParam(value = "reservationCriteria") ReservationCriteria reservationCriteria, @RequestParam(name="page", defaultValue="0") int page, 
+    public String searchByCriteria(Model model, @PathParam(value = "reservationCriteria") ReservationCriteria reservationCriteria, 
+    		@PathParam(value = "reservationStatut") String reservationStatut,
+    		@RequestParam(name="page", defaultValue="0") int page, 
 			@RequestParam(name="size", defaultValue="3") int size){
+    	
     	model.addAttribute("reservationCriteria", new ReservationCriteria());
+    	model.addAttribute("reservationStatutList", ReservationStatut.getListReservationStatut());
     	
-    	Page<Reservation> pageReservations = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, PageRequest.of(page, size));
+    	if(reservationStatut==null) {
+    		Page<Reservation> pageReservations = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, PageRequest.of(page, size));
+    		model.addAttribute("reservations", pageReservations.getContent());
+        	model.addAttribute("page", Integer.valueOf(page));
+    		model.addAttribute("number", pageReservations.getNumber());
+            model.addAttribute("totalPages", pageReservations.getTotalPages());
+            model.addAttribute("totalElements", pageReservations.getTotalElements());
+            model.addAttribute("size", pageReservations.getSize());
     	
-    	model.addAttribute("reservations", pageReservations.getContent());
-    	model.addAttribute("page", Integer.valueOf(page));
-		model.addAttribute("number", pageReservations.getNumber());
-        model.addAttribute("totalPages", pageReservations.getTotalPages());
-        model.addAttribute("totalElements", pageReservations.getTotalElements());
-        model.addAttribute("size", pageReservations.getSize());
-        
+    	}else {
+    		Page<Reservation> pageReservations = reservationMetier.searchAllReservationsByCriteriaAndReservationStatut(reservationCriteria, reservationStatut, PageRequest.of(page, size));
+    		model.addAttribute("reservations", pageReservations.getContent());
+        	model.addAttribute("page", Integer.valueOf(page));
+    		model.addAttribute("number", pageReservations.getNumber());
+            model.addAttribute("totalPages", pageReservations.getTotalPages());
+            model.addAttribute("totalElements", pageReservations.getTotalElements());
+            model.addAttribute("size", pageReservations.getSize());
+    	}
+    	
         return "reservations/reservationListe";
     }
-    
+    /*
+    @InitBinder
+	public void initBinder(final WebDataBinder webdataBinder) {
+		webdataBinder.registerCustomEditor(ReservationStatut.class, new ReservationStatutConverter());
+	}
+    */
     /**
      * Ce endpoint permet de créer une réservation
      * @param model
@@ -93,14 +118,15 @@ public class ReservationController {
      * @param numReservation
      * @return
      */
-    @GetMapping(value="/reservations/suppression/{numReservation}", consumes="application/json")
-	public String suppressReservation(Model model, @PathVariable("numReservation") Long numReservation) {
+    @GetMapping(value="/reservations/suppression/{numReservation}")
+	public String suppressReservation(Model model, @PathVariable("numReservation") Long numReservation) throws IOException {
 		try {
 			Reservation reservation = reservationMetier.suppressReservation(numReservation);
 			model.addAttribute(reservation);
 		} catch (HttpClientErrorException e) {
 			String errorMessage = reservationExceptionMessage.convertCodeStatusToExceptionMessage(e.getRawStatusCode());
 			model.addAttribute("error", errorMessage);
+			return"/error";
 		}
 		return "reservations/reservationConfirmationSuppression";
 	}

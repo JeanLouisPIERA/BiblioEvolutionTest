@@ -10,6 +10,7 @@ import biblioWebServiceRest.dto.ReservationDTO;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.RentAlreadyExistsException;
 import biblioWebServiceRest.exceptions.WrongNumberException;
@@ -28,10 +29,11 @@ public interface IReservationMetier {
 	 * @throws EntityNotFoundException 
 	 * @throws BookNotAvailableException 
 	 * @throws BookAvailableException 
+	 * @throws EntityAlreadyExistsException 
 	 * @throws RentAlreadyExistsException 
 	 */
 	
-	Reservation createReservation(ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, RentAlreadyExistsException ;
+	Reservation createReservation(ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, EntityAlreadyExistsException, RentAlreadyExistsException ;
 	
 	/**
 	 * CRUD : UPDATE notifier la réservation pour indiquer que l'exemplaire du livre demandé est disponible pour l'emprunteur

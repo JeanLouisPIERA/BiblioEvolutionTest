@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import biblioWebAppli.criteria.ReservationCriteria;
 import biblioWebAppli.objets.Reservation;
+import biblioWebAppli.objets.ReservationStatut;
 
 
 
@@ -28,16 +29,16 @@ public interface IReservationMetier {
 	 * @throws IOException
 	 */
 
-	Reservation createReservation(Long numLivre) throws FileNotFoundException, IOException; 
+	Reservation createReservation(Long numLivre) throws IOException; 
 	
 	/**
 	 * CRUD : DELETE un emprunteur supprime volontairement une réservation
 	 * @param numReservation
 	 * @return
-	 * @throws EntityNotFoundException 
-	 * @throws WrongNumberException 
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	Reservation suppressReservation(Long numReservation);
+	Reservation suppressReservation(Long numReservation) throws FileNotFoundException, IOException;
 	
 
 // AFFICHER LES RESERVATIONS ENCOURS ***************************************************************************
@@ -49,6 +50,7 @@ public interface IReservationMetier {
 	 * @return
 	 */
 	 Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria, Pageable pageable);
+	 Page<Reservation> searchAllReservationsByCriteriaAndReservationStatut(ReservationCriteria reservationCriteria, String reservationStatut, Pageable pageable);
 	 
 
 	 

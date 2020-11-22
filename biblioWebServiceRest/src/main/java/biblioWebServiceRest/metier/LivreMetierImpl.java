@@ -5,6 +5,7 @@
 package biblioWebServiceRest.metier;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,30 +56,27 @@ public class LivreMetierImpl implements ILivreMetier{
 	private IReservationRepository reservationRepository;
 	
 	
-	// TICKET 2 FONCTIONNALITE APPLI WEB N°2
-	// Création de cette méthode utilisée dans les classes métier Livre par searchByLivreCriteria 
-	// et Reservation par searchAllReservationsByCriteria 
+	// TICKET 1 FONCTIONNALITE
+	// MISE A JOUR DU DATE DE RETOUR LA PLUS PROCHE D'UN EXEMPLAIRE D'UN LIVRE ET DU NOMBRE D'UTILISATEURS AYANT RESERVE CE LIVRE 
 	@Override
 	public void miseAJourLivres() {
-	//TICKET 1 Fonctionnalité 1 WebAppli : extraction de tous les livres éligibles à la réservation
+	//TICKET 1 Fonctionnalité : extraction de tous les livres éligibles à la réservation
 			Optional<List<Livre>> livresList = livreRepository.findAllByNbExemplairesDisponibles(0);
-			//TICKET 1 Fonctionnalité 1 WebAppli : on recherche la date de retour de prêt la plus proche et on la met à jour   
+			//TICKET 1 Fonctionnalité  : on recherche la date de retour de prêt la plus proche et on la met à jour   
 			if(livresList.isPresent()) {
 				for(Livre livre : livresList.get()) {
-					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndNotPretStatut(
+					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevue(
 							livre, 
 							PretStatut.CLOTURE);
 					if(pretsListe.isPresent()) {
-						Collections.sort(pretsListe.get());
 						for(Pret pret : pretsListe.get()) {
-							if(pretsListe.get().indexOf(pret)==0 && pret.getPretStatut().equals(PretStatut.ECHU))
-								{livre.setDateRetourPrevuePlusProche("Pret Echu - Livre non restitué");}
-							else if (pretsListe.get().indexOf(pret)==0)
-								{livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue().toString());
+							if(pret.getDateRetourPrevue().isBefore(LocalDate.now())) {
+								livre.setDateRetourPrevuePlusProche("Le retour des exemplaires prêtés a été réclamé");
+							}else{
+								livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue().toString());
 							}
 						}
-					}
-				
+					}	
 					 
 					//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
 					// le nombre d'utilisateurs ayant une réservation en cours
@@ -110,7 +108,7 @@ public class LivreMetierImpl implements ILivreMetier{
 	 */
 	@Override
 	public Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable) {
-		// TICKET 2 FONCTIONNALITE APPLI WEB N°2
+		// TICKET 1 FONCTIONNALITE DE MISE A JOURS DES LIVRES SUR DATE DE RETOUR LA PLUS PROCHE ET TAILLE DE LA LISTE D'ATTENTE
 		this.miseAJourLivres();
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		Page<Livre> livres = livreRepository.findAll(livreSpecification, pageable);
@@ -185,7 +183,6 @@ public class LivreMetierImpl implements ILivreMetier{
 		livreCriteria.setAuteur(livreDTO.getAuteur());
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
-		System.out.println("taille" + livreCriteriaList.size());
 		
 		if(livreCriteriaList.size() == 1 
 				&& (

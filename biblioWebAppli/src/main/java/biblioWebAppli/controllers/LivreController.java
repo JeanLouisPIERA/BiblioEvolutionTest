@@ -45,7 +45,7 @@ public class LivreController {
      */
     @RequestMapping(value="/livres", method = RequestMethod.GET)
     public String searchByCriteria(Model model, @PathParam(value = "livreCriteria") LivreCriteria livreCriteria, @RequestParam(name="page", defaultValue="0") int page, 
-			@RequestParam(name="size", defaultValue="4") int size){
+			@RequestParam(name="size", defaultValue="5") int size){
     	model.addAttribute("livreCriteria", new LivreCriteria());
     	
     	Page<Livre> livres = livreMetier.searchByCriteria(livreCriteria, PageRequest.of(page, size));

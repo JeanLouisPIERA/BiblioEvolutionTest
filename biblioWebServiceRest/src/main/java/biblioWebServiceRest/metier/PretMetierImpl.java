@@ -166,7 +166,6 @@ public class PretMetierImpl implements IPretMetier {
 	 */
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
-		
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
 		System.out.println("spec"+ pretSpecification.toString());
 		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
@@ -179,16 +178,16 @@ public class PretMetierImpl implements IPretMetier {
 	 */
 	@Override
 	public List<Pret> searchAndUpdatePretsEchus() {
-		List<Pret> allPrets = pretRepository.findAll(); 
-		List<Pret> pretsEchus = new ArrayList<Pret>();
-		for (Pret pret : allPrets) {
-			if (pret.getDateRetourPrevue().isBefore(LocalDate.now()) && !pret.getPretStatut().equals(PretStatut.CLOTURE))
-				{pret.setPretStatut(PretStatut.ECHU);
-				pretsEchus.add(pret); 
-			pretRepository.save(pret);
+		List<Pret> pretsEchusListe = new ArrayList<Pret>();
+		Optional<List<Pret>> pretsEchus = pretRepository.findAllByDateRetourPrevueBeforeAndNotPretStatut(LocalDate.now(), PretStatut.CLOTURE);
+		if(pretsEchus.isPresent()) {
+			for (Pret pret : pretsEchus.get()) {
+				pret.setPretStatut(PretStatut.ECHU);
+				pretsEchusListe.add(pret);
+				pretRepository.save(pret);
 				}
-		}
-		return pretsEchus; 
+			}
+		return pretsEchusListe; 
 	}
 	
 	

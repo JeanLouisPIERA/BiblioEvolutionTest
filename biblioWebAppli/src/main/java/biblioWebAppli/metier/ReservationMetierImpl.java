@@ -22,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import biblioWebAppli.criteria.ReservationCriteria;
 import biblioWebAppli.dto.ReservationDTO;
 import biblioWebAppli.objets.Reservation;
+import biblioWebAppli.objets.ReservationStatut;
 import biblioWebAppli.objets.User;
 
 @Service
@@ -75,7 +76,7 @@ public class ReservationMetierImpl implements IReservationMetier {
 
 	
 	@Override
-	public Reservation suppressReservation(Long numReservation) {
+	public Reservation suppressReservation(Long numReservation) throws IOException {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
@@ -91,10 +92,9 @@ public class ReservationMetierImpl implements IReservationMetier {
 		
 		return response.getBody(); 
 	}
-
+	
 	@Override
-	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria,
-			Pageable pageable) {
+	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria, Pageable pageable) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
@@ -108,6 +108,47 @@ public class ReservationMetierImpl implements IReservationMetier {
     	        .queryParam("titre", reservationCriteria.getTitre())
     	        .queryParam("auteur", reservationCriteria.getAuteur())
     	        .queryParam("nomCategorieLivre", reservationCriteria.getNomCategorieLivre())
+    	        .queryParam("page", pageable.getPageNumber())
+    	        .queryParam("size", pageable.getPageSize());
+    	
+    	HttpEntity<?> entity = new HttpEntity<>(headers);
+    	
+    	ResponseEntity<RestResponsePage<Reservation>> reservations = restTemplate.exchange
+    			(builder.toUriString(), 
+				HttpMethod.GET,
+				entity,
+    			new ParameterizedTypeReference<RestResponsePage<Reservation>>(){});
+        Page<Reservation> pageReservation = reservations.getBody();
+        
+            	
+        return pageReservation;
+	}
+
+	@Override
+	public Page<Reservation> searchAllReservationsByCriteriaAndReservationStatut(ReservationCriteria reservationCriteria, String reservationStatut, Pageable pageable) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
+		
+    	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    	
+    	if(reservationStatut!=null) {
+    	reservationCriteria.setReservationStatut(ReservationStatut.fromValueText(reservationStatut));
+    	}
+    	
+    	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut());
+    	System.out.println("reservation statut :" + reservationStatut);
+    	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut().getCode());
+    	System.out.println("reservation auteur :" + reservationCriteria.getAuteur());
+    	
+    	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
+    	        .queryParam("numReservation", reservationCriteria.getNumReservation())
+    	        .queryParam("username", username)
+    	        .queryParam("numLivre", reservationCriteria.getNumLivre())
+    	        .queryParam("titre", reservationCriteria.getTitre())
+    	        .queryParam("auteur", reservationCriteria.getAuteur())
+    	        .queryParam("nomCategorieLivre", reservationCriteria.getNomCategorieLivre())
+    	        .queryParam("reservationStatutCode", reservationCriteria.getReservationStatut().getCode())
     	        .queryParam("page", pageable.getPageNumber())
     	        .queryParam("size", pageable.getPageSize());
     	

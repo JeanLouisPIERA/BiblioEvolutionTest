@@ -62,7 +62,18 @@
 				 <input type="text" name="nomCategorieLivre" value="${reservationCriteria.nomCategorieLivre}"/>
 				 </fieldset>
 				
-				 
+				  <fieldset class="form-group">
+		      		<label>Statut de la Réservation </label>
+			      	<select name="reservationStatut" class="form-control">
+				     	 <c:forEach var="reservationStatut" items="${reservationStatutList}">
+				     	 	<c:if test="${reservationStatut.getCode() != 'INCONNUE'}">
+						    <option value="${reservationStatut}">${reservationStatut.toString()}</option>
+						    </c:if>
+						 </c:forEach>
+			        </select>
+	        	</fieldset>
+	        	
+	        	
 				 
 				 <button class="btn-sm btn-primary">Valider</button>
 				 </fieldset> 
@@ -95,7 +106,7 @@
 									      <th>Disponibilité du Livre</th>
 									      <th>Date de Retour Prévue</th>
 									      <th>Rang dans liste d'attente</th>
-									      
+									      <th>Statut de la réservation</th>
 									      
 								     </tr>
 								     </thead>
@@ -110,10 +121,22 @@
 							              <td>${reservation.livre.getNbExemplairesDisponibles()}</td>
 								          <td>${reservation.livre.getDateRetourPrevuePlusProche()}</td>
 								          <td>${reservation.rangReservation}</td>
+								          <td>${reservation.reservationStatut.getText()}</td>
+								          <c:if test="${reservation.reservationStatut.getCode() == 'ENREGISTREE' ||
+								          reservation.reservationStatut.getCode() == 'NOTIFIEE'}">
 								          <td>
 								          	<a type="button"  class="btn btn-warning" 
 								        	href="/reservations/suppression/${reservation.numReservation}">Supprimer</a>
 								          </td>
+								          </c:if>
+								          <c:if test="${reservation.reservationStatut.getCode() == 'SUPPRIMEE' ||
+								          reservation.reservationStatut.getCode() == 'ANNULEE'
+								          || reservation.reservationStatut.getCode() == 'LIVREE'}">
+								          <td>
+								          	<a type="button"  class="btn btn-danger" 
+								        	href="/reservations/suppression/${reservation.numReservation}">Supprimer</a>
+								          </td>
+								          </c:if>
 					    				 </tr>
 				   					</c:forEach>
 								</tbody>

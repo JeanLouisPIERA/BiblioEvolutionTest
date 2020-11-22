@@ -1,6 +1,8 @@
 package biblioWebAppli.objets;
 
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public enum ReservationStatut {
 	
@@ -8,7 +10,8 @@ public enum ReservationStatut {
 	SUPPRIMEE("SUPPRIMEE", "réservation supprimée"), 
 	NOTIFIEE("NOTIFIEE", "réservation notifiée"),
 	LIVREE("LIVREE", "réservation livrée"),
-	ANNULEE("ANNULEE", "réservation annulée");
+	ANNULEE("ANNULEE", "réservation annulée"),
+	INCONNUE("INCONNUE", "statut de la réservation inconnu");
 	
 	 private String code;
 	 private String text;
@@ -55,9 +58,37 @@ public enum ReservationStatut {
 			return "Réservation livrée";
 		}else if(this==ANNULEE) {
 			return "Réservation annulée";	
+		}else if(this==INCONNUE) {
+			return "Statut de Réservation inconnu";	
 		}
 		return super.toString();
 	}
-
-
+	
+	public static ReservationStatut fromValueCode(String code) {
+		try {
+	        return valueOf(code);
+	    } catch (IllegalArgumentException e) {
+	        return ReservationStatut.INCONNUE;
+	    }
+	}
+	
+	public static ReservationStatut fromValueText(String text) {
+		try {
+	        return valueOf(text);
+	    } catch (IllegalArgumentException e) {
+	        return ReservationStatut.INCONNUE;
+	    }
+	}
+	
+	public static List<ReservationStatut> getListReservationStatut() {
+		
+		List<ReservationStatut> ListReservationStatut = new ArrayList<ReservationStatut>();
+		for (ReservationStatut reservationStatut : values()) {
+			ListReservationStatut.add(reservationStatut);
+		}
+		return ListReservationStatut;
+		
+	}
+        
 }
+	

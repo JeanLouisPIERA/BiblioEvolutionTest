@@ -1,8 +1,8 @@
 package biblioWebAppli.criteria;
 
+import java.util.List;
 
-
-
+import biblioWebAppli.objets.ReservationStatut;
 
 public class ReservationCriteria {
 	
@@ -15,6 +15,8 @@ public class ReservationCriteria {
 	private String nomCategorieLivre;
 	private String code;
 	private Integer nbExemplairesDisponibles;
+	private ReservationStatut reservationStatut;
+	
 	
 	public Long getNumReservation() {
 		return numReservation;
@@ -69,7 +71,13 @@ public class ReservationCriteria {
 	}
 	public void setNbExemplairesDisponibles(Integer nbExemplairesDisponibles) {
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
-	} 
+	}
+	public ReservationStatut getReservationStatut() {
+		return reservationStatut;
+	}
+	public void setReservationStatut(ReservationStatut reservationStatut) {
+		this.reservationStatut = reservationStatut;
+	}
 	
 	
 	

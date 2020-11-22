@@ -4,6 +4,7 @@
 package biblioWebServiceRest.dao;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +24,16 @@ import biblioWebServiceRest.entities.User;
 
 @Repository
 public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecificationExecutor<Pret>{
-	/**
-	@Query("select pret from Pret pret where pret.pretStatut like :pretStatut")
-	   Page<Pret> findByPretStatutNamedParams(@Param("pretStatut")PretStatut pretStatut, Pageable pageable);
-**/
-
+	
+	@Query("select pret from Pret pret where (pret.dateRetourPrevue < ?1) " + " AND (pret.pretStatut <> ?2)")
+	Optional<List<Pret>> findAllByDateRetourPrevueBeforeAndNotPretStatut(LocalDate dateRetourPrevueMax, PretStatut pretStatut);
+	
 	Optional<Pret> findByUserAndLivre(User user, Livre livre);
 	
 	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)")
 	Optional<List<Pret>> findAllByLivreAndNotPretStatut(Livre livre1, PretStatut pretStatut);
+	
+	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)" + "ORDER BY pret.dateRetourPrevue ASC")
+	Optional<List<Pret>> findAllByLivreAndNotPretStatutOrderByDateRetourPrevue(Livre livre1, PretStatut pretStatut);
 	
 }

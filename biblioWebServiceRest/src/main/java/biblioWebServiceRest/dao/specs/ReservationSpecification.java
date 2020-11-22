@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import biblioWebServiceRest.criteria.ReservationCriteria;
 import biblioWebServiceRest.entities.Reservation;
+import biblioWebServiceRest.entities.ReservationStatut;
 
 public class ReservationSpecification implements Specification<Reservation>{
 	
@@ -54,21 +55,13 @@ public class ReservationSpecification implements Specification<Reservation>{
             	System.out.println("Code2"+reservationCriteria.getNumLivre());
             	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), reservationCriteria.getNumLivre()));	
             }
-           /*
-            if (reservationCriteria.getCode()!= null) {
-            	//System.out.println("Code1"+root.get("pretStatut").in("code").as(String.class));
-            	//System.out.println("Code2"+pretCriteria.getCode());
-            	predicates.getExpressions().add(builder.equal(root.get("pretStatut"),reservationCriteria.getCode()));			
-            	
-            }
-	        */
-        
-            if (reservationCriteria.getReservationStatut() != null) {
-            	
-            	predicates.getExpressions().add(builder.equal(root.get("reservationStatut"), reservationCriteria.getReservationStatut()));			
-            	
-            }
             
+            if (reservationCriteria.getReservationStatutCode() != null) {
+            	
+            	predicates.getExpressions().add(builder.equal(root.get("reservationStatut"), ReservationStatut.fromValueCode(reservationCriteria.getReservationStatutCode())));			
+            	
+            }
+         
        
         return builder.and(predicates);
 		

@@ -32,6 +32,7 @@ import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
+import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.RentAlreadyExistsException;
 import biblioWebServiceRest.exceptions.WrongNumberException;
@@ -68,16 +69,13 @@ public class ReservationMetierImpl implements IReservationMetier{
 	
 
 	@Override
-	public Reservation createReservation(ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, RentAlreadyExistsException {
-		Optional<Livre> livreToRent = livreRepository.findById(reservationDTO.getNumLivre());
+	public Reservation createReservation(ReservationDTO reservationDTO) throws EntityNotFoundException, BookNotAvailableException, BookAvailableException, EntityAlreadyExistsException, RentAlreadyExistsException {
+			
 		Optional<User> user = userRepository.findById(reservationDTO.getIdUser());
 		if(!user.isPresent()) 
 			throw new EntityNotFoundException ("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
-				
-		Optional<Pret> pret = pretRepository.findByUserAndLivre(user.get(), livreToRent.get());
-		if(pret.isPresent())
-			 throw new RentAlreadyExistsException ("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");	
 		
+		Optional<Livre> livreToRent = livreRepository.findById(reservationDTO.getNumLivre());
 		if(!livreToRent.isPresent()) 
 			throw new EntityNotFoundException ("OUVRAGE INCONNU = Aucun enregistrement de livre ne correspond à votre demande");
 		if(livreToRent.get().getNbExemplaires()==0)
@@ -85,7 +83,17 @@ public class ReservationMetierImpl implements IReservationMetier{
 		if(livreToRent.get().getNbExemplairesDisponibles() >0) 
 			throw new BookAvailableException ("RESERVATION IMPOSSIBLE = Vous pouvez emprunter immédiatement un exemplaire disponible de ce livre");
 		
-		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
+		Optional<Reservation> reservation = reservationRepository.findByUserAndLivreAndStatutReservationOrStatutReservation(user.get(), livreToRent.get(), ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
+		if(reservation.isPresent())
+			 throw new EntityAlreadyExistsException ("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre pour lequel vous avez déjà une réservation en cours");	
+		
+		
+		Optional<Pret> pret = pretRepository.findByUserAndLivre(user.get(), livreToRent.get());
+		if(pret.isPresent())
+			 throw new RentAlreadyExistsException ("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");	
+		
+			
+		//TICKET 1 FONCTIONNALITE REGLE DE GESTION
 		//PERMET DE RESPECTER LA REGLE DE GESTION ET DE GERER LE RANG DANS LA FILE D'ATTENTE
 		Optional<List<Reservation>> reservationsByUser = reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livreToRent.get(), ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
 		if(reservationsByUser.isPresent() && ((reservationsByUser.get().size())>=(multiplicateur*(livreToRent.get().getNbExemplaires()))))
@@ -100,6 +108,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 		LocalDate dateReservation = LocalDate.now();
 		newReservation.setDateReservation(dateReservation);
 		
+		//Incrémente le rang de la réservation en cours de création dans la file d'attente du livre à réserver
 		if(reservationsByUser.isPresent()) {
 			if(!reservationRepository.findAllByUserAndLivreAndReservationStatutOrReservationStatut(
 					user.get(), 
@@ -129,24 +138,17 @@ public class ReservationMetierImpl implements IReservationMetier{
 			throw new WrongNumberException("NOTIFICATION IMPOSSIBLE = Le statut de cette réservation ne permet pas de la notifier");
 		
 		Livre livreToRent = searchedReservation.get().getLivre(); 
-		List<Reservation> reservationsList = new ArrayList<Reservation>();
-		
-		if(livreToRent.getNbExemplairesDisponibles()>=1) {
-		livreToRent.getReservations().forEach((reservation)->{
-			if(reservation.getReservationStatut().equals(ReservationStatut.ENREGISTREE))
-				reservationsList.add(reservation); 
-			});
-			Collections.sort(reservationsList);
-				if(reservationsList.indexOf(searchedReservation.get())==0)
-				{ 
-					searchedReservation.get().setReservationStatut(ReservationStatut.NOTIFIEE);
-					searchedReservation.get().getLivre().setNbExemplairesDisponibles(livreToRent.getNbExemplairesDisponibles()-1);
-					LocalDate dateNotification = LocalDate.now();
-					searchedReservation.get().setDateNotification(dateNotification);
-					LocalDate dateDeadline = dateNotification.plusDays(appProperties.getDureeNotification());
-					searchedReservation.get().setDateDeadline(dateDeadline);
-				} 
-			}
+				
+		Optional<List<Reservation>> reservationsList = reservationRepository.findAllByLivreAndNbExemplairesDisponibleMinimumOrderByNumReservationASC(livreToRent, 1);
+		if(reservationsList.get().indexOf(searchedReservation.get())==0)
+		{ 
+			searchedReservation.get().setReservationStatut(ReservationStatut.NOTIFIEE);
+			searchedReservation.get().getLivre().setNbExemplairesDisponibles(livreToRent.getNbExemplairesDisponibles()-1);
+			LocalDate dateNotification = LocalDate.now();
+			searchedReservation.get().setDateNotification(dateNotification);
+			LocalDate dateDeadline = dateNotification.plusDays(appProperties.getDureeNotification());
+			searchedReservation.get().setDateDeadline(dateDeadline);
+		} 
 		return reservationRepository.save(searchedReservation.get());
 	}
 
@@ -162,20 +164,10 @@ public class ReservationMetierImpl implements IReservationMetier{
 			throw new BookNotAvailableException("LIVRAISON ANNULEE = La date limite de votre réservation pour le pret du livre est dépassée");
 		}
 		
-		//PASSE EN STATUT ANNULEE TOUTES LES RESERVATIONS ENREGISTREES DE CET UTILISATEUR POUR CE LIVRE
-		Optional<List<Reservation>> reservationToDeleteList = reservationRepository.findAllByUserAndLivreAndReservationStatut(
-				searchedReservation.get().getUser(), 
-				searchedReservation.get().getLivre(),
-				ReservationStatut.ENREGISTREE);
-		if(reservationToDeleteList.isPresent()) {
-			for(Reservation reservationToDelete : reservationToDeleteList.get()) {
-				reservationToDelete.setReservationStatut(ReservationStatut.ANNULEE);
-			}
-		}
-		
-		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
+		//TICKET 1 FONCTIONNALITE
 		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
-		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(searchedReservation.get().getLivre(), ReservationStatut.ENREGISTREE);
+		Livre livreSearchedReservation = searchedReservation.get().getLivre();
+		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(livreSearchedReservation, ReservationStatut.ENREGISTREE);
 		if(reservationList.isPresent()) {
 			for(Reservation reservation : reservationList.get()) {
 				reservation.setRangReservation(reservation.getRangReservation()-1);
@@ -193,7 +185,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 		return reservationRepository.save(searchedReservation.get());
 	}
 
-	//TiCKET 2 FONCTIONNALITE APPLIWEB N°4 : PERMET DE SUPPRIMER UNE RESERVATION
+	//TiCKET 1 FONCTIONNALITE APPLIWEB N°4 : PERMET DE SUPPRIMER UNE RESERVATION
 	@Override
 	public Reservation suppressReservation(Long numReservation) throws EntityNotFoundException, WrongNumberException {
 		Optional<Reservation> searchedReservation = reservationRepository.findById(numReservation);
@@ -203,20 +195,9 @@ public class ReservationMetierImpl implements IReservationMetier{
 				|| searchedReservation.get().getReservationStatut().equals(ReservationStatut.ANNULEE)
 				|| searchedReservation.get().getReservationStatut().equals(ReservationStatut.SUPPRIMEE))
 			throw new WrongNumberException("SUPPRESSION IMPOSSIBLE = Le statut de cette réservation ne permet pas de la supprimer");
-		
-		//PASSE EN STATUT ANNULEE TOUTES LES RESERVATIONS ENREGISTREES DE CET UTILISATEUR POUR CE LIVRE
-		Optional<List<Reservation>> reservationToDeleteList = reservationRepository.findAllByUserAndLivreAndReservationStatut(
-				searchedReservation.get().getUser(), 
-				searchedReservation.get().getLivre(),
-				ReservationStatut.ENREGISTREE);
-		if(reservationToDeleteList.isPresent()) {
-			for(Reservation reservationToDelete : reservationToDeleteList.get() ) {
-				reservationToDelete.setReservationStatut(ReservationStatut.ANNULEE);
-			}
-		}
-		
-		//TICKET 2 FONCTIONNALITE APPLIWEB N°2
-		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
+				
+		//TICKET 1 FONCTIONNALITE 
+		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE DES RESERVATIONS DE RANG SUPERIEUR A LA RESERVATION A ANNULER
 		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(searchedReservation.get().getLivre(), ReservationStatut.ENREGISTREE);
 		if(reservationList.isPresent()) {
 			for(Reservation reservation : reservationList.get()) {
@@ -237,9 +218,9 @@ public class ReservationMetierImpl implements IReservationMetier{
 
 	@Override
 	public Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria, Pageable pageable) {
-		reservationCriteria.setReservationStatut(ReservationStatut.ENREGISTREE);
+		//reservationCriteria.setReservationStatut(ReservationStatut.ENREGISTREE);
+		System.out.println(reservationCriteria.getReservationStatutCode());
 		Specification<Reservation> reservationSpecification = new ReservationSpecification(reservationCriteria);
-		System.out.println("spec"+ reservationSpecification.toString());
 		Page<Reservation> reservations = reservationRepository.findAll(
 				reservationSpecification, 
 				pageable);
