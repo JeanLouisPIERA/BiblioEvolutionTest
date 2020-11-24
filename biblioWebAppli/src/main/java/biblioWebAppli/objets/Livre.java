@@ -109,13 +109,7 @@ public class Livre {
 		this.categorie = categorie;
 	}
 
-	public String getDateRetourPrevuePlusProche() {
-		return dateRetourPrevuePlusProche;
-	}
-
-	public void setDateRetourPrevuePlusProche(String dateRetourPrevuePlusProche) {
-		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
-	}
+	
 
 	public Integer getNbReservationsEnCours() {
 		return nbReservationsEnCours;
@@ -131,6 +125,14 @@ public class Livre {
 
 	public void setNbReservataires(Integer nbReservataires) {
 		this.nbReservataires = nbReservataires;
+	}
+
+	public String getDateRetourPrevuePlusProche() {
+		return dateRetourPrevuePlusProche;
+	}
+
+	public void setDateRetourPrevuePlusProche(String dateRetourPrevuePlusProche) {
+		this.dateRetourPrevuePlusProche = dateRetourPrevuePlusProche;
 	}
 	
 	

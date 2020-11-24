@@ -6,9 +6,6 @@ package biblioWebServiceRest.metier;
 
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,10 +62,17 @@ public class LivreMetierImpl implements ILivreMetier{
 			//TICKET 1 Fonctionnalité  : on recherche la date de retour de prêt la plus proche et on la met à jour   
 			if(livresList.isPresent()) {
 				for(Livre livre : livresList.get()) {
-					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevue(
+					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
 							livre, 
-							PretStatut.CLOTURE);
+							PretStatut.CLOTURE, 
+							LocalDate.now());
 					if(pretsListe.isPresent()) {
+						Pret pretDateRetourPlusProche = pretsListe.get().get(0);
+						livre.setDateRetourPrevuePlusProche(pretDateRetourPlusProche.getDateRetourPrevue().toString());
+					}else {
+						livre.setDateRetourPrevuePlusProche("Aucune date de retour ne peut être indiquée");
+					}
+					/*
 						for(Pret pret : pretsListe.get()) {
 							if(pret.getDateRetourPrevue().isBefore(LocalDate.now())) {
 								livre.setDateRetourPrevuePlusProche("Le retour des exemplaires prêtés a été réclamé");
@@ -76,7 +80,8 @@ public class LivreMetierImpl implements ILivreMetier{
 								livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue().toString());
 							}
 						}
-					}	
+						*/
+			
 					 
 					//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
 					// le nombre d'utilisateurs ayant une réservation en cours
@@ -93,11 +98,14 @@ public class LivreMetierImpl implements ILivreMetier{
 						else {
 							livre.setNbReservataires(0);
 						}
+						
 					
 					livreRepository.save(livre);
 				}
 			}
 	}
+			
+	
 	
 	
 	

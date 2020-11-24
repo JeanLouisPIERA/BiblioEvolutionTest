@@ -167,7 +167,6 @@ public class ReservationRestService {
 	})
 	@GetMapping(value="/reservations", produces="application/json")
 	public ResponseEntity<Page<Reservation>> searchAllReservationsByCriteria(@PathParam("reservationCriteria")ReservationCriteria reservationCriteria, @RequestParam int page, @RequestParam int size ) {
-		System.out.println("controller="+reservationCriteria.getReservationStatutCode());
 		Page<Reservation> reservations = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Reservation>>(reservations, HttpStatus.OK);
 	}

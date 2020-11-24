@@ -120,7 +120,6 @@ public class ReservationMetierImpl implements IReservationMetier {
     			new ParameterizedTypeReference<RestResponsePage<Reservation>>(){});
         Page<Reservation> pageReservation = reservations.getBody();
         
-            	
         return pageReservation;
 	}
 
@@ -132,16 +131,8 @@ public class ReservationMetierImpl implements IReservationMetier {
 		
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     	
-    	
-        	reservationCriteria.setReservationStatut(ReservationStatut.fromValueText(reservationStatut));
-        	
-        	
-        	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut());
-        	System.out.println("reservation statut :" + reservationStatut);
-        	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut().getCode());
-        	System.out.println("reservation auteur :" + reservationCriteria.getAuteur());
-    	
-    	
+        reservationCriteria.setReservationStatut(ReservationStatut.fromValueText(reservationStatut));
+   
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
     	        .queryParam("numReservation", reservationCriteria.getNumReservation())
     	        .queryParam("username", username)

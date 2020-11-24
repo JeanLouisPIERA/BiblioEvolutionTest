@@ -24,6 +24,12 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
 			Livre livre, 
 			Integer nbExemplairesDisponiblesMinimum);
 	
+	@Query("select reservation from Reservation reservation where (reservation.reservationStatut = ?1) " + " AND (reservation.livre.nbExemplairesDisponibles = ?2)" + " AND (reservation.rangReservation = ?3)" )
+	Optional<List<Reservation>> findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(
+			ReservationStatut reservationStatut, 
+			Integer nbExemplairesDisponiblesMinimum, 
+			Integer rangReservation);
+	
 	@Query("select reservation from Reservation reservation where (reservation.reservationStatut = ?1) " + " AND (reservation.livre.nbExemplairesDisponibles = ?2 "+" or reservation.livre.nbExemplairesDisponibles > ?2)")
 	Optional<List<Reservation>> findAllByReservationStatutAndLivreNombreExemplairesDisponiblesNamedParams(
 			ReservationStatut reservationStatut,

@@ -28,6 +28,9 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 	@Query("select pret from Pret pret where (pret.dateRetourPrevue < ?1) " + " AND (pret.pretStatut <> ?2)")
 	Optional<List<Pret>> findAllByDateRetourPrevueBeforeAndNotPretStatut(LocalDate dateRetourPrevueMax, PretStatut pretStatut);
 	
+	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.user = ?2)"+ " AND (pret.pretStatut <> ?3 )")
+	Optional<List<Pret>> findAllByLivreAndUserAndNotPretStatut(Livre livre, User user, PretStatut pretStatut);
+	
 	Optional<Pret> findByUserAndLivre(User user, Livre livre);
 	
 	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)")
@@ -35,5 +38,8 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 	
 	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)" + "ORDER BY pret.dateRetourPrevue ASC")
 	Optional<List<Pret>> findAllByLivreAndNotPretStatutOrderByDateRetourPrevue(Livre livre1, PretStatut pretStatut);
+	
+	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)" + " AND (pret.dateRetourPrevue > ?3)"+ "ORDER BY pret.dateRetourPrevue ASC")
+	Optional<List<Pret>> findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(Livre livre1, PretStatut pretStatut, LocalDate localDate);
 	
 }

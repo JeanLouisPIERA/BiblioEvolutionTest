@@ -215,6 +215,8 @@ public class Livre implements Serializable{
 		this.reservations = reservations;
 	}
 
+	
+
 	public String getDateRetourPrevuePlusProche() {
 		return dateRetourPrevuePlusProche;
 	}

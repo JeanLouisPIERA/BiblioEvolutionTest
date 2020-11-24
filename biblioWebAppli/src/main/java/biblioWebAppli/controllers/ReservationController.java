@@ -11,9 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,8 +61,6 @@ public class ReservationController {
     	
     	model.addAttribute("reservationCriteria", new ReservationCriteria());
     	model.addAttribute("reservationStatutList", ReservationStatut.getListReservationStatut());
-    	
-    	System.out.println("reservationStatut WA" + reservationStatut);
     	
     	if(reservationStatut==null || reservationStatut.isEmpty()) {
     		Page<Reservation> pageReservations = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, PageRequest.of(page, size));
