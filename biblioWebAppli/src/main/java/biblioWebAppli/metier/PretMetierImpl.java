@@ -26,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.PretCriteria;
 import biblioWebAppli.objets.Pret;
+import biblioWebAppli.objets.Reservation;
 
 
 
@@ -120,6 +121,26 @@ public class PretMetierImpl implements IPretMetier{
         
             	
         return pagePret;
+	}
+
+
+	@Override
+	public Pret readPret(Long numPret) {
+				
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<?> requestEntity = 
+       	     new HttpEntity<>(headers);
+		
+		String url = uRL+"/" + numPret;
+    	
+		ResponseEntity<Pret> response = restTemplate.exchange(url , HttpMethod.GET, requestEntity, Pret.class);
+		
+		return response.getBody(); 
 	}
 	
 	

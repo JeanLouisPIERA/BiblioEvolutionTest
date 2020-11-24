@@ -28,7 +28,7 @@ import biblioWebAppli.exceptions.ReservationsExceptionsMessage;
 import biblioWebAppli.metier.IReservationMetier;
 import biblioWebAppli.objets.Reservation;
 import biblioWebAppli.objets.ReservationStatut;
-import biblioWebAppli.objets.ReservationStatutConverter;
+
 
 
 
@@ -59,12 +59,14 @@ public class ReservationController {
     public String searchByCriteria(Model model, @PathParam(value = "reservationCriteria") ReservationCriteria reservationCriteria, 
     		@PathParam(value = "reservationStatut") String reservationStatut,
     		@RequestParam(name="page", defaultValue="0") int page, 
-			@RequestParam(name="size", defaultValue="3") int size){
+			@RequestParam(name="size", defaultValue="4") int size){
     	
     	model.addAttribute("reservationCriteria", new ReservationCriteria());
     	model.addAttribute("reservationStatutList", ReservationStatut.getListReservationStatut());
     	
-    	if(reservationStatut==null) {
+    	System.out.println("reservationStatut WA" + reservationStatut);
+    	
+    	if(reservationStatut==null || reservationStatut.isEmpty()) {
     		Page<Reservation> pageReservations = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, PageRequest.of(page, size));
     		model.addAttribute("reservations", pageReservations.getContent());
         	model.addAttribute("page", Integer.valueOf(page));
@@ -85,12 +87,7 @@ public class ReservationController {
     	
         return "reservations/reservationListe";
     }
-    /*
-    @InitBinder
-	public void initBinder(final WebDataBinder webdataBinder) {
-		webdataBinder.registerCustomEditor(ReservationStatut.class, new ReservationStatutConverter());
-	}
-    */
+ 
     /**
      * Ce endpoint permet de créer une réservation
      * @param model
@@ -119,7 +116,7 @@ public class ReservationController {
      * @return
      */
     @GetMapping(value="/reservations/suppression/{numReservation}")
-	public String suppressReservation(Model model, @PathVariable("numReservation") Long numReservation) throws IOException {
+	public String suppressReservation(Model model, @PathVariable("numReservation") Long numReservation) {
 		try {
 			Reservation reservation = reservationMetier.suppressReservation(numReservation);
 			model.addAttribute(reservation);
@@ -130,5 +127,25 @@ public class ReservationController {
 		}
 		return "reservations/reservationConfirmationSuppression";
 	}
+    
+    /**
+     * Permet de lire la fiche d'une réservation
+     * @param model
+     * @param numPret
+     * @return
+     */
+    @GetMapping("/reservations/{numReservation}")
+    public String readReservation(Model model, @PathVariable("numReservation") Long numReservation) {
+    	try {
+			Reservation searchedReservation = reservationMetier.readReservation(numReservation);
+			model.addAttribute("reservation", searchedReservation);
+		} catch (HttpClientErrorException e) {
+			String errorMessage = reservationExceptionMessage.convertCodeStatusToExceptionMessage(e.getRawStatusCode());
+			model.addAttribute("error", errorMessage);
+			return"/error";
+		}
+    	return "reservations/reservationView";
+    
+    }
 
 }

@@ -26,7 +26,7 @@
 		 			<div class="panel panel-primary ">
 		 
 		  				<div class="panel-heading">
-		   				<h5>Confirmation de la suppression de votre réservation du Livre ${reservation.livre.getTitre()}</h5>
+		   				<h5>Confirmation de la suppression de la réservation N° ${reservation.numReservation}du Livre ${reservation.livre.getTitre()}</h5>
 		   				<h5>faite le ${reservation.dateReservation}</h5>
 		  				</div>
 		  

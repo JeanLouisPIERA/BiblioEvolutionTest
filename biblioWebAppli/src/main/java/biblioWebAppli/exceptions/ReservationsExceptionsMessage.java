@@ -19,6 +19,9 @@ public class ReservationsExceptionsMessage {
 		if (StatusCode ==409) {
 			message = "RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre pour lequel vous avez déjà une réservation en cours";
 		}
+		if(StatusCode==417) {
+		message ="RESERVATION IMPOSSIBLE = Vous pouvez emprunter immédiatement un exemplaire disponible de ce livre";
+		}
 		
 		if (StatusCode ==423) {
 			message = "RESERVATION IMPOSSIBLE : le nombre maximum d'utilisateurs ayant fait une réservation est atteint";

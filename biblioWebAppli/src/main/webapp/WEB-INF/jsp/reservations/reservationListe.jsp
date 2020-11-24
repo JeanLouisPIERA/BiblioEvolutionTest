@@ -36,7 +36,7 @@
 				 <fieldset class="form-row">
 							 
 				 <fieldset class="form-group">
-				 <label>Référence du Réservations :</label>
+				 <label>Référence de la Réservation :</label>
 				 <input type="text" name="numReservation" value="${reservationCriteria.numReservation}"/>
 				 </fieldset>
 				 
@@ -56,15 +56,11 @@
 				 <input type="text" name="auteur" value="${reservationCriteria.auteur}"/>
 				 </fieldset>
 				 
-				 
-				 <fieldset class="form-group">
-				 <label>Nom de la catégorie :</label>
-				 <input type="text" name="nomCategorieLivre" value="${reservationCriteria.nomCategorieLivre}"/>
-				 </fieldset>
 				
 				  <fieldset class="form-group">
 		      		<label>Statut de la Réservation </label>
 			      	<select name="reservationStatut" class="form-control">
+			      		<option value="${reservationStatut}">${'Votre Choix'}</option>
 				     	 <c:forEach var="reservationStatut" items="${reservationStatutList}">
 				     	 	<c:if test="${reservationStatut.getCode() != 'INCONNUE'}">
 						    <option value="${reservationStatut}">${reservationStatut.toString()}</option>
@@ -122,6 +118,11 @@
 								          <td>${reservation.livre.getDateRetourPrevuePlusProche()}</td>
 								          <td>${reservation.rangReservation}</td>
 								          <td>${reservation.reservationStatut.getText()}</td>
+								          
+								          <td>
+								          	<a  type="button" class="btn btn-default" 
+									        href="/reservations/${reservation.numReservation}"> Fiche Info </a>
+							        	  </td>
 								          <c:if test="${reservation.reservationStatut.getCode() == 'ENREGISTREE' ||
 								          reservation.reservationStatut.getCode() == 'NOTIFIEE'}">
 								          <td>
@@ -134,7 +135,7 @@
 								          || reservation.reservationStatut.getCode() == 'LIVREE'}">
 								          <td>
 								          	<a type="button"  class="btn btn-danger" 
-								        	href="/reservations/suppression/${reservation.numReservation}">Supprimer</a>
+								        	href="/reservations/suppression/${reservation.numReservation}">Supprimer DEMO </a>
 								          </td>
 								          </c:if>
 					    				 </tr>

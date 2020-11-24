@@ -189,4 +189,22 @@ public class ReservationRestService {
 		return new ResponseEntity<List<Reservation>>(reservationsANotifierList, HttpStatus.OK); 
 	}
 	
+	/**
+	 * Endpoint pour la recherche d'une réservation par son identifiant
+	 * @param numReservation
+	 * @return
+	 * @throws EntityNotFoundException
+	 */
+	@ApiOperation(value = "Recherche d'une réservation par son identifiant)", response = Reservation.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@GetMapping(value="reservations/{numReservation}", produces="application/json")
+	public ResponseEntity<Reservation> readReservation(@PathVariable Long numReservation) throws EntityNotFoundException {
+		Reservation searchedReservation = reservationMetier.readReservation(numReservation);
+		return new ResponseEntity<Reservation>(searchedReservation, HttpStatus.OK); 
+	}
+	
+	
 }

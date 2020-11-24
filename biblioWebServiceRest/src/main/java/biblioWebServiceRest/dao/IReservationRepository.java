@@ -1,5 +1,6 @@
 package biblioWebServiceRest.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,17 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
 	Optional<List<Reservation>> findAllByReservationStatutAndLivreNombreExemplairesDisponiblesNamedParams(
 			ReservationStatut reservationStatut,
 			int nbExemplairesDisponibles);
+	
+	@Query("select reservation from Reservation reservation where (reservation.reservationStatut = ?1) " + " AND (reservation.dateDeadline >= ?2 )")
+	Optional<List<Reservation>> findAllByReservationStatutAndDateDeadlineValide(
+			ReservationStatut reservationStatut,
+			LocalDate localDate);
+	
+	@Query("select reservation from Reservation reservation where (reservation.reservationStatut = ?1) " + " AND (reservation.dateDeadline < ?2 )")
+	Optional<List<Reservation>> findAllByReservationStatutAndDateDeadlineDechue(
+			ReservationStatut reservationStatut,
+			LocalDate localDate);
+			
 	
 	Optional<List<Reservation>> findAllByLivreAndReservationStatutOrReservationStatut(
 			Livre livre, 

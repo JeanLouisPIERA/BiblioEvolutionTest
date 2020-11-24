@@ -35,10 +35,8 @@ public interface IReservationMetier {
 	 * CRUD : DELETE un emprunteur supprime volontairement une réservation
 	 * @param numReservation
 	 * @return
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
 	 */
-	Reservation suppressReservation(Long numReservation) throws FileNotFoundException, IOException;
+	Reservation suppressReservation(Long numReservation);
 	
 
 // AFFICHER LES RESERVATIONS ENCOURS ***************************************************************************
@@ -52,7 +50,12 @@ public interface IReservationMetier {
 	 Page<Reservation> searchAllReservationsByCriteria(ReservationCriteria reservationCriteria, Pageable pageable);
 	 Page<Reservation> searchAllReservationsByCriteriaAndReservationStatut(ReservationCriteria reservationCriteria, String reservationStatut, Pageable pageable);
 	 
-
+	 /**
+	  * Rechercher un prêt par son identiiant
+	  * @param numReservation
+	  * @return
+	  */
+	 Reservation readReservation(Long numReservation);
 	 
 	 
 	 

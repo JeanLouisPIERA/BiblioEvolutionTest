@@ -76,7 +76,7 @@ public class ReservationMetierImpl implements IReservationMetier {
 
 	
 	@Override
-	public Reservation suppressReservation(Long numReservation) throws IOException {
+	public Reservation suppressReservation(Long numReservation) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
@@ -132,14 +132,15 @@ public class ReservationMetierImpl implements IReservationMetier {
 		
     	headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     	
-    	if(reservationStatut!=null) {
-    	reservationCriteria.setReservationStatut(ReservationStatut.fromValueText(reservationStatut));
-    	}
     	
-    	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut());
-    	System.out.println("reservation statut :" + reservationStatut);
-    	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut().getCode());
-    	System.out.println("reservation auteur :" + reservationCriteria.getAuteur());
+        	reservationCriteria.setReservationStatut(ReservationStatut.fromValueText(reservationStatut));
+        	
+        	
+        	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut());
+        	System.out.println("reservation statut :" + reservationStatut);
+        	System.out.println("reservation statut :" + reservationCriteria.getReservationStatut().getCode());
+        	System.out.println("reservation auteur :" + reservationCriteria.getAuteur());
+    	
     	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
     	        .queryParam("numReservation", reservationCriteria.getNumReservation())
@@ -164,5 +165,28 @@ public class ReservationMetierImpl implements IReservationMetier {
             	
         return pageReservation;
 	}
+
+
+	@Override
+	public Reservation readReservation(Long numReservation) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	headers.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	HttpEntity<?> requestEntity = 
+       	     new HttpEntity<>(headers);
+		
+		String url = uRL+"/" + numReservation;
+    	
+		ResponseEntity<Reservation> response = restTemplate.exchange(url , HttpMethod.GET, requestEntity, Reservation.class);
+		
+		return response.getBody(); 
+		
+	}
+	
+	
+	
 
 }

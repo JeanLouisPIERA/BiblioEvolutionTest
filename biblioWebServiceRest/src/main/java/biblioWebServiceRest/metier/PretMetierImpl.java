@@ -114,16 +114,23 @@ public class PretMetierImpl implements IPretMetier {
 		Optional<Pret> pretAProlonger = pretRepository.findById(numPret);
 		if(!pretAProlonger.isPresent()) 
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
-		
+		/*
+		 * TICKET 2 : empêche de prolonger un prêt dont le statut n'est pas encours ou dont le statut est encours et la date de retour
+		 * est inférieure à aujourd'hui
+		*/
 		if(!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)) 
-			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
+			throw new BookNotAvailableException ("PROLONGATION IMPOSSIBLE = Le statut de ce pret de livre ne permet pas sa prolongation");
+		
+		if(pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)
+				&& pretAProlonger.get().getDateRetourPrevue().isBefore(LocalDate.now())) 
+			throw new BookNotAvailableException ("PROLONGATION IMPOSSIBLE = La date de retour prévue de ce prêt ne permet pas sa prolongation");
 		
 		/*
 		 * La date de départ d'un prêt prolonge n'est pas la date de la saisie de sa prolongation mais la date d'échéance
 		 * de la 1ère période de prêt (que la date de prolongation soit antérieure ou postérieure à cette date de 1ère échéance)
+		 * La date initiale du Prêt reste inchangée
 		 */
 		LocalDate datePretProlonge = pretAProlonger.get().getDateRetourPrevue();
-		pretAProlonger.get().setDatePret(datePretProlonge);
 		LocalDate dateRetourPrevuePretProlonge = datePretProlonge.plusDays(appProperties.getDureeProlongation());
 		pretAProlonger.get().setDateRetourPrevue(dateRetourPrevuePretProlonge);
 		
@@ -167,7 +174,6 @@ public class PretMetierImpl implements IPretMetier {
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
-		System.out.println("spec"+ pretSpecification.toString());
 		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
 		return prets;
 	}
@@ -188,6 +194,14 @@ public class PretMetierImpl implements IPretMetier {
 				}
 			}
 		return pretsEchusListe; 
+	}
+
+	@Override
+	public Pret readPret(Long numPret) throws EntityNotFoundException {
+		Optional<Pret> searchedPret = pretRepository.findById(numPret);
+		if(!searchedPret.isPresent())
+			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+		return searchedPret.get();
 	}
 	
 	

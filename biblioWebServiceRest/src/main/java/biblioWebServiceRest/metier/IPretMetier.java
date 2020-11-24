@@ -64,6 +64,14 @@ public interface IPretMetier {
 	  */
 	 List<Pret> searchAndUpdatePretsEchus(); 
 	 
+	 /**
+	  * Affiche un prêt recherché par son identifiant
+	  * @param numPret
+	  * @return
+	 * @throws EntityNotFoundException 
+	  */
+	 Pret readPret(Long numPret) throws EntityNotFoundException;
+	 
 	 
 		
 		

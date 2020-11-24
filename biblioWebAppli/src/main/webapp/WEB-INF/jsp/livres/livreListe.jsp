@@ -122,13 +122,22 @@
 								          ${livre.nbReservataires}
 								          </c:if>
 								          </td>
-								          <td>
+								          
 								          <c:if test="${livre.nbExemplairesDisponibles==0}">
+								          <td>
 								          	<a type="button"  class="btn btn-success" 
 								        	href="/reservations/creation/${livre.numLivre}">Réserver</a>
-								          </c:if>
 								          </td>
+								          </c:if>
 								          
+								          
+								          <c:if test="${livre.nbExemplairesDisponibles!=0}">
+								          <td>
+								          	<a type="button"  class="btn btn-danger" 
+								        	href="/reservations/creation/${livre.numLivre}">Réserver DEMO</a>
+								           </td>	
+								          </c:if>
+								         
 					        	      	  
 					    				 </tr>
 				   					</c:forEach>

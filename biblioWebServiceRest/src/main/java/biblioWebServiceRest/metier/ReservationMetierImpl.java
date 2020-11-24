@@ -175,7 +175,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 			}
 		}
 		searchedReservation.get().setReservationStatut(ReservationStatut.LIVREE);
-		
+		searchedReservation.get().setRangReservation(null);
 		searchedReservation.get().getLivre().setNbExemplairesDisponibles(searchedReservation.get().getLivre().getNbExemplairesDisponibles()+1);
 		PretDTO pretDTO = new PretDTO();
 		pretDTO.setIdUser(searchedReservation.get().getUser().getIdUser());
@@ -207,10 +207,18 @@ public class ReservationMetierImpl implements IReservationMetier{
 				}
 			}
 		}
-		
+		if(searchedReservation.get().getReservationStatut()==ReservationStatut.ENREGISTREE) {
 		searchedReservation.get().setReservationStatut(ReservationStatut.SUPPRIMEE);
+		}
+		if(searchedReservation.get().getReservationStatut()==ReservationStatut.NOTIFIEE) {
+			searchedReservation.get().setReservationStatut(ReservationStatut.ANNULEE);
+			
+			
+		}
+		
 		LocalDate dateSuppression = LocalDate.now();
 		searchedReservation.get().setDateSuppression(dateSuppression);
+		searchedReservation.get().setRangReservation(null);
 		
 		return reservationRepository.save(searchedReservation.get());
 	}
@@ -231,9 +239,18 @@ public class ReservationMetierImpl implements IReservationMetier{
 	public List<Reservation> searchAndNotifierReservations() throws EntityNotFoundException, WrongNumberException {
 		List<Reservation> reservationsANotifier = new ArrayList<Reservation>();
 		
-		Optional<List<Reservation>> reservationsAlreadyNotifiees = reservationRepository.findAllByReservationStatut(ReservationStatut.NOTIFIEE); 
-		if(reservationsAlreadyNotifiees.isPresent()) {
-		reservationsANotifier.addAll(reservationsAlreadyNotifiees.get());
+		Optional<List<Reservation>> reservationsAlreadyNotifieesDeadlineValide = reservationRepository.findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now()); 
+		if(reservationsAlreadyNotifieesDeadlineValide.isPresent()) {	
+			reservationsANotifier.addAll(reservationsAlreadyNotifieesDeadlineValide.get());
+		}
+		
+		Optional<List<Reservation>> reservationsAlreadyNotifieesDeadlineDechue = reservationRepository.findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now()); 
+		if(reservationsAlreadyNotifieesDeadlineDechue.isPresent()) {	
+			for(Reservation reservationAlreadyNotifieeDeadlineDechue : reservationsAlreadyNotifieesDeadlineDechue.get()) {
+				this.suppressReservation(reservationAlreadyNotifieeDeadlineDechue.getNumReservation());
+			}
+			
+			
 		}	
 		
 		Optional<List<Reservation>> reservationsEnregistreesSelectionnees = reservationRepository.findAllByReservationStatutAndLivreNombreExemplairesDisponiblesNamedParams(ReservationStatut.ENREGISTREE, 1);
@@ -247,6 +264,14 @@ public class ReservationMetierImpl implements IReservationMetier{
 				}
 		}
 		return reservationsANotifier; 
+	}
+
+	@Override
+	public Reservation readReservation(Long numReservation) throws EntityNotFoundException {
+		Optional<Reservation> searchedReservation = reservationRepository.findById(numReservation);
+		if(!searchedReservation.isPresent())
+			throw new EntityNotFoundException ("Aucune reservation enregistré ne correspond à votre demande");
+		return searchedReservation.get();
 	}
 
 }

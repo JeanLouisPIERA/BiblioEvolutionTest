@@ -22,7 +22,7 @@
 	 			<div class="panel panel-primary ">
 	 
 				  <div class="panel-heading">
-					   <h5>Confirmation de la réservation du ${reservation.dateReservation}</h5>
+					   <h5>Confirmation de la réservation N° ${reservation.numReservation} du ${reservation.dateReservation}</h5>
 					   <h5>faite par ${reservation.user.getUsername()}</h5>
 		  		   </div>
 	  

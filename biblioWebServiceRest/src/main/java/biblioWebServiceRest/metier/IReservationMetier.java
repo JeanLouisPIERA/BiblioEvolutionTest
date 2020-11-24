@@ -87,7 +87,13 @@ public interface IReservationMetier {
 	  */
 	 List<Reservation> searchAndNotifierReservations() throws EntityNotFoundException, WrongNumberException;
 	 
-	 
+	 /**
+	  * Affiche un prêt recherché par son identifiant
+	  * @param numPret
+	  * @return
+	 * @throws EntityNotFoundException 
+	  */
+	 Reservation readReservation(Long numReservation) throws EntityNotFoundException;
 	 
 	 
 	 

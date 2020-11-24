@@ -27,7 +27,7 @@ public class ReservationSpecification implements Specification<Reservation>{
         //add add criteria to predicates
  
 	        if (reservationCriteria.getNumReservation()!= null) {
-	        	predicates.getExpressions().add(builder.equal(root.get("numPret"), reservationCriteria.getNumReservation()));			
+	        	predicates.getExpressions().add(builder.equal(root.get("numReservation"), reservationCriteria.getNumReservation()));			
 	        }
        
         	if (reservationCriteria.getUsername()!= null) {
@@ -51,8 +51,6 @@ public class ReservationSpecification implements Specification<Reservation>{
             }
             
             if (reservationCriteria.getNumLivre()!= null) {
-            	System.out.println("Code1"+root.get("livre").get("numLivre"));
-            	System.out.println("Code2"+reservationCriteria.getNumLivre());
             	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), reservationCriteria.getNumLivre()));	
             }
             

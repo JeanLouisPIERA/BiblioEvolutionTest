@@ -55,14 +55,7 @@
 				 <label>Auteur du Livre :</label>
 				 <input type="text" name="auteur" value="${pretCriteria.auteur}"/>
 				 </fieldset>
-				 
-				 
-				 <fieldset class="form-group">
-				 <label>Nom de la catégorie :</label>
-				 <input type="text" name="nomCategorieLivre" value="${pretCriteria.nomCategorieLivre}"/>
-				 </fieldset>
-				
-				 
+			
 				 
 				 <button class="btn-sm btn-primary">Valider</button>
 				 </fieldset> 
@@ -109,14 +102,30 @@
 								          <td>${pret.dateRetourPrevue}</td>
 								          <td>${pret.dateRetourEffectif}</td>
 								          <td>${pret.pretStatut.getText()}</td>
+								          
 								          <td>
+								          	<a  type="button" class="btn btn-default" 
+									        href="/prets/${pret.numPret}"> Fiche Info </a>
+							        	  </td>
+								         
 								          <c:if test="${pret.pretStatut.getCode() != 'PROLONGE' 
 								          && pret.pretStatut.getCode() != 'CLOTURE' 
 								          && pret.pretStatut.getCode() != 'ECHU'}">
+								          <td>
 								          	<a type="button"  class="btn btn-warning" 
 								        	href="/prets/prolongation/${pret.numPret}">Prolonger</a>
-								          </c:if>
 								          </td>
+								          </c:if>
+								          
+								          <c:if test="${pret.pretStatut.getCode() == 'PROLONGE'
+								          || pret.pretStatut.getCode() == 'CLOTURE' 
+								          || pret.pretStatut.getCode() == 'ECHU'}">
+								          <td>
+								          	<a type="button"  class="btn btn-danger" 
+								        	href="/prets/prolongation/${pret.numPret}">Prolonger DEMO</a>
+								          </td>
+								          </c:if>
+								          
 					    				 </tr>
 				   					</c:forEach>
 								</tbody>
