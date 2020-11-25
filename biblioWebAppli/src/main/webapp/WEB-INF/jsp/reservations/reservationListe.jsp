@@ -100,7 +100,7 @@
 									      <th>Titre</th>
 									      <th>Catégorie</th>
 									      <th>Disponibilité du Livre</th>
-									      <th>Date de Retour Prévue</th>
+									      <th>Date de retour la plus proche</th>
 									      <th>Rang dans liste d'attente</th>
 									      <th>Statut de la réservation</th>
 									      

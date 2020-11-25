@@ -85,7 +85,7 @@ INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (30, '2020-11-02', NULL, '2020-12-02', 0, 11, 1);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (31, '2020-11-10', NULL, '2020-12-10', 0, 13, 3);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (32, '2020-11-12', NULL, '2020-12-12', 0, 11, 7);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (33, '2020-11-14', '2020-11-20', '2020-12-14', 3, 24, 6);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (33, '2020-11-14', '2020-11-18', '2020-12-14', 3, 24, 6);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (34, '2020-11-14', '2020-11-18', '2020-12-14', 3, 19, 7);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (35, '2020-11-19', NULL, '2020-12-19', 0, 19, 3);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (36, '2020-11-19', '2020-11-21', '2020-12-19', 3, 18, 8);

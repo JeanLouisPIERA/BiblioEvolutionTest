@@ -80,6 +80,7 @@ public class MailScheduler {
  		    	this.populateModel("nomUser", nomUser); 
  		    	this.populateModel("nomLivre", pretARelancer.getLivre().getTitre()); 
  		    	this.populateModel("nomAuteur", pretARelancer.getLivre().getAuteur()); 
+ 		    	this.populateModel("numLivre", pretARelancer.getLivre().getNumLivre()); 
  		    	
  		          
  		         mailService.sendMessageUsingThymeleafTemplate(mailTo, nomUser, subject, model);
@@ -115,6 +116,7 @@ public class MailScheduler {
  		    	this.populateModel("nomUser", nomUser); 
  		    	this.populateModel("nomLivre", reservationANotifier.getLivre().getTitre());
  		    	this.populateModel("nomAuteur", reservationANotifier.getLivre().getAuteur());
+ 		    	this.populateModel("numLivre", reservationANotifier.getLivre().getNumLivre());
  		    			
  		         mailService.sendMessageUsingThymeleafTemplateR(mailTo, nomUser, subjectR, model);
  	    	

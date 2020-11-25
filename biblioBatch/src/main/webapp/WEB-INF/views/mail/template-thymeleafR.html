@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Template du email de relance des prêts échus</title>
+<title>Template du email de notification des réservations</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href='http://fonts.googleapis.com/css?family=Roboto'
@@ -32,6 +32,10 @@ body {
 		Si vous n'empruntez pas le livre avant cette date, votre réservation sera annulée.<b> Pour rappel, </b>
 		voici les références de l'ouvrage réservé : <br></br> <b> <span th:text="${nomLivre}"></span>
 		</b> de <span th:text="${nomAuteur}"></span> (auteur)
+	</p>
+	
+	<p>
+	Référence de l'ouvrage : <span th:text="${numLivre}"></span>
 	</p>
 
 	<p>

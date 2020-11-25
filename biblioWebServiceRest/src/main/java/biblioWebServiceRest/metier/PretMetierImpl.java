@@ -54,6 +54,8 @@ public class PretMetierImpl implements IPretMetier {
 	PretMapper pretMapper;
 	@Autowired
 	LivreMapper livreMapper; 
+	@Autowired
+	private ILivreMetier livreMetier;
 	
 	
 	
@@ -93,6 +95,8 @@ public class PretMetierImpl implements IPretMetier {
 	LocalDate dateRetourPrevue = datePret.plusDays(appProperties.getDureePret());
 	newPret.setDateRetourPrevue(dateRetourPrevue);
 	newPret.setPretStatut(PretStatut.ENCOURS);
+	
+	livreMetier.miseAJourLivres();
 	
 	return pretRepository.save(newPret);
 		
@@ -160,6 +164,8 @@ public class PretMetierImpl implements IPretMetier {
 		
 		Integer nbExemplairesDisponiblesAvantTransaction = pretACloturer.get().getLivre().getNbExemplairesDisponibles();
 		pretACloturer.get().getLivre().setNbExemplairesDisponibles(nbExemplairesDisponiblesAvantTransaction + 1);
+		
+		livreMetier.miseAJourLivres();
 		
 		return pretRepository.save(pretACloturer.get());
 		

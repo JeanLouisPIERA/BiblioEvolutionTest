@@ -107,6 +107,7 @@ public class MailService{
         helper.setFrom(new InternetAddress(mail,nameFrom));
         
         helper.setText(htmlBody, true);
+        
 
         eMailSender.send(message);
     }

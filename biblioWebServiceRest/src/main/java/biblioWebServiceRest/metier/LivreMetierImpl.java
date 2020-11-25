@@ -72,15 +72,6 @@ public class LivreMetierImpl implements ILivreMetier{
 					}else {
 						livre.setDateRetourPrevuePlusProche("Aucune date de retour ne peut être indiquée");
 					}
-					/*
-						for(Pret pret : pretsListe.get()) {
-							if(pret.getDateRetourPrevue().isBefore(LocalDate.now())) {
-								livre.setDateRetourPrevuePlusProche("Le retour des exemplaires prêtés a été réclamé");
-							}else{
-								livre.setDateRetourPrevuePlusProche(pret.getDateRetourPrevue().toString());
-							}
-						}
-						*/
 			
 					 
 					//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours

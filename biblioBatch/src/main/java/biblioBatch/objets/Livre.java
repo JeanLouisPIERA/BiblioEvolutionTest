@@ -28,16 +28,14 @@ public class Livre {
 	
 	private Integer nbReservataires;
 
-	/**
-	 * @return the numLivre
-	 */
+	
+
+	
+
 	public Long getNumLivre() {
 		return numLivre;
 	}
 
-	/**
-	 * @param numLivre the numLivre to set
-	 */
 	public void setNumLivre(Long numLivre) {
 		this.numLivre = numLivre;
 	}

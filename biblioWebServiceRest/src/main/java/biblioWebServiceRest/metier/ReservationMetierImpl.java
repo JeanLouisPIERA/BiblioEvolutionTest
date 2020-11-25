@@ -126,6 +126,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 		
 		newReservation.setReservationStatut(ReservationStatut.ENREGISTREE);
 		
+		livreMetier.miseAJourLivres();
+		
 		return reservationRepository.save(newReservation);
 		
 	}
@@ -179,6 +181,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 		pretDTO.setNumLivre(searchedReservation.get().getLivre().getNumLivre());
 		pretMetier.createPret(pretDTO);
 		
+		livreMetier.miseAJourLivres();
+		
 		return reservationRepository.save(searchedReservation.get());
 	}
 
@@ -216,6 +220,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 		LocalDate dateSuppression = LocalDate.now();
 		searchedReservation.get().setDateSuppression(dateSuppression);
 		searchedReservation.get().setRangReservation(null);
+		
+		livreMetier.miseAJourLivres();
 		
 		return reservationRepository.save(searchedReservation.get());
 	}

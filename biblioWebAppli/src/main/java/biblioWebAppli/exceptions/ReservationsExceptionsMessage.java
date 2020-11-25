@@ -13,11 +13,11 @@ public class ReservationsExceptionsMessage {
 		}
 		
 		if (StatusCode ==406) {
-			message = "RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt";
+			message = "RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà un prêt en-cours, prolongé ou échu";
 		}
 		
 		if (StatusCode ==409) {
-			message = "RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre pour lequel vous avez déjà une réservation en cours";
+			message = "RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre pour lequel vous avez déjà une réservation en-cours ou notifiée";
 		}
 		if(StatusCode==417) {
 		message ="RESERVATION IMPOSSIBLE = Vous pouvez emprunter immédiatement un exemplaire disponible de ce livre";
