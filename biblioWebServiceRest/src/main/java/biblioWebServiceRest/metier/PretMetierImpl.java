@@ -55,6 +55,8 @@ public class PretMetierImpl implements IPretMetier {
 	PretMapper pretMapper;
 	@Autowired
 	LivreMapper livreMapper; 
+	@Autowired
+	private ILivreMetier livreMetier;
 	
 	
 	
@@ -95,6 +97,8 @@ public class PretMetierImpl implements IPretMetier {
 	newPret.setDateRetourPrevue(dateRetourPrevue);
 	newPret.setPretStatut(PretStatut.ENCOURS);
 	
+	livreMetier.miseAJourLivres();
+	
 	return pretRepository.save(newPret);
 		
 	}
@@ -117,12 +121,25 @@ public class PretMetierImpl implements IPretMetier {
 		
 		if(!pretAProlonger.isPresent()) 
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+<<<<<<< HEAD
 		
 		if(
 				!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS) &&
 				!pretAProlonger.get().getPretStatut().equals(PretStatut.AECHOIR)	
 				) 
 			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
+=======
+		/*
+		 * TICKET 2 : empêche de prolonger un prêt dont le statut n'est pas encours ou dont le statut est encours et la date de retour
+		 * est inférieure à aujourd'hui
+		*/
+		if(!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)) 
+			throw new BookNotAvailableException ("PROLONGATION IMPOSSIBLE = Le statut de ce pret de livre ne permet pas sa prolongation");
+		
+		if(pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)
+				&& pretAProlonger.get().getDateRetourPrevue().isBefore(LocalDate.now())) 
+			throw new BookNotAvailableException ("PROLONGATION IMPOSSIBLE = La date de retour prévue de ce prêt ne permet pas sa prolongation");
+>>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 		
 		/*COMMENTAIRE HOTFIX 1.0.1 : Dans la version d'origine, il n'y avait pas de bug 
 		 * Un prêt à prolonger ne pouvait pas avoir une date de retour postérieure à la date de traitement
@@ -136,9 +153,9 @@ public class PretMetierImpl implements IPretMetier {
 		/*
 		 * La date de départ d'un prêt prolonge n'est pas la date de la saisie de sa prolongation mais la date d'échéance
 		 * de la 1ère période de prêt (que la date de prolongation soit antérieure ou postérieure à cette date de 1ère échéance)
+		 * La date initiale du Prêt reste inchangée
 		 */
 		LocalDate datePretProlonge = pretAProlonger.get().getDateRetourPrevue();
-		pretAProlonger.get().setDatePret(datePretProlonge);
 		LocalDate dateRetourPrevuePretProlonge = datePretProlonge.plusDays(appProperties.getDureeProlongation());
 		pretAProlonger.get().setDateRetourPrevue(dateRetourPrevuePretProlonge);
 		
@@ -169,6 +186,8 @@ public class PretMetierImpl implements IPretMetier {
 		Integer nbExemplairesDisponiblesAvantTransaction = pretACloturer.get().getLivre().getNbExemplairesDisponibles();
 		pretACloturer.get().getLivre().setNbExemplairesDisponibles(nbExemplairesDisponiblesAvantTransaction + 1);
 		
+		livreMetier.miseAJourLivres();
+		
 		return pretRepository.save(pretACloturer.get());
 		
 		
@@ -181,9 +200,7 @@ public class PretMetierImpl implements IPretMetier {
 	 */
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
-		
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
-		System.out.println("spec"+ pretSpecification.toString());
 		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
 		return prets;
 	}
@@ -194,6 +211,7 @@ public class PretMetierImpl implements IPretMetier {
 	 */
 	@Override
 	public List<Pret> searchAndUpdatePretsEchus() {
+<<<<<<< HEAD
 		/*
 		 * COMMENTAIRE HOTIX 1.0.1 : on maintient cette 1ère méthode pour envoyer un mail aux utilisateurs dont le pret est échu
 		 * c'est à dire qu'à la date de traitement la date de retour est dépassée et le livre n'est toujours pas restitué
@@ -210,9 +228,26 @@ public class PretMetierImpl implements IPretMetier {
 				pretEchu.setPretStatut(PretStatut.ECHU);
 				pretsEchus.add(pretEchu);
 				pretRepository.save(pretEchu);
+=======
+		List<Pret> pretsEchusListe = new ArrayList<Pret>();
+		Optional<List<Pret>> pretsEchus = pretRepository.findAllByDateRetourPrevueBeforeAndNotPretStatut(LocalDate.now(), PretStatut.CLOTURE);
+		if(pretsEchus.isPresent()) {
+			for (Pret pret : pretsEchus.get()) {
+				pret.setPretStatut(PretStatut.ECHU);
+				pretsEchusListe.add(pret);
+				pretRepository.save(pret);
+>>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 				}
-		}
-		return pretsEchus; 
+			}
+		return pretsEchusListe; 
+	}
+
+	@Override
+	public Pret readPret(Long numPret) throws EntityNotFoundException {
+		Optional<Pret> searchedPret = pretRepository.findById(numPret);
+		if(!searchedPret.isPresent())
+			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+		return searchedPret.get();
 	}
 
 	@Override

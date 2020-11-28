@@ -54,6 +54,25 @@ public class ExceptionHandlerControllerAdvice {
 		return exceptionReponse;
 	}
 	
+	
+	/**
+	 * Cette méthode permet de gérer l'exception métier personnalisée " Book Available "
+	 * Voir ReservationMetier
+	 * @param ex1
+	 * @return
+	 */
+	@ExceptionHandler(BookAvailableException.class)
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.EXPECTATION_FAILED)
+	public ExceptionReponse handleCustomException(BookAvailableException ex1) {
+		ExceptionReponse exceptionReponse = new ExceptionReponse();
+		exceptionReponse.setLocalDate(LocalDate.now());
+		exceptionReponse.setMessageErreur(ex1.getMessage());
+		exceptionReponse.setStatusCode(HttpStatus.EXPECTATION_FAILED.value());
+		return exceptionReponse;
+	}
+	
+	
 	/**
 	 * Cette méthode permet de gérer l'exception personnalisée " Entity Already Exists "
 	 * Voir CategorieMetier et LivreMetier
@@ -113,7 +132,17 @@ public class ExceptionHandlerControllerAdvice {
 	}
 	
 	
-	
+	@ExceptionHandler (RentAlreadyExistsException.class)
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE)
+	public ExceptionReponse handleCustomException(RentAlreadyExistsException ex5) {
+		ExceptionReponse exceptionReponse = new ExceptionReponse();
+		exceptionReponse.setLocalDate(LocalDate.now());
+		exceptionReponse.setMessageErreur(ex5.getMessage());
+		exceptionReponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+		return exceptionReponse;
+		
+	}
 	
 	
 	

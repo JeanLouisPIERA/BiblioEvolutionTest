@@ -4,10 +4,13 @@
 
 package biblioWebServiceRest.metier;
 
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,10 +21,16 @@ import org.springframework.stereotype.Service;
 import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
+import biblioWebServiceRest.dao.IPretRepository;
+import biblioWebServiceRest.dao.IReservationRepository;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
+import biblioWebServiceRest.entities.Pret;
+import biblioWebServiceRest.entities.PretStatut;
+import biblioWebServiceRest.entities.Reservation;
+import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -37,7 +46,59 @@ public class LivreMetierImpl implements ILivreMetier{
 	@Autowired
 	private ICategorieRepository categorieRepository; 
 	@Autowired
+	private IPretRepository pretRepository;
+	@Autowired
 	private LivreMapper livreMapper;
+	@Autowired
+	private IReservationRepository reservationRepository;
+	
+	
+	// TICKET 1 FONCTIONNALITE
+	// MISE A JOUR DU DATE DE RETOUR LA PLUS PROCHE D'UN EXEMPLAIRE D'UN LIVRE ET DU NOMBRE D'UTILISATEURS AYANT RESERVE CE LIVRE 
+	@Override
+	public void miseAJourLivres() {
+	//TICKET 1 Fonctionnalité : extraction de tous les livres éligibles à la réservation
+			Optional<List<Livre>> livresList = livreRepository.findAllByNbExemplairesDisponibles(0);
+			//TICKET 1 Fonctionnalité  : on recherche la date de retour de prêt la plus proche et on la met à jour   
+			if(livresList.isPresent()) {
+				for(Livre livre : livresList.get()) {
+					Optional<List<Pret>> pretsListe = pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
+							livre, 
+							PretStatut.CLOTURE, 
+							LocalDate.now());
+					if(pretsListe.isPresent()) {
+						Pret pretDateRetourPlusProche = pretsListe.get().get(0);
+						livre.setDateRetourPrevuePlusProche(pretDateRetourPlusProche.getDateRetourPrevue().toString());
+					}else {
+						livre.setDateRetourPrevuePlusProche("Aucune date de retour ne peut être indiquée");
+					}
+			
+					 
+					//TICKET 1 Fonctionnalité 1 WebAppli : on identifie le nombre de réservations en cours
+					// le nombre d'utilisateurs ayant une réservation en cours
+					// le rang de la réservation dans la liste des réservations d'un livre
+					Optional<List<Reservation>> reservations = reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
+						if(reservations.isPresent()) {
+							livre.setNbReservationsEnCours(reservations.get().size());}
+						else {
+							livre.setNbReservationsEnCours(0);
+						}
+					Optional<List<Reservation>> reservationsByUser = reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
+						if(reservationsByUser.isPresent()) {
+							livre.setNbReservataires(reservationsByUser.get().size());}
+						else {
+							livre.setNbReservataires(0);
+						}
+						
+					
+					livreRepository.save(livre);
+				}
+			}
+	}
+			
+	
+	
+	
 	
 	/**
 	 * Recherche multicritères des livres enregistrés
@@ -46,6 +107,8 @@ public class LivreMetierImpl implements ILivreMetier{
 	 */
 	@Override
 	public Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable) {
+		// TICKET 1 FONCTIONNALITE DE MISE A JOURS DES LIVRES SUR DATE DE RETOUR LA PLUS PROCHE ET TAILLE DE LA LISTE D'ATTENTE
+		this.miseAJourLivres();
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		Page<Livre> livres = livreRepository.findAll(livreSpecification, pageable);
 		return livres;
@@ -108,10 +171,7 @@ public class LivreMetierImpl implements ILivreMetier{
 			throw new EntityNotFoundException("Le livre à mettre à jour n'existe pas");
 		
 		Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
-		
-		
-		
-		
+	
 		/*
 		 * Si la modification du titre ou du nom de l'auteur créée une nouvelle combinaison déjà existante identifiée 
 		 * par la recherche via LivreCriteria, la mise à jour du livre est refusée pour respecter l'unicité des enregistrements
@@ -122,7 +182,6 @@ public class LivreMetierImpl implements ILivreMetier{
 		livreCriteria.setAuteur(livreDTO.getAuteur());
 		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
 		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
-		System.out.println("taille" + livreCriteriaList.size());
 		
 		if(livreCriteriaList.size() == 1 
 				&& (
@@ -140,9 +199,6 @@ public class LivreMetierImpl implements ILivreMetier{
 		
 		livreToUpdate.get().setTitre(livreUpdates.getTitre());
 		livreToUpdate.get().setAuteur(livreUpdates.getAuteur());
-		
-		
-		
 				
 		/*
 		 * La mise à jour du nombre total d'exemplaires d'une référence de livre est inférieure au nombre des exemplaires

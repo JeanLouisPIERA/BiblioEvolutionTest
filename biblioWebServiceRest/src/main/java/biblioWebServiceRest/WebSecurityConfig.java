@@ -116,6 +116,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         	.authorizeRequests()
         	.antMatchers(HttpMethod.POST, "/biblio/users/login" ).permitAll()
         	.antMatchers(HttpMethod.PUT, "/biblio/prets/prolongation/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
+        	.antMatchers(HttpMethod.POST, "/biblio/reservations/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
+        	.antMatchers(HttpMethod.PUT, "/biblio/reservations/suppression/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
         	.antMatchers(HttpMethod.GET, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString(), RoleEnum.USER.toString())
         	.antMatchers(HttpMethod.PUT, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString())
             .antMatchers(HttpMethod.POST, "/biblio/**").hasAnyAuthority(RoleEnum.ADMIN.toString())            

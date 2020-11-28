@@ -3,18 +3,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Template du email de relance des prêts échus</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
-    <!-- use the font -->
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            font-size: 20px;
-        }
-    </style>
+<title>Template du email de relance des prêts échus</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href='http://fonts.googleapis.com/css?family=Roboto'
+	rel='stylesheet' type='text/css' />
+<!-- use the font -->
+<style>
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 20px;
+}
+</style>
 </head>
+<<<<<<< HEAD
  <body>
  	<p>
       Objet: votre prêt N°
@@ -53,4 +55,35 @@
     
     
   </body>
+=======
+<body>
+	<p>
+		Objet: votre prêt N° <span th:text="${numPret}"></span> enregistré le
+		<span
+			th:text="${#temporals.format(debut, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
+	</p>
+	<p th:text="${'Bonjour ' + nomUser}"></p>
+	<p>
+		Votre emprunt de livre rappelé en objet est échu depuis le : <b> <span
+			th:text="${#temporals.format(echeance, 'dd-MMMM-yyyy', new java.util.Locale('fr', 'FR'))}"></span>
+		</b>
+	</p>
+	<p>
+		Merci de ramener à la bibliothèque <b> dans les meilleurs délais </b>
+		l'ouvrage suivant : <br></br> <b> <span th:text="${nomLivre}"></span>
+		</b> de <span th:text="${nomAuteur}"></span> (auteur)
+	</p>
+	
+	<p>
+	Référence de l'ouvrage : <span th:text="${numLivre}"></span>
+	</p>
+
+	<p>
+		Avec nos remerciements <br />
+	</p>
+	<p>L'équipe Biblio</p>
+
+
+</body>
+>>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 </html>

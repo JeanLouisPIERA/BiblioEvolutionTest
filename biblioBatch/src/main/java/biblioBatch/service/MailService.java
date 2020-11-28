@@ -40,14 +40,19 @@ public class MailService{
 	
 	@Value("${application.template}")
 	private String template;
+<<<<<<< HEAD
 	@Value("${application.template.Rappel}")
 	private String templateRappel;
+=======
+	@Value("${application.template.R}")
+	private String templateR;
+>>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 	
 	@Value("${application.nameFrom}")
 	private String nameFrom;
 	
 	/**
-	 * Cette méthode permet de customiser le message envoyé en utilisant le template Thymeleaf indiqué
+	 * Cette méthode permet de customiser le message RELANCE PRETS envoyé en utilisant le template Thymeleaf indiqué
 	 * @param to
 	 * @param subject
 	 * @param templateModel
@@ -67,6 +72,7 @@ public class MailService{
 		    }
 	 
 	 /**
+<<<<<<< HEAD
 		 * Cette méthode permet de customiser le message envoyé en utilisant le template Thymeleaf indiqué
 		 * @param to
 		 * @param subject
@@ -85,6 +91,28 @@ public class MailService{
 
 			        sendHtmlMessage(to, name, subject, htmlBody);
 			    }
+=======
+		 * Cette méthode permet de customiser le message NOTIFICATION RESERVATIONS envoyé en utilisant le template Thymeleaf indiqué
+		 * @param to
+		 * @param subject
+		 * @param templateModel
+		 * @throws MessagingException
+		 * @throws UnsupportedEncodingException
+		 */
+		 public void sendMessageUsingThymeleafTemplateR(
+			        String to, String name, String subject, Map<String, Object> templateModel)
+			            throws MessagingException, UnsupportedEncodingException {
+			                
+			        Context thymeleafContext = new Context();
+			        thymeleafContext.setVariables(templateModel);
+			        
+			        String htmlBody = thymeleafTemplateEngine.process(templateR, thymeleafContext);
+
+			        sendHtmlMessage(to, name, subject, htmlBody);
+			    }
+	 
+	 
+>>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 	
 	/**
 	 * Cette méthode permet de créer un message HTML en renseignant le destinataire, le sujet, l'émetteur et en créant le htmlBody du mail 
@@ -105,10 +133,11 @@ public class MailService{
         helper.setFrom(new InternetAddress(mail,nameFrom));
         
         helper.setText(htmlBody, true);
+        
 
         eMailSender.send(message);
     }
 
-    
+	
     
 }

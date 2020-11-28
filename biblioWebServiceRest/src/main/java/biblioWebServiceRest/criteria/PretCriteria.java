@@ -13,8 +13,8 @@ public class PretCriteria {
 	
 	private Long numPret;
 	private String username;
-	private Long userId; 
-	private Long numLivre; 
+	private Integer userId; 
+	private Integer numLivre; 
 	private String titre; 
 	private String auteur;
 	private String nomCategorieLivre;
@@ -47,31 +47,21 @@ public class PretCriteria {
 		this.username = username;
 	}
 
-	/**
-	 * @return the userId
-	 */
-	public Long getUserId() {
+	
+
+	public Integer getUserId() {
 		return userId;
 	}
 
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(Long userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 
-	/**
-	 * @return the numLivre
-	 */
-	public Long getNumLivre() {
+	public Integer getNumLivre() {
 		return numLivre;
 	}
 
-	/**
-	 * @param numLivre the numLivre to set
-	 */
-	public void setNumLivre(Long numLivre) {
+	public void setNumLivre(Integer numLivre) {
 		this.numLivre = numLivre;
 	}
 

@@ -3,6 +3,7 @@
  */
 package biblioWebServiceRest.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,9 +19,9 @@ public interface ILivreRepository extends JpaRepository <Livre, Long>, JpaSpecif
 	@Query("select l from Livre l where l.titre like %?1")
 	Optional<Livre> findByTitre(String titre);
 
-	
+	@Query("select livre from Livre livre where livre.nbExemplairesDisponibles = ?1")
+	Optional<List<Livre>> findAllByNbExemplairesDisponibles(Integer nbExemplairesDisponibles);
 
-	
 	
 	
 

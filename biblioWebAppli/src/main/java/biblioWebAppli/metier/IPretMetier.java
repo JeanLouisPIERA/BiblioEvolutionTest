@@ -37,5 +37,11 @@ public interface IPretMetier {
 	  */
 	 Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable);
 	 
+	 /**
+	  * Rechercher un prêt par son identifiant
+	  * @param numPret
+	  * @return
+	  */
+	 Pret readPret(Long numPret);
 
 }

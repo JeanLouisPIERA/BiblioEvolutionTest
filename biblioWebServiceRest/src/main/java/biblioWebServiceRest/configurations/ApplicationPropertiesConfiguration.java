@@ -17,7 +17,11 @@ public class ApplicationPropertiesConfiguration {
 
     private int dureePret;
     private int dureeProlongation;
+<<<<<<< HEAD
     private int dureeAEchoir;
+=======
+    private int dureeNotification;
+>>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 	/**
 	 * @return the dureePret
 	 */
@@ -42,11 +46,19 @@ public class ApplicationPropertiesConfiguration {
 	public void setDureeProlongation(int dureeProlongation) {
 		this.dureeProlongation = dureeProlongation;
 	}
+<<<<<<< HEAD
 	public int getDureeAEchoir() {
 		return dureeAEchoir;
 	}
 	public void setDureeAEchoir(int dureeAEchoir) {
 		this.dureeAEchoir = dureeAEchoir;
+=======
+	public int getDureeNotification() {
+		return dureeNotification;
+	}
+	public void setDureeNotification(int dureeNotification) {
+		this.dureeNotification = dureeNotification;
+>>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 	} 
 	
 	

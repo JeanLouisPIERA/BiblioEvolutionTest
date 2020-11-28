@@ -30,7 +30,8 @@
         <div class="panel-body">
            Bonjour ${name}!!
            <br></br> <a href="/livres">Cliquer ici</a> pour consulter tous les livres. 
-           <br></br> <a href="/prets">Cliquer ici</a> pour consulter les prets en cours. 
+           <br></br> <a href="/prets">Cliquer ici</a> pour consulter vos prets en cours. 
+           <br></br> <a href="/reservations">Cliquer ici</a> pour consulter vos reservations en cours.
                       
         </div>
      </div>
