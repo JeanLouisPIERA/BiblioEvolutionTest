@@ -3,21 +3,21 @@
  */
 package biblioWebServiceRest.dao;
 
-<<<<<<< HEAD
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-=======
+
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -34,7 +34,7 @@ import biblioWebServiceRest.entities.User;
 @Repository
 public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecificationExecutor<Pret>{
 	
-<<<<<<< HEAD
+
 	@Query("select pret from Pret pret where (pret.pretStatut <> ?1)" + "AND (pret.dateRetourPrevue < ?2)")
 	   Optional<List<Pret>> findAllByOtherPretStatutAndDateEcheanceBeforeThisDate(PretStatut pretStatut, LocalDate date);
 	
@@ -46,7 +46,7 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 	
 	@Query("select pret from Pret pret where (pret.pretStatut = ?1)" + "AND (pret.dateRetourPrevue BETWEEN ?2 AND ?3)")
 	   Optional<List<Pret>> findAllByPretStatutAndDateEcheanceBetweenTwoDates(PretStatut pretStatut, LocalDate dateDebut, LocalDate dateFin);
-=======
+
 	@Query("select pret from Pret pret where (pret.dateRetourPrevue < ?1) " + " AND (pret.pretStatut <> ?2)")
 	Optional<List<Pret>> findAllByDateRetourPrevueBeforeAndNotPretStatut(LocalDate dateRetourPrevueMax, PretStatut pretStatut);
 	
@@ -63,6 +63,6 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 	
 	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)" + " AND (pret.dateRetourPrevue > ?3)"+ "ORDER BY pret.dateRetourPrevue ASC")
 	Optional<List<Pret>> findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(Livre livre1, PretStatut pretStatut, LocalDate localDate);
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
+
 	
 }

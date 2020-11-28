@@ -121,14 +121,14 @@ public class PretMetierImpl implements IPretMetier {
 		
 		if(!pretAProlonger.isPresent()) 
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
-<<<<<<< HEAD
+
 		
 		if(
 				!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS) &&
 				!pretAProlonger.get().getPretStatut().equals(PretStatut.AECHOIR)	
 				) 
 			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
-=======
+
 		/*
 		 * TICKET 2 : empêche de prolonger un prêt dont le statut n'est pas encours ou dont le statut est encours et la date de retour
 		 * est inférieure à aujourd'hui
@@ -139,7 +139,7 @@ public class PretMetierImpl implements IPretMetier {
 		if(pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)
 				&& pretAProlonger.get().getDateRetourPrevue().isBefore(LocalDate.now())) 
 			throw new BookNotAvailableException ("PROLONGATION IMPOSSIBLE = La date de retour prévue de ce prêt ne permet pas sa prolongation");
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
+
 		
 		/*COMMENTAIRE HOTFIX 1.0.1 : Dans la version d'origine, il n'y avait pas de bug 
 		 * Un prêt à prolonger ne pouvait pas avoir une date de retour postérieure à la date de traitement
@@ -204,14 +204,13 @@ public class PretMetierImpl implements IPretMetier {
 		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
 		return prets;
 	}
-
+	
 	/**
 	 * @param pageable
 	 * @return
 	 */
 	@Override
 	public List<Pret> searchAndUpdatePretsEchus() {
-<<<<<<< HEAD
 		/*
 		 * COMMENTAIRE HOTIX 1.0.1 : on maintient cette 1ère méthode pour envoyer un mail aux utilisateurs dont le pret est échu
 		 * c'est à dire qu'à la date de traitement la date de retour est dépassée et le livre n'est toujours pas restitué
@@ -228,20 +227,14 @@ public class PretMetierImpl implements IPretMetier {
 				pretEchu.setPretStatut(PretStatut.ECHU);
 				pretsEchus.add(pretEchu);
 				pretRepository.save(pretEchu);
-=======
-		List<Pret> pretsEchusListe = new ArrayList<Pret>();
-		Optional<List<Pret>> pretsEchus = pretRepository.findAllByDateRetourPrevueBeforeAndNotPretStatut(LocalDate.now(), PretStatut.CLOTURE);
-		if(pretsEchus.isPresent()) {
-			for (Pret pret : pretsEchus.get()) {
-				pret.setPretStatut(PretStatut.ECHU);
-				pretsEchusListe.add(pret);
-				pretRepository.save(pret);
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 				}
-			}
-		return pretsEchusListe; 
+		}
+		return pretsEchus; 
 	}
 
+	
+
+	
 	@Override
 	public Pret readPret(Long numPret) throws EntityNotFoundException {
 		Optional<Pret> searchedPret = pretRepository.findById(numPret);
