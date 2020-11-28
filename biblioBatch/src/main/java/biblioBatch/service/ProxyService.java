@@ -76,7 +76,7 @@ public class ProxyService {
 		return pretsEchusList;
 	}
 	
-<<<<<<< HEAD
+
 	/**
 	 * Cette méthode permet d'obtenir la liste des prêts à échoir à la date du batch
 	 * @return
@@ -99,7 +99,7 @@ public class ProxyService {
     
 		return pretsAEchoirList;
 	}
-=======
+
 	public Reservation[] notificationReservations() {
 		
 		String url = uRLR + "/notifiees";
@@ -121,7 +121,6 @@ public class ProxyService {
 		
 	}
 	
-	
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
+
 
 }

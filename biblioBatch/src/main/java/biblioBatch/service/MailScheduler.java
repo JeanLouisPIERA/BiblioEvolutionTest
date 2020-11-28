@@ -41,13 +41,13 @@ public class MailScheduler {
 	
     @Value("${application.subject}")
     private String subject;	
-<<<<<<< HEAD
+
     @Value("${application.subject.Rappel}")
     private String subjectRappel;	
-=======
+
     @Value("${application.subject.R}")
     private String subjectR;	
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
+
     
     	/**
     	 * Cette méthode permet de créer le modèle à peupler à partir de la liste de réponse de l'API 
@@ -96,7 +96,6 @@ public class MailScheduler {
  	    }
  	 	
  	 	/**
-<<<<<<< HEAD
  		 * Cette méthode permet d'envoyer une série de mails à partir de la liste des prêts échus récupérée dans l'API Biblio
  	     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService
  	     * Gestion de la date en LocalDateTime gérée par Thymeleaf
@@ -106,8 +105,6 @@ public class MailScheduler {
  		 * @throws UnsupportedEncodingException 
  		 * @throws IOException
  		 */
- 		
- 		
  	 	@Scheduled(cron= "${application.cron}")
  	    public void sendMailsRappelList() throws MessagingException, UnsupportedEncodingException{
  	    	
@@ -126,7 +123,10 @@ public class MailScheduler {
  		    	
  		          
  		         mailService.sendMessageUsingThymeleafTemplateRappel(mailTo, nomUser, subjectRappel, model);
-=======
+ 	    	}
+ 	 	}
+ 	 	
+        /**
  		 * Cette méthode permet d'envoyer une série de mails à partir de la liste des réservations A NOTIFIER récupérée dans l'API Biblio
  	     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService
  	     * Gestion de la date en LocalDateTime gérée par Thymeleaf
@@ -136,8 +136,6 @@ public class MailScheduler {
  		 * @throws UnsupportedEncodingException 
  		 * @throws IOException
  		 */
- 		
- 		
  	 	@Scheduled(cron= "${application.cron}")
  	    public void sendMailsReservationList() throws MessagingException, UnsupportedEncodingException{
  	    	
@@ -156,7 +154,6 @@ public class MailScheduler {
  		    	this.populateModel("numLivre", reservationANotifier.getLivre().getNumLivre());
  		    			
  		         mailService.sendMessageUsingThymeleafTemplateR(mailTo, nomUser, subjectR, model);
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
  	    	
  		    	}
  	    
