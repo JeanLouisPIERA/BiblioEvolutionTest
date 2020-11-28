@@ -10,6 +10,7 @@ public class Reservation {
 	private LocalDate dateDeadline;
 	private LocalDate dateSuppression;
 	private ReservationStatut reservationStatut;
+	private Integer rangReservation;
 	private User user;
 	private Livre livre;
 	public Long getNumReservation() {
@@ -59,6 +60,12 @@ public class Reservation {
 	}
 	public void setLivre(Livre livre) {
 		this.livre = livre;
+	}
+	public Integer getRangReservation() {
+		return rangReservation;
+	}
+	public void setRangReservation(Integer rangReservation) {
+		this.rangReservation = rangReservation;
 	}
 	
 	

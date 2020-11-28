@@ -1,5 +1,3 @@
-
-
 --
 -- TOC entry 2854 (class 0 OID 331280)
 -- Dependencies: 203
@@ -30,7 +28,7 @@ INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disp
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (14, 'Jean Anouilh', 2, 0,'La guerre de Troie n''aura pas lieu', 4);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (15, 'Achille Zavatta', 2, 2, 'Memoire d''un clown', 5);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (16, 'Victor Hugo', 3, 3, 'La Legende des Siecles', 6);
-INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (17, 'JRR Tolkien', 5, 5, 'Le Seigneur de l''Anneau', 7);
+INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (17, 'JRR Tolkien', 5, 3, 'Le Seigneur de l''Anneau', 7);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (18, 'Uderzo et Goscinny', 1, 1, 'Asterix Le Gaulois', 8);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (19, 'Alphonse Boudard', 2, 1, 'Metamorphose des cloportes', 9);
 INSERT INTO public.livre (num_livre, auteur, nb_exemplaires, nb_exemplaires_disponibles, titre, num_categorie) VALUES (20, 'Frederic Dard', 3, 2, 'San Antonio a de la memoire', 9);
@@ -90,17 +88,9 @@ INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (35, '2020-11-19', NULL, '2020-12-19', 0, 19, 3);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (36, '2020-11-19', '2020-11-21', '2020-12-19', 3, 18, 8);
 INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (37, '2020-11-19', NULL, '2020-12-19', 0, 23, 6);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (38, '2020-10-30', NULL, '2020-11-29', 0, 17, 6);
+INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (39, '2020-11-30', NULL, '2020-11-29', 0, 17, 7);
 
-<<<<<<< HEAD
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (25, '2020-10-05', NULL, '2020-11-05', 1, 10, 1);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (26, '2020-09-15', NULL, '2020-11-15', 2, 11, 2);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (27, '2020-10-15', NULL, '2020-11-15', 0, 12, 3);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (28, '2020-09-15','2020-09-30', '2020-10-15', 3, 13, 3);
-INSERT INTO public.pret (num_pret, date_pret, date_retour_effectif, date_retour_prevue, pret_statut, livre_num_livre, user_id) VALUES (29, '2020-10-15', NULL, '2020-12-15', 2, 12, 2);
-
-
-
-=======
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (1, '2020-11-02', NULL, NULL, '2020-11-03', 1, 1, 11, 6);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (2, '2020-11-08', NULL, NULL, '2020-11-09', 1, 2, 11, 7);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (3, '2020-11-10', NULL, NULL, '2020-11-11', 1, 3, 11, 8);
@@ -114,7 +104,6 @@ INSERT INTO public.reservation (num_reservation, date_reservation, date_notifica
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (11, '2020-11-22', NULL, NULL, NULL, 0, 1, 14, 3);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (12, '2020-11-22', NULL, NULL, NULL, 0, 2, 18, 2);
 INSERT INTO public.reservation (num_reservation, date_reservation, date_notification, date_deadline, date_suppression, reservation_statut, rang_reservation, livre_num_livre, user_id) VALUES (13, '2020-11-22', NULL, NULL, NULL, 0, 2, 24, 2);
->>>>>>> refs/heads/feature/ticket#1-ajouter-un-nouveau-systeme-de-reservation-de-livres
 
 
 --
@@ -123,7 +112,7 @@ INSERT INTO public.reservation (num_reservation, date_reservation, date_notifica
 -- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.hibernate_sequence', 37, true);
+SELECT pg_catalog.setval('public.hibernate_sequence', 39, true);
 
 
 --
