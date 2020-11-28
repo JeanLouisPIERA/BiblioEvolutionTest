@@ -30,7 +30,7 @@
 
 <div class="container-fluid">
  <div class="row justify-content-center mb-3">
-  <div class="col-md-6 col-md-offset-2 ">
+  <div class="col-md-8 col-md-offset-2 ">
   
    <div class="panel panel-primary">
     <div class="panel-heading">
@@ -65,6 +65,11 @@
 				 <input type="text" name="nomCategorie" value="${livreCriteria.nomCategorie}"/>
 				 </fieldset>
 				
+				
+				<fieldset class="form-group">
+				 <label>Nombre d'exemplaires disponibles :</label>
+				 <input type="text" name="nbExemplairesDisponibles" value="${livreCriteria.nbExemplairesDisponibles}"/>
+				 </fieldset>
 		
 				 <button class="btn-sm btn-primary">Valider</button>
 				 </fieldset> 
@@ -94,6 +99,8 @@
 									      <th>Nombre d'exemplaires</th>
 									      <th>Exemplaires disponibles</th>
 									      <th>Catégorie</th>
+									      <th>Date de retour la plus proche</th>
+									      <th>Réservations en cours : nombre d'utilisateurs inscrits</th>
 								     </tr>
 								     </thead>
 								     <tbody>
@@ -105,9 +112,32 @@
 								          <td>${livre.nbExemplaires}</td>
 								          <td>${livre.nbExemplairesDisponibles}</td>
 								          <td>${livre.categorie.getNomCategorie()}</td>
+								          <td>
+								          <c:if test="${livre.nbExemplairesDisponibles==0}"> 
+								          ${livre.dateRetourPrevuePlusProche}
+								          </c:if>
+								          </td>
+								          <td>
+								          <c:if test="${livre.nbExemplairesDisponibles==0}"> 
+								          ${livre.nbReservataires}
+								          </c:if>
+								          </td>
+								          
+								          <c:if test="${livre.nbExemplairesDisponibles==0}">
+								          <td>
+								          	<a type="button"  class="btn btn-success" 
+								        	href="/reservations/creation/${livre.numLivre}">Réserver</a>
+								          </td>
+								          </c:if>
 								          
 								          
-								          
+								          <c:if test="${livre.nbExemplairesDisponibles!=0}">
+								          <td>
+								          	<a type="button"  class="btn btn-danger" 
+								        	href="/reservations/creation/${livre.numLivre}">Réserver DEMO</a>
+								           </td>	
+								          </c:if>
+								         
 					        	      	  
 					    				 </tr>
 				   					</c:forEach>

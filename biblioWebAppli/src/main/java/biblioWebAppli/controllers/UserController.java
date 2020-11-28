@@ -6,17 +6,25 @@ package biblioWebAppli.controllers;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 
 import biblioWebAppli.metier.IUserMetier;
 import biblioWebAppli.objets.User;
+import biblioWebAppli.security.WebSecurityConfig;
 
 
 
@@ -27,11 +35,8 @@ public class UserController {
 
 @Autowired
 private IUserMetier userMetier;
-@Value("${application.username}")
-private String applicationUsername;
-@Value("${application.password}")
-private String applicationPassword;
-
+@Autowired
+private WebSecurityConfig webSecurityConfig;
 
 /**
  * Cette méthode permet d'afficher le formulaire de login
@@ -40,6 +45,7 @@ private String applicationPassword;
  * @param logout
  * @return
  */
+
 @RequestMapping(value = "/login", method = RequestMethod.GET)
 public String login(Model model, String error, String logout) {
 	
@@ -58,23 +64,15 @@ public String login(Model model, String error, String logout) {
 
 @RequestMapping(value="/login", method = RequestMethod.POST)
 public String autologin(Model model, @RequestParam("username")String username,  @RequestParam("password")String password) throws FileNotFoundException, IOException   {
-	
-	if(!username.equals(applicationUsername) || !password.equals(applicationPassword))
+
+	if(!username.equals(userMetier.findByUsernameAndPassword(username, password).getUsername()) 
+			&& !password.equals(userMetier.findByUsernameAndPassword(username, password).getPassword())) {
 		{model.addAttribute("error", "Votre nom d'utilisateur et/ou votre mot de passe sont invalides.");
 		return "login";}
-	
-	try {
-		
-		User userInLogged = userMetier.findByUsernameAndPassword(username, password);
-		model.addAttribute("user", userInLogged);
-		
-	} catch (HttpClientErrorException e) {
-        model.addAttribute("error", e.getResponseBodyAsString());
-        return"/error";
-	}
+	};
 	return "accueil";
+	}
 	
-}
 
 /**
  * Cette méthode gère l'affichage de la page accueil

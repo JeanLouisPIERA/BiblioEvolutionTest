@@ -42,6 +42,10 @@ public class LivreSpecification implements Specification<Livre> {
             if (livreCriteria.getNomCategorie()!= null) {
             	predicates.getExpressions().add(builder.like(root.get("categorie").get("nomCategorie"), "%" + livreCriteria.getNomCategorie() + "%"));	
             }
+            
+            if (livreCriteria.getNbExemplairesDisponibles()!= null) {
+            	predicates.getExpressions().add(builder.equal(root.get("nbExemplairesDisponibles"), livreCriteria.getNbExemplairesDisponibles()));	
+            }
         
         return builder.and(predicates);
     }

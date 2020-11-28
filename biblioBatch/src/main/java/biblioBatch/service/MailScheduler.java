@@ -17,6 +17,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import biblioBatch.objets.Pret;
+import biblioBatch.objets.Reservation;
+
+
 
 
 /**
@@ -38,8 +41,13 @@ public class MailScheduler {
 	
     @Value("${application.subject}")
     private String subject;	
+
     @Value("${application.subject.Rappel}")
     private String subjectRappel;	
+
+    @Value("${application.subject.R}")
+    private String subjectR;	
+
     
     	/**
     	 * Cette méthode permet de créer le modèle à peupler à partir de la liste de réponse de l'API 
@@ -78,6 +86,7 @@ public class MailScheduler {
  		    	this.populateModel("nomUser", nomUser); 
  		    	this.populateModel("nomLivre", pretARelancer.getLivre().getTitre()); 
  		    	this.populateModel("nomAuteur", pretARelancer.getLivre().getAuteur()); 
+ 		    	this.populateModel("numLivre", pretARelancer.getLivre().getNumLivre()); 
  		    	
  		          
  		         mailService.sendMessageUsingThymeleafTemplate(mailTo, nomUser, subject, model);
@@ -96,8 +105,6 @@ public class MailScheduler {
  		 * @throws UnsupportedEncodingException 
  		 * @throws IOException
  		 */
- 		
- 		
  	 	@Scheduled(cron= "${application.cron}")
  	    public void sendMailsRappelList() throws MessagingException, UnsupportedEncodingException{
  	    	
@@ -116,6 +123,37 @@ public class MailScheduler {
  		    	
  		          
  		         mailService.sendMessageUsingThymeleafTemplateRappel(mailTo, nomUser, subjectRappel, model);
+ 	    	}
+ 	 	}
+ 	 	
+        /**
+ 		 * Cette méthode permet d'envoyer une série de mails à partir de la liste des réservations A NOTIFIER récupérée dans l'API Biblio
+ 	     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService
+ 	     * Gestion de la date en LocalDateTime gérée par Thymeleaf
+ 	     * Gestion de new InternetAddress pour le destinataire
+ 	     * Importation du sujet depuis application.properties
+ 		 * @throws MessagingException
+ 		 * @throws UnsupportedEncodingException 
+ 		 * @throws IOException
+ 		 */
+ 	 	@Scheduled(cron= "${application.cron}")
+ 	    public void sendMailsReservationList() throws MessagingException, UnsupportedEncodingException{
+ 	    	
+ 	    	Reservation[] notificationReservationsList = proxyService.notificationReservations();
+ 	    	
+ 	    	for (Reservation reservationANotifier : notificationReservationsList) {
+ 		    	String mailTo = reservationANotifier.getUser().getAdresseMail(); 
+ 		    	String nomUser = reservationANotifier.getUser().getUsername();
+ 		    	
+ 		    	this.populateModel("numReservation", reservationANotifier.getNumReservation());
+ 		    	this.populateModel("dateReservation", reservationANotifier.getDateReservation().atStartOfDay());
+ 		    	this.populateModel("dateDeadline", reservationANotifier.getDateDeadline().atStartOfDay());		
+ 		    	this.populateModel("nomUser", nomUser); 
+ 		    	this.populateModel("nomLivre", reservationANotifier.getLivre().getTitre());
+ 		    	this.populateModel("nomAuteur", reservationANotifier.getLivre().getAuteur());
+ 		    	this.populateModel("numLivre", reservationANotifier.getLivre().getNumLivre());
+ 		    			
+ 		         mailService.sendMessageUsingThymeleafTemplateR(mailTo, nomUser, subjectR, model);
  	    	
  		    	}
  	    

@@ -21,10 +21,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import biblioWebAppli.criteria.PretCriteria;
-
-
-
-
+import biblioWebAppli.exceptions.PretsExceptionsMessage;
+import biblioWebAppli.exceptions.ReservationsExceptionsMessage;
 import biblioWebAppli.metier.IPretMetier;
 
 import biblioWebAppli.objets.Pret;
@@ -42,7 +40,8 @@ public class PretController {
     private ObjectMapper mapper;
     @Value("${application.idUser}")
 	private Long idUser;
-
+    @Autowired
+    PretsExceptionsMessage pretExceptionMessage;
     
     /**
      * Permet d'afficher une sélection de prets sous forme de page
@@ -54,7 +53,7 @@ public class PretController {
      */
     @RequestMapping(value="/prets", method = RequestMethod.GET)
     public String searchByCriteria(Model model, @PathParam(value = "pretCriteria") PretCriteria pretCriteria, @RequestParam(name="page", defaultValue="0") int page, 
-			@RequestParam(name="size", defaultValue="3") int size){
+			@RequestParam(name="size", defaultValue="4") int size){
     	model.addAttribute("pretCriteria", new PretCriteria());
     	
     	Page<Pret> pagePrets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
@@ -80,14 +79,33 @@ public class PretController {
 	public String prolongerPret(Model model, @PathVariable("numPret") Long numPret) {
 		try {
 			Pret pretAProlonger = pretMetier.prolongerPret(numPret);
-			model.addAttribute(pretAProlonger);
+			model.addAttribute("pret", pretAProlonger);
 		} catch (HttpClientErrorException e) {
-			model.addAttribute("error", e.getResponseBodyAsString());
-		     return"/error";
+			String errorMessage = pretExceptionMessage.convertCodeStatusToExceptionMessage(e.getRawStatusCode());
+			model.addAttribute("error", errorMessage);
+			return"/error";
 		}
 		return "prets/pretProlongation";
 	}
     
+    /**
+     * Permet de lire la fiche d'un prêt
+     * @param model
+     * @param numPret
+     * @return
+     */
+    @GetMapping("/prets/{numPret}")
+    public String readPret(Model model, @PathVariable("numPret") Long numPret) {
+    	try {
+			Pret searchedPret = pretMetier.readPret(numPret);
+			model.addAttribute("pret", searchedPret);
+		} catch (HttpClientErrorException e) {
+			String errorMessage = pretExceptionMessage.convertCodeStatusToExceptionMessage(e.getRawStatusCode());
+			model.addAttribute("error", errorMessage);
+			return"/error";
+		}
+    	return "prets/pretView";
     
+    }
 
-}
+ }

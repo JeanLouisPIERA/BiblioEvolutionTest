@@ -20,7 +20,10 @@ Les branches feature, release et hotfix commencent toutes par un prefixe (featur
 La convention de "branch naming" est celle du HYPHEN SEPARATORS (-):
 - les branches features  : issue tracker ID + courte description de la fonctionnalité
 - les branches release et hotfix : v.(nombreMajeur).(nombreMineur).(nombreBug). La version de départ sur la branche master est la version 1.0.0-SNAPSHOT
+<<<<<<< HEAD
+=======
 
+>>>>>>> refs/heads/hotfix/v.1.0.1-SNAPSHOT-#ticket2-corriger-un-bug-de-prolongation-de-pret
 
 # Présentation :
 

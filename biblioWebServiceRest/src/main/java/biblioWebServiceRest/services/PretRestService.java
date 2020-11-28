@@ -157,6 +157,7 @@ public class PretRestService {
 
 
 	/**
+	 * Recherche des prêts échus (date retour supérieure à date de la de la requête
 	 * @param pageable
 	 * @return
 	 * @see biblioWebServiceRest.metier.IPretMetier#selectPretsEchus(org.springframework.data.domain.Pageable)
@@ -178,14 +179,29 @@ public class PretRestService {
 	 * @see biblioWebServiceRest.metier.IPretMetier#selectPretsEchus(org.springframework.data.domain.Pageable)
 	 */
 	@ApiOperation(value = "Recherche et update statut des prets à échoir (date de requête à moins d'une semaine de la date de retour)", response = Pret.class)
-	@ApiResponses(value = {
-	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
-	})
+	
 	@GetMapping(value="/prets/aechoir", produces="application/json")
 	public ResponseEntity<List<Pret>> selectPretsAEchoir() {
 		List<Pret> pretsAEchoirListe = pretMetier.searchAndUpdatePretsAEchoir();
 		return new ResponseEntity<List<Pret>>(pretsAEchoirListe, HttpStatus.OK); 
+	}
+	 
+	/**
+	 * Recherche un prêt par son identifiant
+	 * @param numPret
+	 * @return
+	 * @throws EntityNotFoundException 
+	 */
+	@ApiOperation(value = "Recherche un prêt par son identifiant)", response = Pret.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "La recherche a été réalisée avec succés"),
+	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	})
+	@GetMapping(value="prets/{numPret}", produces="application/json")
+	public ResponseEntity<Pret> readPret(@PathVariable Long numPret) throws EntityNotFoundException {
+		Pret searchedPret = pretMetier.readPret(numPret);
+		return new ResponseEntity<Pret>(searchedPret, HttpStatus.OK); 
+
 	}
 	
 

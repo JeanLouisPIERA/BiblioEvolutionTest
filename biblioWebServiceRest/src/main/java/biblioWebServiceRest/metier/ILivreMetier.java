@@ -18,6 +18,12 @@ import biblioWebServiceRest.exceptions.WrongNumberException;
 
 
 public interface ILivreMetier {
+	/**
+	 * Cette méthode est utilisée par les classes métier Livre et Reservation
+	 * Elle permet de mettre à jour la date de retour la plus proche pour tous les livres éligibles à la réservation
+	 * Elle permet d'identifier le nombre de réservations en cours pour un livre 
+	 */
+	void miseAJourLivres();
 	
 	/**
 	 * Recherche multicritères des livres enregistrés
