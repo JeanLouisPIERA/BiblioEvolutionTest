@@ -29,6 +29,22 @@ public class LivreDTO {
 	private Long numCategorie;
 	
 	
+	
+	public LivreDTO() {
+		super();
+	}
+	
+	
+	public LivreDTO(@NotEmpty String titre, @NotEmpty String auteur, @NotNull @Positive Integer nbExemplaires,
+			@Positive Long numCategorie) {
+		super();
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.numCategorie = numCategorie;
+	}
+
+
 	/**
 	 * @return the nbExemplaires
 	 */

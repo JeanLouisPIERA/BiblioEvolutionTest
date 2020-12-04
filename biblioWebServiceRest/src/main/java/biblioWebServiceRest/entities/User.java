@@ -60,8 +60,6 @@ public class User implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 	
-	
-
 	/**
 	 * @param username
 	 */
@@ -70,7 +68,13 @@ public class User implements Serializable {
 		this.username = username;
 	}
 
+	
 
+	public User(Long idUser, String username) {
+		super();
+		this.idUser = idUser;
+		this.username = username;
+	}
 
 	public User(String username, String adresseMail) {
 		super();

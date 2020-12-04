@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -40,7 +41,31 @@ import biblioWebServiceRest.mapper.LivreMapper;
 @Service
 @Transactional
 public class LivreMetierImpl implements ILivreMetier{
+	
+	
+	/*
+	private final  ILivreRepository livreRepository;
 
+	private final ICategorieRepository categorieRepository; 
+	
+	private final IPretRepository pretRepository;
+	
+	private final LivreMapper livreMapper;
+	
+	private final IReservationRepository reservationRepository;
+	
+	@Autowired
+	public LivreMetierImpl(ILivreRepository livreRepository, IReservationRepository reservationRepository, IPretRepository pretRepository, ILivreRepository livreRepository2, LivreMapper livreMapper, ICategorieRepository categorieRepository
+			) {
+				this.livreRepository = livreRepository;
+				this.categorieRepository = categorieRepository;
+				this.pretRepository = pretRepository;
+				this.livreMapper = livreMapper;
+				this.reservationRepository = reservationRepository;
+	}
+	*/
+	
+	
 	@Autowired
 	private ILivreRepository livreRepository;
 	@Autowired
@@ -68,9 +93,13 @@ public class LivreMetierImpl implements ILivreMetier{
 							LocalDate.now());
 					if(pretsListe.isPresent()) {
 						Pret pretDateRetourPlusProche = pretsListe.get().get(0);
+						System.out.println("1"+pretDateRetourPlusProche.getLivre().getNumLivre());
 						livre.setDateRetourPrevuePlusProche(pretDateRetourPlusProche.getDateRetourPrevue().toString());
+						System.out.println("2"+livre.getDateRetourPrevuePlusProche());
 					}else {
+						System.out.println("A"+livre.getNumLivre());
 						livre.setDateRetourPrevuePlusProche("Aucune date de retour ne peut être indiquée");
+						System.out.println("3"+livre.getDateRetourPrevuePlusProche());
 					}
 			
 					 
@@ -109,8 +138,8 @@ public class LivreMetierImpl implements ILivreMetier{
 	public Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable) {
 		// TICKET 1 FONCTIONNALITE DE MISE A JOURS DES LIVRES SUR DATE DE RETOUR LA PLUS PROCHE ET TAILLE DE LA LISTE D'ATTENTE
 		this.miseAJourLivres();
-		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
-		Page<Livre> livres = livreRepository.findAll(livreSpecification, pageable);
+		//Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
+		Page<Livre> livres = livreRepository.findAll(new LivreSpecification(livreCriteria), pageable);
 		return livres;
 	}
 
@@ -135,7 +164,7 @@ public class LivreMetierImpl implements ILivreMetier{
 		
 		/*
 		 * Recherche d'un livre via LivreCriteria : un livre est identifié par la combinaison unique d'un titre et d'un auteur
-		 */
+		 
 		LivreCriteria livreCriteria = new LivreCriteria(); 
 		livreCriteria.setTitre(livreDTO.getTitre());
 		livreCriteria.setAuteur(livreDTO.getAuteur());
@@ -143,7 +172,14 @@ public class LivreMetierImpl implements ILivreMetier{
 		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
 		if(!livreCriteriaList.isEmpty()) 
 			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
+		*/
+		
+		Optional<Livre> livreAlreadyCreated = livreRepository.findByTitreAndAuteur(livreDTO.getTitre(), livreDTO.getAuteur());
+		if(livreAlreadyCreated.isPresent()) 
+			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
+		
 		Livre livreToCreate = livreMapper.livreDTOToLivre(livreDTO); 
+		
 		livreToCreate.setCategorie(categorie.get());
 		livreToCreate.setNbExemplairesDisponibles(livreDTO.getNbExemplaires());
 		
@@ -241,6 +277,7 @@ public class LivreMetierImpl implements ILivreMetier{
 		livreRepository.deleteById(numLivre);
 		
 	}
+
 
 }
 	

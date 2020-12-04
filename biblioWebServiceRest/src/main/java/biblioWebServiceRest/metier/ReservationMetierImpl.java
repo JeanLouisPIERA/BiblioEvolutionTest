@@ -76,6 +76,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 		if(!user.isPresent()) 
 			throw new EntityNotFoundException ("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
 		
+	System.out.println(user.get().getIdUser());
+		
 		Optional<Livre> livreToRent = livreRepository.findById(reservationDTO.getNumLivre());
 		if(!livreToRent.isPresent()) 
 			throw new EntityNotFoundException ("OUVRAGE INCONNU = Aucun enregistrement de livre ne correspond à votre demande");
@@ -88,6 +90,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 		if(reservation.isPresent())
 			 throw new EntityAlreadyExistsException ("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre pour lequel vous avez déjà une réservation en cours");	
 		
+	System.out.println(livreToRent.get().getNumLivre());
 		
 		Optional<List<Pret>> pretListe = pretRepository.findAllByLivreAndUserAndNotPretStatut(livreToRent.get(), user.get(), PretStatut.CLOTURE);
 		if(pretListe.isPresent())
@@ -99,13 +102,15 @@ public class ReservationMetierImpl implements IReservationMetier{
 		Optional<List<Reservation>> reservationsByUser = reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livreToRent.get(), ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
 		if(reservationsByUser.isPresent() && ((reservationsByUser.get().size())>=(multiplicateur*(livreToRent.get().getNbExemplaires()))))
 			throw new BookNotAvailableException ("RESERVATION IMPOSSIBLE : le nombre maximum d'utilisateurs ayant fait une réservation est atteint");
-			
+	
+	System.out.println("tzille" + reservationsByUser.get().size());		
+	
 		Reservation newReservation = new Reservation();
 		
 		newReservation.setLivre(livreToRent.get());
-		
+	System.out.println(newReservation.getLivre().getNumLivre());
 		newReservation.setUser(user.get());
-		
+	System.out.println(newReservation.getUser().getIdUser());
 		LocalDate dateReservation = LocalDate.now();
 		newReservation.setDateReservation(dateReservation);
 		

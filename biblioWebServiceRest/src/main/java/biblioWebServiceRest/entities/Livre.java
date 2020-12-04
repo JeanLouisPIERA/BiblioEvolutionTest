@@ -78,6 +78,19 @@ public class Livre implements Serializable{
 		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
 		this.categorie = categorie;
 	}
+	
+	
+
+	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
+			Categorie categorie) {
+		super();
+		this.numLivre = numLivre;
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+		this.categorie = categorie;
+	}
 
 	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
 			Categorie categorie, List<Pret> prets) {
