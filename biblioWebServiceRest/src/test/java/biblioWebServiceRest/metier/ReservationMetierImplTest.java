@@ -159,7 +159,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		
     }
     
-   //****************************************** TESTS CREATE ********************************************************************
+   //****************************************** TESTS CREATE *********************************************************************
     
     @Test
     public void testCreateReservation_whenExceptionUserInconnu() {
@@ -333,7 +333,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	 * correctement avec tous les attributs = null
 	 */
 	@Test
-	public void testSearchAllReservationsByCriteria_withoutAllAttributesNull() {
+	public void testSearchAllReservationsByCriteria_withoutExceptionAndAllAttributesNull() {
 		ReservationCriteria reservationCriteria = new ReservationCriteria();
 		Pageable pageable = PageRequest.of(0,6);
 		
