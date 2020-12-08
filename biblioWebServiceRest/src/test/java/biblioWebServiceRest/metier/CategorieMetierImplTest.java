@@ -60,7 +60,7 @@ public class CategorieMetierImplTest {
 			Categorie categorieTest = categorieMetierImpl.createCategorie(newCategorieDTO);
 		} catch (Exception e) {
 			assertThat(e).isInstanceOf(EntityAlreadyExistsException.class)
-						 .hasMessage("La categorie que vous souhaitez creer existe pas deja");
+						 .hasMessage("La categorie que vous souhaitez creer existe deja");
 		}
 		
 		

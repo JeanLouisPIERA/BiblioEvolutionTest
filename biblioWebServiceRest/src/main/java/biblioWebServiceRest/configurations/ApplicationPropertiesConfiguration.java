@@ -21,6 +21,8 @@ public class ApplicationPropertiesConfiguration {
     private int dureeAEchoir;
 
     private int dureeNotification;
+    
+    private int multiplicateur;
 
 	/**
 	 * @return the dureePret
@@ -59,6 +61,12 @@ public class ApplicationPropertiesConfiguration {
 	public void setDureeNotification(int dureeNotification) {
 		this.dureeNotification = dureeNotification;
 
+	}
+	public int getMultiplicateur() {
+		return multiplicateur;
+	}
+	public void setMultiplicateur(int multiplicateur) {
+		this.multiplicateur = multiplicateur;
 	} 
 	
 	

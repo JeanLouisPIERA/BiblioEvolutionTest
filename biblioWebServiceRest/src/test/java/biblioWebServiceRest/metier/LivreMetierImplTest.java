@@ -288,7 +288,7 @@ public class LivreMetierImplTest  extends BiblioWebServiceRestMetierTests{
 	    
 	    Assertions.assertTrue(livre4.getDateRetourPrevuePlusProche().toString().equals("Aucune date de retour ne peut être indiquée"));	
 	}
-	*/
+	
 	
 	@Test
 	public void testSearchByLivreCriteria_withMiseAjour() {
@@ -327,5 +327,5 @@ public class LivreMetierImplTest  extends BiblioWebServiceRestMetierTests{
 	   
 	    
 	}
-	
+	*/
 }
