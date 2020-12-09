@@ -2,6 +2,8 @@ package biblioWebServiceRest.metier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -271,7 +273,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
    	
 			try {
 				Reservation reservationCreated = reservationMetier.createReservation(reservationDTO1);
-				Assertions.assertTrue(reservationCreated.compareTo(reservation1) == 0);
+				verify(reservationRepository, times(1)).save(any(Reservation.class));
 			} catch (EntityNotFoundException e) {
 				assertThat(e).isInstanceOf(EntityNotFoundException.class)
 				 .hasMessage("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
@@ -308,7 +310,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
    	
 			try {
 				Reservation reservationCreated = reservationMetier.createReservation(reservationDTO10);
-				Assertions.assertTrue(reservationCreated.compareTo(reservation1) == 0);
+				verify(reservationRepository, times(1)).save(any(Reservation.class));
 			} catch (EntityNotFoundException e) {
 				assertThat(e).isInstanceOf(EntityNotFoundException.class)
 				 .hasMessage("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
@@ -338,9 +340,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		Pageable pageable = PageRequest.of(0,6);
 		
 		Page<Reservation> reservationPageTest = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, pageable);
-		Assertions.assertTrue(reservationPageTest.getContent().size()==2);
-		Assertions.assertTrue(reservationPageTest.getContent().get(0).getNumReservation()==3);
-		Assertions.assertTrue(reservationPageTest.getContent().get(1).getNumReservation()==4);
+		verify(reservationRepository, times(1)).findAll(any(ReservationSpecification.class), any(Pageable.class));
 	}
 	
 	/**
@@ -362,9 +362,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		Pageable pageable = PageRequest.of(0,6);
 		
 		Page<Reservation> reservationPageTest = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, pageable);
-		Assertions.assertTrue(reservationPageTest.getContent().size()==2);
-		Assertions.assertTrue(reservationPageTest.getContent().get(0).getNumReservation()==3);
-		Assertions.assertTrue(reservationPageTest.getContent().get(1).getNumReservation()==4);
+		verify(reservationRepository, times(1)).findAll(any(ReservationSpecification.class), any(Pageable.class));
 	}
 	
 	@Test 
@@ -382,6 +380,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	public void testReadReservation_withoutException() {
 		try {
 			Reservation reservation = reservationMetier.readReservation((long) 1);
+			verify(reservationRepository, times(1)).findById((long)1);
 		} catch (Exception e) {
 			assertThat(e).isInstanceOf(EntityNotFoundException.class)
 			 .hasMessage("Aucune reservation enregistrée ne correspond à votre demande");
@@ -417,6 +416,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		
 		try {
 			Reservation reservationNotifiee = reservationMetier.notifierReservation((long)6);
+			verify(reservationRepository, times(1)).save(any(Reservation.class));
 		} catch (EntityNotFoundException e) {
 			assertThat(e).hasMessage("RESERVATION INCONNUE : Cette réservation n'existe pas");
 		} catch (WrongNumberException e1) {
@@ -458,22 +458,26 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	@Test
 	public void testMiseAJourRangReservationDansFileAttente() {
 		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
-    	User user20 = new User((long)20, "user20");
+    	
+		User user20 = new User((long)20, "user20");
     	User user30 = new User((long)30, "user30");
+    	
     	Livre livre20 = new Livre((long) 20,"titre20", "auteur20", 2,0,categorie1);
+    	
     	Reservation reservation20 = new Reservation((long)2, LocalDate.now().minusDays(10), LocalDate.now().minusDays(1), LocalDate.now().plusDays(1), null, ReservationStatut.NOTIFIEE, 1,user20, livre20);
     	Reservation reservation30 = new Reservation((long)3, LocalDate.now().minusDays(8), null, null, null, ReservationStatut.ENREGISTREE, 2, user30, livre20);
-    	//Reservation reservation20b = new Reservation((long)2, LocalDate.now().minusDays(10), LocalDate.now().minusDays(1), LocalDate.now().plusDays(1), LocalDate.now(), ReservationStatut.LIVREE, null,user20, livre20);
     	Reservation reservation30b = new Reservation((long)3, LocalDate.now().minusDays(8), null, null, null, ReservationStatut.ENREGISTREE, 1, user30, livre20);
+    	
     	List<Reservation> reservationList30 = Arrays.asList(reservation30);
-    	Mockito.when(reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livre20, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationList30));
+    	
+    	Mockito.when(reservationRepository.findAllByLivreAndReservationStatut(livre20, ReservationStatut.ENREGISTREE)).thenReturn(Optional.of(reservationList30));
+    	
 	    
-
     	Mockito.when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation30b);
+    	
+    	reservationMetier.miseAJourRangReservationDansFileAttente(livre20);
 		
-		reservationRepository.findAllByLivreAndReservationStatut(livre20, ReservationStatut.ENREGISTREE);
-		
-		Assert.assertTrue(reservation20.getRangReservation()==1);
+    	verify(reservationRepository, times(1)).save(any(Reservation.class));
 	}
 	
 	
@@ -482,6 +486,9 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
     	
 		try {
 			reservationMetier.livrerReservationAndCreerPret((long)7);
+			verify(reservationRepository, times(2)).save(any(Reservation.class));
+			verify(pretMetier, times(1)).createPret(any(PretDTO.class));
+			verify(livreMetier, times(1)).miseAJourLivres();
 		} catch (EntityNotFoundException e) {
 			assertThat(e)
 			 .hasMessage("RESERVATION INCONNUE = Cette réservation n'existe pas");
@@ -517,8 +524,9 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		  Mockito.when(reservationRepository.findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now())).thenReturn(Optional.of(reservationsAlreadyNotifieesDeadlineValideList));
 		try {
 			List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
-			Assertions.assertTrue(reservationsANotifierList.size()==1);
-			Assertions.assertTrue(reservationsANotifierList.get(0).getNumReservation()==7);
+			verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now());
+			verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now()); 
+			verify(reservationRepository, times(1)).findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(ReservationStatut.ENREGISTREE, 1,1);
 		} catch (EntityNotFoundException | WrongNumberException e) {
 			
 		}
@@ -560,8 +568,9 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		  
 		  try {
 				List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
-				Assertions.assertTrue(reservationsANotifierList.size()==1);
-				Assertions.assertTrue(reservationsANotifierList.get(0).getNumReservation()==10);
+				verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now());
+				verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now()); 
+				verify(reservationRepository, times(1)).findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(ReservationStatut.ENREGISTREE, 1,1);			
 				} catch (EntityNotFoundException | WrongNumberException e) {
 			}	
 	}
@@ -620,6 +629,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		
 			try {
 				Reservation reservationToSuppress = reservationMetier.suppressReservation((long) 14);
+				verify(reservationRepository, times(1)).save(any(Reservation.class));
 			} catch (EntityNotFoundException e) {
 				assertThat(e).isInstanceOf(EntityNotFoundException.class)
 				 .hasMessage("RESERVATION INCONNUE = Cette réservation n'existe pas");
@@ -639,6 +649,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	
 			try {
 				Reservation reservationToSuppress = reservationMetier.suppressReservation((long) 15);
+				verify(reservationRepository, times(1)).save(any(Reservation.class));
 			} catch (EntityNotFoundException e) {
 				assertThat(e).isInstanceOf(EntityNotFoundException.class)
 				 .hasMessage("RESERVATION INCONNUE = Cette réservation n'existe pas");

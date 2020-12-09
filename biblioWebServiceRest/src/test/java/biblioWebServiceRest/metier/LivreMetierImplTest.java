@@ -1,42 +1,40 @@
 package biblioWebServiceRest.metier;
 
-
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
-//import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.context.WebApplicationContext;
 
-import biblioWebServiceRest.BiblioWebServiceRestApplication;
+import biblioWebServiceRest.criteria.CategorieCriteria;
 import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.IReservationRepository;
+import biblioWebServiceRest.dao.specs.CategorieSpecification;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
@@ -46,286 +44,442 @@ import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.ReservationStatut;
 import biblioWebServiceRest.entities.User;
-import biblioWebServiceRest.exceptions.BiblioException;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
+import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
+import biblioWebServiceRest.exceptions.WrongNumberException;
+import biblioWebServiceRest.mapper.CategorieMapper;
 import biblioWebServiceRest.mapper.LivreMapper;
 
-
-@SpringBootTest (classes = BiblioWebServiceRestApplication.class)
-@TestPropertySource(locations="classpath:application.properties")
-public class LivreMetierImplTest  extends BiblioWebServiceRestMetierTests{
+@SpringBootTest
+@RunWith(SpringRunner.class)
+public class LivreMetierImplTest  {
 	
-	@Autowired
-	private WebApplicationContext webApplicationContext;
+	@Mock
+	private ICategorieRepository categorieRepository;
 	
-	@TestConfiguration
-    static class LivreMetierImplTestContextConfiguration {
- 
-        @Bean
-        public ILivreMetier livreMetier() {
-            return new LivreMetierImpl();
-        }
-    }
-
-    @Autowired
-    private ILivreMetier livreMetier;
-    
-    @MockBean
-    private ILivreRepository livreRepository;
-	@MockBean
-	private ICategorieRepository categorieRepository; 
-	@MockBean
+	@Mock
+	private ILivreRepository livreRepository;
+	
+	@Mock
 	private IPretRepository pretRepository;
-	@Autowired
-	private LivreMapper livreMapper;
-	@MockBean
+	
+	@Mock
 	private IReservationRepository reservationRepository;
-//**************************************************************************************************************************	
-	@Before
-	public void setUp() {
-		/*
-		 * Jeu de données pour le test de la création d'un livre***********************************************************
-		 */
-		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
+	
+	@Mock
+	private CategorieMapper categorieMapper;
+	
+	@Mock
+	private LivreMapper livreMapper;
+	
+	@InjectMocks
+	private LivreMetierImpl livreMetier;
+	
+	@Before 
+	public void setup() {
 		
-		Optional<Categorie> optionalCategorie1 = Optional.of(categorie1);
-	    
-		Livre livre1 = new Livre((long) 1,"titre1", "auteur1", 1,1,categorie1);
-		Livre livre2 = new Livre((long) 2,"titre2", "auteur2", 1, 1, categorie1);
+		MockitoAnnotations.initMocks(this);
 		
-		LivreDTO livre1DTO = new LivreDTO("titre1", "auteur1", 1, categorie1.getNumCategorie());
-	    
-	    Mockito.when(categorieRepository.findById(livre1DTO.getNumCategorie())).thenReturn(optionalCategorie1);
-	    
-	    Mockito.when(livreRepository.findByTitreAndAuteur(livre1DTO.getTitre(), livre1DTO.getAuteur())).thenReturn(Optional.of(livre1));
-	    
-	    
-	    /*
-	     * Jeu de données pour la mise à Jour ********************************************************************************
-	     */
-	   
-	   /*
-	    // 1- MAINSTREAM private MiseAJour()
-	    User user3 = new User("user3");
-	    List<Livre> livreList3 = new ArrayList<Livre>();
-	    List<Pret> pretList3 = new ArrayList<Pret>();
-	    
-	    List<Reservation> reservationList3 = new ArrayList<Reservation>();
-	    Livre livre3 = new Livre((long) 3,"titre3", "auteur3", 1, 0, null, 2,2, categorie1, pretList3, reservationList3);
-	    livreList3.add(livre3);
-	    Pret pret3Livre3 = new Pret(LocalDate.now(), LocalDate.now().plusDays(28), PretStatut.ENCOURS, user3, livre3);
-	    pretList3.add(pret3Livre3);
-	    
-	    Reservation reservation3 = new Reservation((long)3, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user3, livre3);
-	    reservationList3.add(reservation3);
-	    
-	    Mockito.when(livreRepository.findAllByNbExemplairesDisponibles(0)).thenReturn(Optional.of(livreList3));
-	    
-	    Mockito.when(pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
-				livre3, 
-				PretStatut.CLOTURE, 
-				LocalDate.now())).thenReturn(Optional.of(pretList3));
-	   
-	    Mockito.when(reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre3, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationList3));
-	    
-	    Mockito.when(reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livre3, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationList3));
-	    
-	    // 2- else 1
-	    User user4 = new User("user4");
-	    List<Livre> livreList4 = new ArrayList<Livre>();
-	    List<Pret> pretList4 = new ArrayList<Pret>();
-	    
-	    List<Reservation> reservationList4 = new ArrayList<Reservation>();
-	    Livre livre4 = new Livre((long) 3,"titre3", "auteur3", 1, 0, null, 2,2, categorie1, pretList4, reservationList4);
-	    livreList4.add(livre4);
-	    Pret pret4Livre4 = new Pret(LocalDate.now(), LocalDate.now().minusDays(28), PretStatut.ENCOURS, user4, livre4);
-	    pretList4.add(pret4Livre4);
-	    
-	    Reservation reservation4 = new Reservation((long)3, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user4, livre4);
-	    reservationList4.add(reservation4);
-	    
-	    Mockito.when(livreRepository.findAllByNbExemplairesDisponibles(0)).thenReturn(Optional.of(livreList4));
-	    
-	    Mockito.when(pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
-				livre3, 
-				PretStatut.CLOTURE, 
-				LocalDate.now())).thenReturn(Optional.of(pretList3));
-	   
-	    Mockito.when(reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre4, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationList4));
-	    
-	    Mockito.when(reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livre4, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationList4));
-	    
-	    */
-
-//*****************************************************************************************************************************
-	    /*
-	     * Jeu de données pour méthode SearchLivreByCriteria
-	     */
-			 // 1- MAINSTREAM private MiseAJour()
-			    User user5 = new User("user5");
-			    List<Livre> livreList5 = new ArrayList<Livre>();
-			    List<Pret> pretList5 = new ArrayList<Pret>();
-			    
-			    List<Reservation> reservationList5 = new ArrayList<Reservation>();
-			    Livre livre5 = new Livre((long) 5,"titre5", "auteur5", 1, 0, null, 2,2, categorie1, pretList5, reservationList5);
-			    livreList5.add(livre5);
-			    Pret pret5Livre5 = new Pret(LocalDate.now(), LocalDate.now().plusDays(28), PretStatut.ENCOURS, user5, livre5);
-			    pretList5.add(pret5Livre5);
-			    
-			    Reservation reservation3 = new Reservation((long)5, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user5, livre5);
-			    reservationList5.add(reservation3);
-			    
-			    LivreCriteria livreCriteria5 = new LivreCriteria((long) 5, "titre5", "auteur5", null, 0);
-			    Page<Livre> livrePage5 = new PageImpl<Livre>(livreList5, PageRequest.of(0, 6), livreList5.size());
-			    Pageable pageable = PageRequest.of(0, 6);
-			    LivreSpecification livreSpecification5 = new LivreSpecification(livreCriteria5);
-			    
-			    //
-			    Mockito.when(livreRepository.findAllByNbExemplairesDisponibles(0)).thenReturn(Optional.of(livreList5));
-			    
-			    Mockito.when(pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
-						livre5, 
-						PretStatut.CLOTURE, 
-						LocalDate.now())).thenReturn(Optional.of(pretList5));
-			   
-			    Mockito.when(reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre5, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationList5));
-			    
-			    Mockito.when(reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livre5, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationList5));
-			    //
-			    
-			    Mockito.when(livreRepository.findAll(livreSpecification5, pageable)).thenReturn(livrePage5);
-			    
-			    
 	}
 	
-
+	
 	@Test
-	public void testCreateLivre_whenSansExceptions() {
-	   
+	public void testMiseAjourLivres_withoutDateRetourPlusProche_AndWithoutNbReservationsEnCours_AndWithoutNbREservataires() {
+		
 		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
-		LivreDTO livre2DTO = new LivreDTO("titre2", "auteur2", 1, (long) 1);
-		Livre livre2 = new Livre((long) 2,"titre2", "auteur2", 1,null,categorie1);
+    	User user1 = new User((long)1, "user1");
+		Livre livre2 = new Livre((long) 2,"titre2", "auteur2", 1, 0,categorie1);
+		
+		List<Livre> livreList2 = Arrays.asList(livre2);
+		
+		Mockito.when(livreRepository.findAllByNbExemplairesDisponibles(0)).thenReturn(Optional.of(livreList2));
 		Mockito.when(livreRepository.save(any(Livre.class))).thenReturn(livre2);
 		
-		 Assertions.assertDoesNotThrow(() -> {
-			 Livre livreTest = livreMetier.createLivre(livre2DTO);
-	            }, "Le test unitaire sur la méthode createLivre() ne s'est pas correctement déroulé");		 
+		when(pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
+				livre2, 
+				PretStatut.CLOTURE, 
+				LocalDate.now())).thenReturn(Optional.ofNullable(null));
+
+		when(reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(
+				livre2, 
+				ReservationStatut.ENREGISTREE, 
+				ReservationStatut.NOTIFIEE)).thenReturn(Optional.ofNullable(null));
+
+		when(reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(
+				livre2, 
+				ReservationStatut.ENREGISTREE,
+				ReservationStatut.NOTIFIEE)).thenReturn(Optional.ofNullable(null));
+		
+		livreMetier.miseAJourLivres();
+		
+		verify(livreRepository, times(1)).findAllByNbExemplairesDisponibles(0);
+		verify(pretRepository, times(1)).findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
+				any(Livre.class), 
+				any(PretStatut.class), 
+				any(LocalDate.class));
+		verify(reservationRepository, times(1)).findAllByLivreAndReservationStatutOrReservationStatut(
+				any(Livre.class), 
+				any(ReservationStatut.class), 
+				any(ReservationStatut.class));
+		verify(reservationRepository, times(1)).findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(
+				any(Livre.class), 
+				any(ReservationStatut.class), 
+				any(ReservationStatut.class));
+		verify(livreRepository).save(any(Livre.class));
 	}
 	
 	@Test
-	public void testCreateLivre_whenExceptionSansCategorie() {
-	   
-		LivreDTO livre2DTO = new LivreDTO("titre2", "auteur2", 1, null);
-		Livre livre2 = new Livre((long) 2,"titre2", "auteur2", 1,null,null);
+	public void testMiseAjourLivres_OnEachItem() {
 		
-		
-		 Assertions.assertThrows(EntityNotFoundException.class, () -> {
-			 Livre livreTest = livreMetier.createLivre(livre2DTO);
-         });
-	}
-	
-	@Test
-	public void testCreateLivre_whenExceptionLivreAlreadyExists() {
-	   
 		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
-		LivreDTO livre1DTO = new LivreDTO("titre1", "auteur1", 1, categorie1.getNumCategorie());
-		Livre livre1 = new Livre((long) 1,"titre1", "auteur1", 1,1,categorie1);
+    	User user1 = new User((long)1, "user1");
+    	User user2 = new User((long)2, "user2");
+		Livre livre1 = new Livre((long) 1,"titre1", "auteur1", 1, 0,categorie1);
 		
-		 Assertions.assertThrows(EntityAlreadyExistsException.class, () -> {
-			 Livre livreTest = livreMetier.createLivre(livre1DTO);
-         });
+		List<Livre> livreList1 = Arrays.asList(livre1);
+		
+		List<Pret> pretListUser1Livre1 = new ArrayList<Pret>();
+		Pret pret1User1Livre1 = new Pret(LocalDate.now().minusDays(10), LocalDate.now().plusDays(18), PretStatut.ENCOURS, user1, livre1 );
+		pretListUser1Livre1.add(pret1User1Livre1);
+		livre1.setPrets(pretListUser1Livre1);
+		
+		List<Reservation> reservationListLivre1 = new ArrayList<Reservation>();
+		Reservation reservation1 = new Reservation((long)1, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user2, livre1);
+		reservationListLivre1.add(reservation1);
+		livre1.setReservations(reservationListLivre1);
+		
+		Mockito.when(livreRepository.findAllByNbExemplairesDisponibles(0)).thenReturn(Optional.of(livreList1));
+		Mockito.when(livreRepository.save(any(Livre.class))).thenReturn(livre1);
+		when(pretRepository.findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
+				livre1, 
+				PretStatut.CLOTURE, 
+				LocalDate.now())).thenReturn(Optional.of(pretListUser1Livre1));
+
+		when(reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(
+				livre1, 
+				ReservationStatut.ENREGISTREE, 
+				ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationListLivre1));
+
+		when(reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(
+				livre1, 
+				ReservationStatut.ENREGISTREE,
+				ReservationStatut.NOTIFIEE)).thenReturn(Optional.of(reservationListLivre1));
+		
+		livreMetier.miseAJourLivres();
+		
+		verify(livreRepository, times(1)).findAllByNbExemplairesDisponibles(0);
+		verify(pretRepository, times(1)).findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(
+				any(Livre.class), 
+				any(PretStatut.class), 
+				any(LocalDate.class));
+		verify(reservationRepository, times(1)).findAllByLivreAndReservationStatutOrReservationStatut(
+				any(Livre.class), 
+				any(ReservationStatut.class), 
+				any(ReservationStatut.class));
+		verify(reservationRepository, times(1)).findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(
+				any(Livre.class), 
+				any(ReservationStatut.class), 
+				any(ReservationStatut.class));
+		verify(livreRepository).save(any(Livre.class));
 	}
-	/*
+	
 	@Test
-	public void testMiseAJourLivre_whenSansException() {
-			Categorie categorie1 = new Categorie((long) 1,"Categorie1");
-			User user3 = new User("user3");
-		    List<Livre> livreList3 = new ArrayList<Livre>();
-		    List<Pret> pretList3 = new ArrayList<Pret>();
-		    
-		    List<Reservation> reservationList3 = new ArrayList<Reservation>();
-		    Livre livre3 = new Livre((long) 3,"titre3", "auteur3", 1, 0, null, 2,2, categorie1, pretList3, reservationList3);
-		    livreList3.add(livre3);
-		    Pret pret3Livre3 = new Pret(LocalDate.now(), LocalDate.now().plusDays(28), PretStatut.ENCOURS, user3, livre3);
-		    pretList3.add(pret3Livre3);
-		    
-		    Reservation reservation3 = new Reservation((long)3, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user3, livre3);
-		    reservationList3.add(reservation3);
-		    
-		    Mockito.when(livreRepository.save(any(Livre.class))).thenReturn(livre3);
+	public void testSearchByLivreCriteria() {
+		
+		LivreCriteria livreCriteria = new LivreCriteria();
+		Pageable pageable = PageRequest.of(0,6);
+		
+		//livreMetier.miseAJourLivres();
+		Page<Livre> livrePageTest = livreMetier.searchByLivreCriteria(livreCriteria, pageable);
+		verify(livreRepository, times(1)).findAll(any(LivreSpecification.class), any(Pageable.class));
+		
+	}
+	
+	@Test
+	public void testCreateLivre_whenEntityNotFoundException() {
+		
+		LivreDTO livreDTO1 = new LivreDTO();
+		livreDTO1.setAuteur("auteur1");
+		livreDTO1.setTitre("titre1");
+		livreDTO1.setNbExemplaires(1);
+		livreDTO1.setNumCategorie((long) 1);
+		
+		when(categorieRepository.findById((long)1)).thenReturn(Optional.ofNullable(null));
+		
+		try {
+			Livre livreToCreate = livreMetier.createLivre(livreDTO1);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(EntityNotFoundException.class)
+			 .hasMessage("Le livre ne peut pas etre enregistre car la categorie saisie n'existe pas");
+		}
+		
+	}
+	
+	@Test
+	public void testCreateLivre_whenEntityAlreadyExistsException() {
+		
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO1 = new LivreDTO();
+		livreDTO1.setAuteur("auteur1");
+		livreDTO1.setTitre("titre1");
+		livreDTO1.setNbExemplaires(1);
+		livreDTO1.setNumCategorie((long) 1);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		
+		when(categorieRepository.findById((long)1)).thenReturn(Optional.ofNullable(categorie1));
+		when(livreRepository.findByTitreAndAuteur("titre1", "auteur1")).thenReturn(Optional.of(livre1));
+		
+		try {
+			Livre livreToCreate = livreMetier.createLivre(livreDTO1);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(EntityAlreadyExistsException.class)
+			 .hasMessage("Ce livre a déjà été référencé");
+		}
+	}
+	
+	@Test
+	public void testCreateLivre_withoutException() {
+		
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO1 = new LivreDTO();
+		livreDTO1.setAuteur("auteur1");
+		livreDTO1.setTitre("titre1");
+		livreDTO1.setNbExemplaires(1);
+		livreDTO1.setNumCategorie((long) 1);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		
+		when(categorieRepository.findById((long)1)).thenReturn(Optional.ofNullable(categorie1));
+		when(livreRepository.findByTitreAndAuteur("titre1", "auteur1")).thenReturn(Optional.ofNullable(null));
+		when(livreMapper.livreDTOToLivre(livreDTO1)).thenReturn(livre1);
+		when(livreRepository.save(any(Livre.class))).thenReturn(livre1);
+		
 			
-		    livreMetier.miseAJourLivres();
-		    
-		    
-		    System.out.println(livre3.getDateRetourPrevuePlusProche());
-		    System.out.println(pret3Livre3.getDateRetourPrevue());
-		    
-		    Assertions.assertTrue(livre3.getDateRetourPrevuePlusProche().toString().equals(pret3Livre3.getDateRetourPrevue().toString()));	
-	}
-	
-	
-	@Test
-	public void testMiseAJourLivre_whenDateRetourPlusProcheNonIndiquée() {
-		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
-		User user4 = new User("user4");
-	    List<Livre> livreList4 = new ArrayList<Livre>();
-	    List<Pret> pretList4 = new ArrayList<Pret>();
-	    
-	    List<Reservation> reservationList4 = new ArrayList<Reservation>();
-	    Livre livre4 = new Livre((long) 3,"titre3", "auteur3", 1, 0, null, 2,2, categorie1, pretList4, reservationList4);
-	    livreList4.add(livre4);
-	    Pret pret4Livre4 = new Pret(LocalDate.now().minusDays(28), LocalDate.now().minusDays(18), PretStatut.ENCOURS, user4, livre4);
-	    pretList4.add(pret4Livre4);
-	    
-	    Reservation reservation4 = new Reservation((long)3, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user4, livre4);
-	    reservationList4.add(reservation4);
+			try {
+				Livre livreToCreate = livreMetier.createLivre(livreDTO1);
+				verify(livreRepository, times(1)).save(any(Livre.class));
+			} catch (EntityAlreadyExistsException e) {
+				assertThat(e).isInstanceOf(EntityNotFoundException.class)
+				 .hasMessage("Le livre ne peut pas etre enregistre car la categorie saisie n'existe pas");
+			} catch (EntityNotFoundException e) {
+				assertThat(e).isInstanceOf(EntityAlreadyExistsException.class)
+				 .hasMessage("Ce livre a déjà été référencé");
+			}
 		
-	    livreMetier.miseAJourLivres();
-	    
-	    System.out.println(livre4.getDateRetourPrevuePlusProche());
-	    
-	    
-	    Assertions.assertTrue(livre4.getDateRetourPrevuePlusProche().toString().equals("Aucune date de retour ne peut être indiquée"));	
 	}
 	
+	@Test
+	public void testUpdateLivre_whenUnknownIdAndEntityNotFoundException() {
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO2 = new LivreDTO();
+		livreDTO2.setAuteur("auteur2");
+		livreDTO2.setTitre("titre2");
+		livreDTO2.setNbExemplaires(2);
+		livreDTO2.setNumCategorie((long) 2);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(null));
+		
+		try {
+			livreMetier.updateLivre((long)1, livreDTO2);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(EntityNotFoundException.class)
+			 .hasMessage("Le livre à mettre à jour n'existe pas");
+		}
+	}
+		
+	@Test
+	public void testUpdateLivre_whenEntityAlreadyExistsException() {
+		
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO2 = new LivreDTO();
+		livreDTO2.setAuteur("auteur2");
+		livreDTO2.setTitre("titre2");
+		livreDTO2.setNbExemplaires(1);
+		livreDTO2.setNumCategorie((long) 1);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		Livre livre2 = new Livre ((long)2, "titre2", "auteur2", 1,0, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
+		when(livreRepository.findById((long)2)).thenReturn(Optional.ofNullable(livre2));
+		when(livreRepository.findByTitreAndAuteur("titre2", "auteur2")).thenReturn(Optional.ofNullable(livre2));
+		
+		try {
+			livreMetier.updateLivre((long)1, livreDTO2);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(EntityAlreadyExistsException.class)
+			 .hasMessage("Ce livre a déjà été référencé");
+		}
+	}
+		
+	@Test
+	public void testUpdateLivre_whenUnknownCategoryAndEntityNotFoundException() {
+		
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO2 = new LivreDTO();
+		livreDTO2.setAuteur("auteur2");
+		livreDTO2.setTitre("titre2");
+		livreDTO2.setNbExemplaires(1);
+		livreDTO2.setNumCategorie((long) 2);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
+		when(livreRepository.findByTitreAndAuteur("titre2", "auteur2")).thenReturn(Optional.ofNullable(null));
+		when(categorieRepository.findById((long)2)).thenReturn(Optional.ofNullable(null));
+		
+		try {
+			livreMetier.updateLivre((long)1, livreDTO2);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(EntityNotFoundException.class)
+			 .hasMessage("Le changement de categorie est impossible car la categorie saisie n'existe pas");
+		}
+	}
 	
 	@Test
-	public void testSearchByLivreCriteria_withMiseAjour() {
-		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
-		User user5 = new User("user5");
-	    List<Livre> livreList5 = new ArrayList<Livre>();
-	    List<Pret> pretList5 = new ArrayList<Pret>();
-	    
-	    List<Reservation> reservationList5 = new ArrayList<Reservation>();
-	    Livre livre5 = new Livre((long) 5,"titre5", "auteur5", 1, 0, LocalDate.now().plusDays(28).toString(), 2,2, categorie1, pretList5, reservationList5);
-	    livreList5.add(livre5);
-	    Pret pret5Livre5 = new Pret(LocalDate.now(), LocalDate.now().plusDays(28), PretStatut.ENCOURS, user5, livre5);
-	    pretList5.add(pret5Livre5);
-	    
-	    Reservation reservation3 = new Reservation((long)5, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user5, livre5);
-	    reservationList5.add(reservation3);
-	    
-	    LivreCriteria livreCriteria5 = new LivreCriteria((long) 5, "titre5", "auteur5", null, 0);
-	    Page<Livre> livrePage5 = new PageImpl<Livre>(livreList5, PageRequest.of(0, 6), livreList5.size());
-	    
-	    
-	    Pageable pageable = PageRequest.of(0, 6);
-	    
-	    Mockito.when(livreRepository.findAll(new LivreSpecification(livreCriteria5), pageable)).thenReturn(livrePage5);
-	    
-	    Page<Livre> livrePageResult = livreMetier.searchByLivreCriteria(livreCriteria5, PageRequest.of(0, 6));
-	    Assertions.assertTrue(livrePageResult.hasContent());
-	    Livre livreResult = (Livre) livrePageResult.getContent().get(0);
-	    
-	    //Vérification du contenu du retour du searchLivreByCriteria()
-	    Assertions.assertTrue(livreResult.equals(livre5));
-	    
-	    //Vérification de la mise à jour
-	    Assertions.assertTrue(livreResult.getDateRetourPrevuePlusProche().toString().equals(pret5Livre5.getDateRetourPrevue().toString()));	
-	    
-	   
-	    
+	public void testUpdateLivre_whenNbExemplairesLessZeroAndWrongNumberException() {
+		
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO2 = new LivreDTO();
+		livreDTO2.setAuteur("auteur2");
+		livreDTO2.setTitre("titre2");
+		livreDTO2.setNbExemplaires(-1);
+		livreDTO2.setNumCategorie((long) 1);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		Livre livre2 = new Livre ((long)2, "titre2", "auteur2", -1,0, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
+		when(livreRepository.findByTitreAndAuteur("titre2", "auteur2")).thenReturn(Optional.ofNullable(null));
+		when(categorieRepository.findById((long)1)).thenReturn(Optional.ofNullable(categorie1));
+		when(livreMapper.livreDTOToLivre(livreDTO2)).thenReturn(livre2);
+		
+		try {
+			livreMetier.updateLivre((long)1, livreDTO2);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(WrongNumberException.class)
+			 .hasMessage("Le nombre total d'exemplaires de la référence de livre à mettre à jour doit au moins être égale à 0");
+		}
+	}
+	
+	@Test
+	public void testUpdateLivre_whenNbExemplairesUpdatedLessThanNbExemplairesDisponiblesAndWrongNumberException() {
+		
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO2 = new LivreDTO();
+		livreDTO2.setAuteur("auteur2");
+		livreDTO2.setTitre("titre2");
+		livreDTO2.setNbExemplaires(1);
+		livreDTO2.setNumCategorie((long) 1);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 3,3, categorie1);
+		Livre livre2 = new Livre ((long)2, "titre2", "auteur2", 1,3, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
+		when(livreRepository.findByTitreAndAuteur("titre2", "auteur2")).thenReturn(Optional.ofNullable(null));
+		when(categorieRepository.findById((long)1)).thenReturn(Optional.ofNullable(categorie1));
+		when(livreMapper.livreDTOToLivre(livreDTO2)).thenReturn(livre2);
+		
+		try {
+			livreMetier.updateLivre((long)1, livreDTO2);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(WrongNumberException.class)
+			 .hasMessage("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
+		}
+	}
+	
+	@Test
+	public void testUpdateLivre_withoutException() {
+		
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		LivreDTO livreDTO2 = new LivreDTO();
+		livreDTO2.setAuteur("auteur2");
+		livreDTO2.setTitre("titre2");
+		livreDTO2.setNbExemplaires(4);
+		livreDTO2.setNumCategorie((long) 1);
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 3,3, categorie1);
+		Livre livre2 = new Livre ((long)2, "titre2", "auteur2", 4,3, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
+		when(livreRepository.findByTitreAndAuteur("titre2", "auteur2")).thenReturn(Optional.ofNullable(null));
+		when(categorieRepository.findById((long)1)).thenReturn(Optional.ofNullable(categorie1));
+		when(livreMapper.livreDTOToLivre(livreDTO2)).thenReturn(livre2);
+		when(livreRepository.save(any(Livre.class))).thenReturn(any(Livre.class));
+		
+		try {
+			Livre livreToUpdate = livreMetier.updateLivre((long)1, livreDTO2);
+			verify(livreRepository, times(1)).save(any(Livre.class));
+		} catch (EntityNotFoundException e) {
+			assertThat(e).isInstanceOf(EntityNotFoundException.class);
+		} catch (EntityAlreadyExistsException e) {
+			assertThat(e).isInstanceOf(EntityAlreadyExistsException.class);
+		} catch (WrongNumberException e) {
+			assertThat(e).isInstanceOf(WrongNumberException.class);
+		}
+	}
+	
+	/*
+	public void deleteLivre(Long numLivre) throws EntityNotFoundException, EntityNotDeletableException{
+	Optional<Livre> livreToDelete = livreRepository.findById(numLivre);
+	if(!livreToDelete.isPresent()) 
+		throw new EntityNotFoundException("Le livre que vous voulez supprimer n'existe pas"); 
+	
+	 * Comme les prets clotures ne sont pas supprimés, le seul moyen de s'assurer qu'il n'existe pas de pret encours pour un 
+	 * livre à supprimer est de vérifier que le nombre total d'exemplaires est égal au nombre d'exemplaires disponibles
+	
+	if(livreToDelete.get().getNbExemplairesDisponibles()!=livreToDelete.get().getNbExemplaires()) 
+		throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours"); 
+	
+	livreRepository.deleteById(numLivre);
 	}
 	*/
+	
+	@Test
+	public void testDeleteLivre_whenEntityNotFoundException() {
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(null));
+		
+		try {
+			livreMetier.deleteLivre((long)1);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(EntityNotFoundException.class)
+			 .hasMessage("Le livre que vous voulez supprimer n'existe pas");
+		}
+	}
+		
+	@Test
+	public void testDeleteLivre_whenEntityNotDeletableException() {
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,0, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
+		
+		try {
+			livreMetier.deleteLivre((long)1);
+		} catch (Exception e) {
+			assertThat(e).isInstanceOf(EntityNotDeletableException.class)
+			 .hasMessage("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours");
+		}
+	}
+	
+	@Test
+	public void testDeleteLivre_withoutException() {
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
+		Livre livre1 = new Livre ((long)1, "titre1", "auteur1", 1,1, categorie1);
+		
+		when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
+	
+			try {
+				livreMetier.deleteLivre((long)1);
+				verify(livreRepository, times(1)).deleteById((long)1);
+			} catch (EntityNotFoundException e) {
+				assertThat(e).isInstanceOf(EntityNotFoundException.class)
+				 .hasMessage("Le livre que vous voulez supprimer n'existe pas");
+			} catch (EntityNotDeletableException e) {
+				assertThat(e).isInstanceOf(EntityNotDeletableException.class)
+				 .hasMessage("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours");
+			}
+		
+	}
+	
+	
 }

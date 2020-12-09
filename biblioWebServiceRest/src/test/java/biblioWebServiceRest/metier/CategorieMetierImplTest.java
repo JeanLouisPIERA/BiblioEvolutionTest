@@ -3,6 +3,8 @@ package biblioWebServiceRest.metier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -30,6 +32,7 @@ import biblioWebServiceRest.dao.specs.CategorieSpecification;
 import biblioWebServiceRest.dto.CategorieDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
+import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -104,6 +107,7 @@ public class CategorieMetierImplTest {
 		
 		try {
 			Categorie categorieTest = categorieMetier.createCategorie(newCategorieDTO);
+			verify(categorieRepository, times(1)).save(any(Categorie.class));
 		} catch (Exception e) {
 			assertThat(e).isInstanceOf(EntityAlreadyExistsException.class)
 						 .hasMessage("La categorie que vous souhaitez creer existe deja");
@@ -145,7 +149,7 @@ public class CategorieMetierImplTest {
 	@Test
 	public void testDeleteCategorie_withoutException() {
 		
-		Categorie categorie1 = new Categorie("categorie1");
+		Categorie categorie1 = new Categorie((long)1, "categorie1");
 		List<Livre> livreList = Arrays.asList();
 		categorie1.setLivres(livreList);
 		
@@ -154,6 +158,8 @@ public class CategorieMetierImplTest {
 		
 		try {
 			categorieMetier.deleteCategorie((long)1);
+			verify(categorieRepository, times(1)).findById((long)1);
+			verify(categorieRepository, times(1)).deleteById((long)1);
 		} catch (EntityNotFoundException e) {
 			assertThat(e).isInstanceOf(EntityNotFoundException.class)
 			 .hasMessage("La categorie que vous voulez supprimer n'existe pas");
@@ -172,6 +178,7 @@ public class CategorieMetierImplTest {
 		Pageable pageable = PageRequest.of(0,6);
 		
 		Page<Categorie> categoriePageTest = categorieMetier.searchByCriteria(categorieCriteria, pageable);
+		verify(categorieRepository, times(1)).findAll(any(CategorieSpecification.class), any(Pageable.class));
 		Assertions.assertTrue(categoriePageTest.getContent().size()==2);
 	}
 	
