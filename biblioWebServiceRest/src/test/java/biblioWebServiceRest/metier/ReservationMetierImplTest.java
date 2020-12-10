@@ -69,7 +69,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	@Mock
 	ILivreMetier livreMetier;
 	@Mock
-	ApplicationPropertiesConfiguration appProperties;
+	ApplicationPropertiesConfiguration appProperties; 
 	
 	@InjectMocks
     private ReservationMetierImpl reservationMetier;

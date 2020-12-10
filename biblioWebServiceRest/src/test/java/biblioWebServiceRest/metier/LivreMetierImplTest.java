@@ -190,7 +190,6 @@ public class LivreMetierImplTest  {
 		LivreCriteria livreCriteria = new LivreCriteria();
 		Pageable pageable = PageRequest.of(0,6);
 		
-		//livreMetier.miseAJourLivres();
 		Page<Livre> livrePageTest = livreMetier.searchByLivreCriteria(livreCriteria, pageable);
 		verify(livreRepository, times(1)).findAll(any(LivreSpecification.class), any(Pageable.class));
 		
@@ -414,22 +413,6 @@ public class LivreMetierImplTest  {
 			assertThat(e).isInstanceOf(WrongNumberException.class);
 		}
 	}
-	
-	/*
-	public void deleteLivre(Long numLivre) throws EntityNotFoundException, EntityNotDeletableException{
-	Optional<Livre> livreToDelete = livreRepository.findById(numLivre);
-	if(!livreToDelete.isPresent()) 
-		throw new EntityNotFoundException("Le livre que vous voulez supprimer n'existe pas"); 
-	
-	 * Comme les prets clotures ne sont pas supprimés, le seul moyen de s'assurer qu'il n'existe pas de pret encours pour un 
-	 * livre à supprimer est de vérifier que le nombre total d'exemplaires est égal au nombre d'exemplaires disponibles
-	
-	if(livreToDelete.get().getNbExemplairesDisponibles()!=livreToDelete.get().getNbExemplaires()) 
-		throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours"); 
-	
-	livreRepository.deleteById(numLivre);
-	}
-	*/
 	
 	@Test
 	public void testDeleteLivre_whenEntityNotFoundException() {

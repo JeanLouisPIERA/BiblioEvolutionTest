@@ -120,6 +120,7 @@ public class PretRestService {
 	 * @param numPret
 	 * @return
 	 * @throws EntityNotFoundException 
+	 * @throws BookNotAvailableException 
 	 * @see biblioWebServiceRest.metier.IPretMetier#cloturerPret(java.lang.Long)
 	 */
 	@ApiOperation(value = "Cloture d'un prêt à la restitution de l'ouvrage", response = Pret.class)
@@ -128,7 +129,7 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
 	@PutMapping(value="/prets/cloture/{numPret}", produces="application/json")
-	public ResponseEntity<Pret> cloturerPret(@PathVariable Long numPret) throws EntityNotFoundException {
+	public ResponseEntity<Pret> cloturerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {
 		
 		Pret cloturePret = pretMetier.cloturerPret(numPret);
 		return new ResponseEntity<Pret>(cloturePret, HttpStatus.ACCEPTED);

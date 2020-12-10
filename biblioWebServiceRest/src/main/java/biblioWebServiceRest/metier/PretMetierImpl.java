@@ -122,23 +122,16 @@ public class PretMetierImpl implements IPretMetier {
 		if(!pretAProlonger.isPresent()) 
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 
+		/*
+		 * TICKET 2 : empêche de prolonger un prêt dont le statut n'est pas encours ou dont le statut est encours et la date de retour
+		 * est inférieure à aujourd'hui
+		*/
 		
 		if(
 				!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS) &&
 				!pretAProlonger.get().getPretStatut().equals(PretStatut.AECHOIR)	
 				) 
 			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa prolongation");
-
-		/*
-		 * TICKET 2 : empêche de prolonger un prêt dont le statut n'est pas encours ou dont le statut est encours et la date de retour
-		 * est inférieure à aujourd'hui
-		*/
-		if(!pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)) 
-			throw new BookNotAvailableException ("PROLONGATION IMPOSSIBLE = Le statut de ce pret de livre ne permet pas sa prolongation");
-		
-		if(pretAProlonger.get().getPretStatut().equals(PretStatut.ENCOURS)
-				&& pretAProlonger.get().getDateRetourPrevue().isBefore(LocalDate.now())) 
-			throw new BookNotAvailableException ("PROLONGATION IMPOSSIBLE = La date de retour prévue de ce prêt ne permet pas sa prolongation");
 
 		
 		/*COMMENTAIRE HOTFIX 1.0.1 : Dans la version d'origine, il n'y avait pas de bug 
@@ -172,13 +165,17 @@ public class PretMetierImpl implements IPretMetier {
 	 * @param numPret
 	 * @return
 	 * @throws EntityNotFoundException 
+	 * @throws BookNotAvailableException 
 	 * @throws Exception
 	 */
 	@Override
-	public Pret cloturerPret(Long numPret) throws EntityNotFoundException {
+	public Pret cloturerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException {
 		Optional<Pret> pretACloturer = pretRepository.findById(numPret);
 		if(!pretACloturer.isPresent()) 
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
+		
+		if(pretACloturer.get().getPretStatut().equals(PretStatut.CLOTURE)) 
+			throw new BookNotAvailableException ("Le statut de ce pret de livre ne permet pas sa clôture");
 		
 		pretACloturer.get().setDateRetourEffectif(LocalDate.now());
 		pretACloturer.get().setPretStatut(PretStatut.CLOTURE);
