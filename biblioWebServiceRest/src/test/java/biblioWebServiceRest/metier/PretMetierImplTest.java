@@ -89,7 +89,8 @@ public class PretMetierImplTest extends BiblioWebServiceRestMetierTests{
 		pretDTO1.setIdUser((long)1);
 		pretDTO1.setNumLivre((long)1);
 		
-		Mockito.when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(null));
+		Mockito.when(livreRepository.findById((long)1)).thenReturn(Optional.empty());
+				//.ofNullable(null));
 		
 		try {
 			Pret newPret = pretMetier.createPret(pretDTO1);
@@ -143,7 +144,7 @@ public class PretMetierImplTest extends BiblioWebServiceRestMetierTests{
 	}
 	
 	@Test
-	public void testCreatePret_withoutException() {
+	public void testCreatePret_withoutException() throws Exception {
 		
 		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
     	User user1 = new User((long)1, "user1");
@@ -154,21 +155,15 @@ public class PretMetierImplTest extends BiblioWebServiceRestMetierTests{
 		pretDTO1.setIdUser((long)1);
 		pretDTO1.setNumLivre((long)1);
 		
-		Mockito.when(livreRepository.findById((long)1)).thenReturn(Optional.ofNullable(livre1));
-		Mockito.when(userRepository.findById((long)1)).thenReturn(Optional.ofNullable(user1));
+		Mockito.when(livreRepository.findById((long)1)).thenReturn(Optional.of(livre1));
+		Mockito.when(userRepository.findById((long)1)).thenReturn(Optional.of(user1));
 		Mockito.when(pretRepository.save(any(Pret.class))).thenReturn(pret1User1Livre1);
 		
-		try {
+		
 			Pret newPret = pretMetier.createPret(pretDTO1);
+			Assert.assertTrue(newPret.equals(pret1User1Livre1));
 			verify(pretRepository, times(1)).save(any(Pret.class));
-		} catch (BookNotAvailableException e) {
-			assertThat(e).isInstanceOf(BookNotAvailableException.class)
-			 .hasMessage("Il n'y a plus d'exemplaire disponible de ce livre");
-		}
-		catch (EntityNotFoundException e) {
-			assertThat(e).isInstanceOf(EntityNotFoundException.class)
-			 .hasMessage("Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
-		}
+		
 	}
 	
 	@Test
@@ -542,15 +537,6 @@ public class PretMetierImplTest extends BiblioWebServiceRestMetierTests{
 				LocalDate.now());
 		
 	}
-	
-	/*
-	public Pret readPret(Long numPret) throws EntityNotFoundException {
-		Optional<Pret> searchedPret = pretRepository.findById(numPret);
-		if(!searchedPret.isPresent())
-			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
-		return searchedPret.get();
-	}
-	*/
 	
 	@Test
 	public void testReadPret_whenEntityNotFoundException() {

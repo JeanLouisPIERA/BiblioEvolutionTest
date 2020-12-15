@@ -17,6 +17,8 @@ import biblioWebServiceRest.entities.User;
 
 @Service
 public class SecurityServiceImpl implements ISecurityService{
+
+
 	
 @Autowired
 private AuthenticationManager authenticationManager;
@@ -28,7 +30,7 @@ private IUserRepository userRepository;
 private static final Logger logger = LoggerFactory.getLogger
 (SecurityServiceImpl.class);
 
-/**
+/*
  * Cette méthode permet d'identifier le nom de l'utilisateur loggé après authentification
  */
 @Override
@@ -41,7 +43,7 @@ public String findLoggedInUsername() {
     return null;
 }
 
-/**
+/*
  * Cette méthode permet d'identifier l'utilisateur loggé après authentification 
  */
 @Override
@@ -55,9 +57,9 @@ public User findLoggedInUser() {
     return null;
 }
 
-/**
+/*
  * Cette méthode permet à un visiteur de se logger automatiquement avec le role USER
- */
+*/
 @Override
 public User autologin(String username, String password) {
     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
