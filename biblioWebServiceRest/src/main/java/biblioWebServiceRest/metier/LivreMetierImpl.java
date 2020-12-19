@@ -43,29 +43,6 @@ import biblioWebServiceRest.mapper.LivreMapper;
 public class LivreMetierImpl implements ILivreMetier{
 	
 	
-	/*
-	private final  ILivreRepository livreRepository;
-
-	private final ICategorieRepository categorieRepository; 
-	
-	private final IPretRepository pretRepository;
-	
-	private final LivreMapper livreMapper;
-	
-	private final IReservationRepository reservationRepository;
-	
-	@Autowired
-	public LivreMetierImpl(ILivreRepository livreRepository, IReservationRepository reservationRepository, IPretRepository pretRepository, ILivreRepository livreRepository2, LivreMapper livreMapper, ICategorieRepository categorieRepository
-			) {
-				this.livreRepository = livreRepository;
-				this.categorieRepository = categorieRepository;
-				this.pretRepository = pretRepository;
-				this.livreMapper = livreMapper;
-				this.reservationRepository = reservationRepository;
-	}
-	*/
-	
-	
 	@Autowired
 	private ILivreRepository livreRepository;
 	@Autowired
@@ -94,7 +71,6 @@ public class LivreMetierImpl implements ILivreMetier{
 					if(pretsListe.isPresent()) {
 						Pret pretDateRetourPlusProche = pretsListe.get().get(0);
 						livre.setDateRetourPrevuePlusProche(pretDateRetourPlusProche.getDateRetourPrevue().toString());
-						System.out.println(livre.getDateRetourPrevuePlusProche());
 					}else {
 						livre.setDateRetourPrevuePlusProche("Aucune date de retour ne peut être indiquée");
 					}
@@ -106,7 +82,7 @@ public class LivreMetierImpl implements ILivreMetier{
 					Optional<List<Reservation>> reservations = reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
 						if(reservations.isPresent()) {
 							livre.setNbReservationsEnCours(reservations.get().size());
-							System.out.println(livre.getNbReservationsEnCours());}
+							}
 						else {
 							livre.setNbReservationsEnCours(0);
 						}
@@ -193,19 +169,23 @@ public class LivreMetierImpl implements ILivreMetier{
 		if(!livreToUpdate.isPresent()) 
 			throw new EntityNotFoundException("Le livre à mettre à jour n'existe pas");
 		
+		if(livreDTO.getTitre()!=null && livreDTO.getAuteur()!=null) {
 		Optional<Livre> livreAfterUpdate = livreRepository.findByTitreAndAuteur(livreDTO.getTitre(), livreDTO.getAuteur()); 
-		if(livreAfterUpdate.isPresent())
+		if(livreAfterUpdate.isPresent()) {
 			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
+		}else {
+			//Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
+			livreToUpdate.get().setTitre(livreDTO.getTitre());
+			livreToUpdate.get().setAuteur(livreDTO.getAuteur());
+		}
+		}
 		
+		if(livreDTO.getNumCategorie()!=null) {
 		Optional<Categorie> categorie = categorieRepository.findById(livreDTO.getNumCategorie());
 		if(!categorie.isPresent()) 
 			throw new EntityNotFoundException("Le changement de categorie est impossible car la categorie saisie n'existe pas");
 		livreToUpdate.get().setCategorie(categorie.get());
-		
-		Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
-		livreToUpdate.get().setTitre(livreUpdates.getTitre());
-		livreToUpdate.get().setAuteur(livreUpdates.getAuteur());
-				
+		}		
 		/*
 		 * La mise à jour du nombre total d'exemplaires d'une référence de livre est inférieure au nombre des exemplaires
 		 * disponibles avant mise à jour soulève une exception car il y a un problème de gestion : on supprime un livre 
@@ -213,11 +193,12 @@ public class LivreMetierImpl implements ILivreMetier{
 		 * à jour		
 		 */
 		Integer nbExemplairesIndisponibles = livreToUpdate.get().getNbExemplaires()-livreToUpdate.get().getNbExemplairesDisponibles();
-		if(livreUpdates.getNbExemplaires()<0) 
+		if(livreDTO.getNbExemplaires()<0) 
 			throw new WrongNumberException("Le nombre total d'exemplaires de la référence de livre à mettre à jour doit au moins être égale à 0");
-		if(livreToUpdate.get().getNbExemplairesDisponibles()- (livreUpdates.getNbExemplaires())>0 || livreToUpdate.get().getNbExemplairesDisponibles()<0) throw new WrongNumberException("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
-		livreToUpdate.get().setNbExemplaires(livreUpdates.getNbExemplaires());
-		livreToUpdate.get().setNbExemplairesDisponibles(livreUpdates.getNbExemplaires()-nbExemplairesIndisponibles);
+		if((livreDTO.getNbExemplaires()-nbExemplairesIndisponibles)<0)
+			throw new WrongNumberException("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
+		livreToUpdate.get().setNbExemplaires(livreDTO.getNbExemplaires());
+		livreToUpdate.get().setNbExemplairesDisponibles(livreDTO.getNbExemplaires()-nbExemplairesIndisponibles);
 		
 		return livreRepository.save(livreToUpdate.get());
 	}
@@ -242,9 +223,28 @@ public class LivreMetierImpl implements ILivreMetier{
 		 * Comme les prets clotures ne sont pas supprimés, le seul moyen de s'assurer qu'il n'existe pas de pret encours pour un 
 		 * livre à supprimer est de vérifier que le nombre total d'exemplaires est égal au nombre d'exemplaires disponibles
 		 */
-		if(livreToDelete.get().getNbExemplairesDisponibles()!=livreToDelete.get().getNbExemplaires()) 
-			throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours"); 
+		Optional<List<Pret>> pretsNonClotures = pretRepository.findAllByLivreAndNotPretStatut(livreToDelete.get(), PretStatut.CLOTURE);
+		Optional<List<Reservation>> reservationsNonSupprimeesAndNonAnnuleesAndNonLivrees = reservationRepository.findAllByLivreAndNotReservationStatutAndNotReservationStatutAndNotReservationStatut(livreToDelete.get(), ReservationStatut.ANNULEE, ReservationStatut.SUPPRIMEE, ReservationStatut.LIVREE);		
+		if(pretsNonClotures.isPresent() || reservationsNonSupprimeesAndNonAnnuleesAndNonLivrees.isPresent()) 
+			throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts ou des réservations encours"); 
 		
+		Optional<List<Pret>> pretsClotures = pretRepository.findAllByLivreAndPretStatut(livreToDelete.get(), PretStatut.CLOTURE);
+		if(pretsClotures.isPresent()) {
+			for(Pret pret : pretsClotures.get()) {
+				pretRepository.deleteById(pret.getNumPret());
+			}
+		}
+		
+		Optional<List<Reservation>> reservationsSupprimeesOuAnnuleesOuLivrees = reservationRepository.findAllByLivreAndReservationStatutAndReservationStatutAndReservationStatut(
+				livreToDelete.get(),
+				ReservationStatut.ANNULEE,
+				ReservationStatut.SUPPRIMEE, 
+				ReservationStatut.LIVREE);
+		if(reservationsSupprimeesOuAnnuleesOuLivrees.isPresent()) {
+			for(Reservation reservation : reservationsSupprimeesOuAnnuleesOuLivrees.get()) {
+				reservationRepository.deleteById(reservation.getNumReservation());
+			}
+		}
 		livreRepository.deleteById(numLivre);
 		
 	}

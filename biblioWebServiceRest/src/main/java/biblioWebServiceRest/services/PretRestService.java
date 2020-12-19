@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 import biblioWebServiceRest.criteria.PretCriteria;
 
 import biblioWebServiceRest.dto.PretDTO;
+import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
+import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.WrongNumberException;
@@ -73,7 +75,7 @@ public class PretRestService {
 	@ApiOperation(value = "Enregistrement d'un nouveau prêt", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le prêt a été créé"),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 401, message = "Ressource inexistante"),
 	        @ApiResponse(code = 423, message = "Il n'y a plus d'exemplaire disponible de ce livre")
 	})
 	@PostMapping(value="/prets", produces = "application/json", consumes = "application/json")
@@ -151,7 +153,7 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
 	@GetMapping(value="/prets", produces="application/json")
-	public ResponseEntity<Page<Pret>> searchByPretCriteria(@PathParam("pretCriteria")PretCriteria pretCriteria, @RequestParam int page, @RequestParam int size ) {
+	public ResponseEntity<Page<Pret>> searchByPretCriteria(@PathParam("pretCriteria")PretCriteria pretCriteria,  @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "3") int size ) {
 		Page<Pret> prets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Pret>>(prets, HttpStatus.OK);
 	}

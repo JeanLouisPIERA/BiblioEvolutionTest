@@ -199,6 +199,9 @@ public class PretMetierImpl implements IPretMetier {
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
 		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
+		System.out.println("ListPret"+ prets.getContent().get(0).getNumPret());
+		System.out.println("ListPret"+ prets.getContent().get(0).getLivre().getNumLivre());
+		System.out.println("ListPret"+ prets.getContent().get(0).getUser().getIdUser());
 		return prets;
 	}
 	
@@ -239,7 +242,7 @@ public class PretMetierImpl implements IPretMetier {
 			throw new EntityNotFoundException ("Aucun prêt enregistré ne correspond à votre demande");
 		return searchedPret.get();
 	}
-
+	
 	@Override
 	public List<Pret> searchAndUpdatePretsAEchoir() {
 		/*
@@ -276,6 +279,8 @@ public class PretMetierImpl implements IPretMetier {
 		}
 		return pretsAEchoir; 
 		}
+
+	
 		
 	}	
 		

@@ -59,7 +59,7 @@ public class UserDetailsServiceImplTest {
 	
 	
 	@Test
-	public void testLoadUserByUsername_withoutException() {
+	public void testLoadUserByUsername_withoutException() throws Exception {
 		
 		String username = "username";
 		String password = "password";
@@ -70,17 +70,9 @@ public class UserDetailsServiceImplTest {
 		User user1 = new User(username, password, adresseMail, role1);
 		
 		Mockito.when(userRepository.findByUsername(username)).thenReturn(Optional.of(user1));
-		
-		
-		try {
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-			Assert.assertTrue(userDetails.getPassword().contentEquals("password"));
-			Assert.assertTrue(userDetails.getUsername().contentEquals("username"));
-		} catch (Exception e) {
-			assertThat(e).isInstanceOf(org.springframework.security.core.userdetails.UsernameNotFoundException.class)
-			 .hasMessage("User not found");
-		} 
+
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		Assert.assertTrue(userDetails.getPassword().contentEquals("password"));
+		Assert.assertTrue(userDetails.getUsername().contentEquals("username"));
 	}
-	
-	
 }

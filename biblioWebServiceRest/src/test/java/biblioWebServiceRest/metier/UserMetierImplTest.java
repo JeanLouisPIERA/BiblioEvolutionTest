@@ -73,7 +73,7 @@ public class UserMetierImplTest {
 	}
 	
 	@Test
-	public void testFindbyUsernameAndPassWord() {
+	public void testFindbyUsernameAndPassWord() throws Exception {
 		
 		String username = "username";
 		String password = "password";
@@ -84,14 +84,8 @@ public class UserMetierImplTest {
 		
 		Mockito.when(securityService.autologin(username, password)).thenReturn(user1);
 		
-		try {
-			User userFound = userMetier.findByUsernameAndPassword(username, password);
-			Assert.assertTrue(userFound.getPassword().contentEquals("password"));
-			Assert.assertTrue(userFound.getUsername().equals("username"));
-		} catch (EntityNotFoundException e) {			
-		}
-		
-		
+		User userFound = userMetier.findByUsernameAndPassword(username, password);
+		Assert.assertTrue(userFound.getPassword().contentEquals("password"));
+		Assert.assertTrue(userFound.getUsername().equals("username"));
 	}
-	
 }

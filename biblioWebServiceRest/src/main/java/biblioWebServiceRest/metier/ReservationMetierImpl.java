@@ -172,15 +172,6 @@ public class ReservationMetierImpl implements IReservationMetier{
 		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
 		Livre livreSearchedReservation = searchedReservation.get().getLivre();
 		this.miseAJourRangReservationDansFileAttente(livreSearchedReservation);
-		/*
-		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(livreSearchedReservation, ReservationStatut.ENREGISTREE);
-		if(reservationList.isPresent()) {
-			for(Reservation reservation : reservationList.get()) {
-				reservation.setRangReservation(reservation.getRangReservation()-1);
-				reservationRepository.save(reservation);
-			}
-		}
-		*/
 		searchedReservation.get().setReservationStatut(ReservationStatut.LIVREE);
 		searchedReservation.get().setRangReservation(null);
 		searchedReservation.get().getLivre().setNbExemplairesDisponibles(searchedReservation.get().getLivre().getNbExemplairesDisponibles()+1);
@@ -209,17 +200,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 		//TICKET 1 FONCTIONNALITE 
 		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE DES RESERVATIONS DE RANG SUPERIEUR A LA RESERVATION A ANNULER
 		this.miseAJourRangReservationDansFileAttente(searchedReservation.get().getLivre());
-		/*
-		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(searchedReservation.get().getLivre(), ReservationStatut.ENREGISTREE);
-		if(reservationList.isPresent()) {
-			for(Reservation reservation : reservationList.get()) {
-				if(searchedReservation.get().getRangReservation()<reservation.getRangReservation()) {
-				reservation.setRangReservation(reservation.getRangReservation()-1);
-				reservationRepository.save(reservation);
-				}
-			}
-		}
-		*/
+		
 		if(searchedReservation.get().getReservationStatut()==ReservationStatut.ENREGISTREE) {
 			searchedReservation.get().setReservationStatut(ReservationStatut.SUPPRIMEE);
 		}
@@ -286,4 +267,4 @@ public class ReservationMetierImpl implements IReservationMetier{
 		return searchedReservation.get();
 	}
 
-}
+} 

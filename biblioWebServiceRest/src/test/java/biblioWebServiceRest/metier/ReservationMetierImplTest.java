@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -51,7 +52,7 @@ import biblioWebServiceRest.exceptions.WrongNumberException;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
+public class ReservationMetierImplTest {
  
     @Mock
 	private IReservationRepository reservationRepository;
@@ -130,11 +131,13 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	    
 	    /*
 	     * Jeu de données pour les use cases READ
-	     */
+	    */
 	    Page<Reservation> reservationPage1 = new PageImpl<Reservation>(reservationList1);
 	    Mockito.when(reservationRepository.findAll(any(ReservationSpecification.class), any(Pageable.class))).thenReturn(reservationPage1);
-	
+		
 	    Mockito.when(reservationRepository.findById((long)1)).thenReturn(Optional.of(reservation1));
+	    
+	    
 	    
 	    /*
 	     * Jeu de données pour les use cases UPDATE
@@ -172,7 +175,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		} catch (EntityNotFoundException | BookNotAvailableException | BookAvailableException | EntityAlreadyExistsException | RentAlreadyExistsException e) {
 			assertThat(e).isInstanceOf(EntityNotFoundException.class)
 			 .hasMessage("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
-		} 
+		}  
 	}
 	
 	@Test
@@ -260,7 +263,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	}
 	
 	@Test
-    public void testCreateReservation_withoutExceptionAtFirstRank() {
+    public void testCreateReservation_withoutExceptionAtFirstRank() throws Exception {
     	Categorie categorie1 = new Categorie((long) 1,"Categorie1");
     	User user1 = new User((long)1, "user1");
     	Livre livre1 = new Livre((long) 1,"titre100", "auteur100", 1,0,categorie1);
@@ -270,28 +273,14 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
     	
     	Mockito.when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation1);
    	
-			try {
-				Reservation reservationCreated = reservationMetier.createReservation(reservationDTO1);
-				verify(reservationRepository, times(1)).save(any(Reservation.class));
-			} catch (EntityNotFoundException e) {
-				assertThat(e).isInstanceOf(EntityNotFoundException.class)
-				 .hasMessage("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
-			} catch (BookNotAvailableException e) {
-				assertThat(e).isInstanceOf(EntityNotFoundException.class)
-				 .hasMessage("OUVRAGE INCONNU = Aucun enregistrement de livre ne correspond à votre demande");
-			} catch (BookAvailableException e) {
-				assertThat(e).isInstanceOf(BookNotAvailableException.class);
-			} catch (EntityAlreadyExistsException e) {
-				assertThat(e).isInstanceOf(BookAvailableException.class)
-				 .hasMessage("RESERVATION IMPOSSIBLE = Vous pouvez emprunter immédiatement un exemplaire disponible de ce livre");			
-			} catch (RentAlreadyExistsException e) {
-				assertThat(e).isInstanceOf(RentAlreadyExistsException.class)
-				 .hasMessage("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");
-			}
+		Reservation reservationCreated = reservationMetier.createReservation(reservationDTO1);
+		verify(reservationRepository, times(1)).save(any(Reservation.class));
+		Assert.assertTrue(reservationCreated.equals(reservation1));
+			
 	}
 	
 	@Test
-    public void testCreateReservation_withoutExceptionWithARankSupTo1() {
+    public void testCreateReservation_withoutExceptionWithARankSupTo1() throws Exception {
     	Categorie categorie1 = new Categorie((long) 1,"Categorie1");
     	User user1 = new User((long)1, "user1");
     	User user20 = new User((long)20, "user20");
@@ -307,24 +296,9 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
     	Mockito.when(livreRepository.findById(reservationDTO10.getNumLivre())).thenReturn(Optional.of(livre10));
     	Mockito.when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation1);
    	
-			try {
-				Reservation reservationCreated = reservationMetier.createReservation(reservationDTO10);
-				verify(reservationRepository, times(1)).save(any(Reservation.class));
-			} catch (EntityNotFoundException e) {
-				assertThat(e).isInstanceOf(EntityNotFoundException.class)
-				 .hasMessage("UTILISATEUR INCONNU = Aucun utilisateur ne correspond à votre identification de l'emprunteur ");
-			} catch (BookNotAvailableException e) {
-				assertThat(e).isInstanceOf(EntityNotFoundException.class)
-				 .hasMessage("OUVRAGE INCONNU = Aucun enregistrement de livre ne correspond à votre demande");
-			} catch (BookAvailableException e) {
-				assertThat(e).isInstanceOf(BookNotAvailableException.class);
-			} catch (EntityAlreadyExistsException e) {
-				assertThat(e).isInstanceOf(BookAvailableException.class)
-				 .hasMessage("RESERVATION IMPOSSIBLE = Vous pouvez emprunter immédiatement un exemplaire disponible de ce livre");			
-			} catch (RentAlreadyExistsException e) {
-				assertThat(e).isInstanceOf(RentAlreadyExistsException.class)
-				 .hasMessage("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");
-			}
+		Reservation reservationCreated = reservationMetier.createReservation(reservationDTO10);
+		verify(reservationRepository, times(1)).save(any(Reservation.class));
+		Assert.assertTrue(reservationCreated.equals(reservation1));
     }
 	
 	//***************************************** TESTS READ **********************************************************************
@@ -335,11 +309,16 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	 */
 	@Test
 	public void testSearchAllReservationsByCriteria_withoutExceptionAndAllAttributesNull() {
+	
 		ReservationCriteria reservationCriteria = new ReservationCriteria();
-		Pageable pageable = PageRequest.of(0,6);
+		Pageable pageable = PageRequest.of(0,6);	
 		
 		Page<Reservation> reservationPageTest = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, pageable);
 		verify(reservationRepository, times(1)).findAll(any(ReservationSpecification.class), any(Pageable.class));
+		Assertions.assertTrue(reservationPageTest.getNumberOfElements()==2);
+		Assertions.assertTrue(reservationPageTest.getTotalPages()==1);
+		Assertions.assertTrue(reservationPageTest.getContent().get(0).getNumReservation()== (long)3);
+		Assertions.assertTrue(reservationPageTest.getContent().get(1).getNumReservation()==(long)4);
 	}
 	
 	/**
@@ -360,8 +339,19 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 			reservationCriteria.setUsername("user1");		
 		Pageable pageable = PageRequest.of(0,6);
 		
+		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
+    	User user1 = new User((long)1, "user1");
+		Livre livre1 = new Livre((long) 1,"titre1", "auteur1", 1,0,categorie1);
+		Reservation reservation1 = new Reservation((long)1, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user1, livre1);
+		List<Reservation> reservationList = Arrays.asList(reservation1);
+		Page<Reservation> reservationPage = new PageImpl<Reservation>(reservationList);
+		Mockito.when(reservationRepository.findAll(any(ReservationSpecification.class), any(Pageable.class))).thenReturn(reservationPage);
+		
 		Page<Reservation> reservationPageTest = reservationMetier.searchAllReservationsByCriteria(reservationCriteria, pageable);
 		verify(reservationRepository, times(1)).findAll(any(ReservationSpecification.class), any(Pageable.class));
+		Assertions.assertTrue(reservationPageTest.getNumberOfElements()==1);
+		Assertions.assertTrue(reservationPageTest.getTotalPages()==1);
+		Assertions.assertTrue(reservationPageTest.getContent().get(0).getNumReservation()== (long)1);
 	}
 	
 	@Test 
@@ -376,14 +366,18 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	}
 	
 	@Test
-	public void testReadReservation_withoutException() {
-		try {
-			Reservation reservation = reservationMetier.readReservation((long) 1);
-			verify(reservationRepository, times(1)).findById((long)1);
-		} catch (Exception e) {
-			assertThat(e).isInstanceOf(EntityNotFoundException.class)
-			 .hasMessage("Aucune reservation enregistrée ne correspond à votre demande");
-		}
+	public void testReadReservation_withoutException() throws Exception {
+		
+		Categorie categorie1 = new Categorie((long) 1,"Categorie1");	
+    	User user1 = new User((long)1, "user1");
+		Livre livre6 = new Livre((long) 6,"titre6", "auteur6", 1,0,categorie1);
+		Reservation reservation1 = new Reservation((long)1, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user1, livre6);
+		Mockito.when(reservationRepository.findById((long)1)).thenReturn(Optional.of(reservation1));
+		
+		Reservation reservation = reservationMetier.readReservation((long) 1);
+		verify(reservationRepository, times(1)).findById((long)1);
+		Assert.assertTrue(reservation.equals(reservation1));
+		
 	}
 	
 	//************************************** TESTS UPDATE **********************************************************************
@@ -411,16 +405,19 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	}
 	
 	@Test
-	public void testNotifierReservation_withoutException() {
+	public void testNotifierReservation_withoutException() throws Exception {
 		
-		try {
-			Reservation reservationNotifiee = reservationMetier.notifierReservation((long)6);
-			verify(reservationRepository, times(1)).save(any(Reservation.class));
-		} catch (EntityNotFoundException e) {
-			assertThat(e).hasMessage("RESERVATION INCONNUE : Cette réservation n'existe pas");
-		} catch (WrongNumberException e1) {
-			assertThat(e1).hasMessage("NOTIFICATION IMPOSSIBLE = Le statut de cette réservation ne permet pas de la notifier");
-		}
+Categorie categorie1 = new Categorie((long) 1,"Categorie1");
+    	
+    	User user1 = new User((long)1, "user1");
+		Livre livre1 = new Livre((long) 1,"titre1", "auteur1", 1,0,categorie1);
+		Reservation reservation1 = new Reservation((long)1, LocalDate.now(), null, null, null, ReservationStatut.ENREGISTREE, user1, livre1);
+		Mockito.when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation1);
+		
+		Reservation reservationNotifiee = reservationMetier.notifierReservation((long)6);
+		verify(reservationRepository, times(1)).save(any(Reservation.class));
+		Assert.assertTrue(reservationNotifiee.equals(reservation1));
+		
 	}
 	
 	@Test
@@ -481,38 +478,23 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	
 	
 	@Test
-	public void testLivrerReservationAndCreerPret_withoutException() {
+	public void testLivrerReservationAndCreerPret_withoutException() throws Exception {
     	
-		try {
-			reservationMetier.livrerReservationAndCreerPret((long)7);
-			verify(reservationRepository, times(2)).save(any(Reservation.class));
-			verify(pretMetier, times(1)).createPret(any(PretDTO.class));
-			verify(livreMetier, times(1)).miseAJourLivres();
-		} catch (EntityNotFoundException e) {
-			assertThat(e)
-			 .hasMessage("RESERVATION INCONNUE = Cette réservation n'existe pas");
-		} catch (WrongNumberException e) {
-			assertThat(e)
-			 .hasMessage("LIVRAISON IMPOSSIBLE = Le statut de cette réservation ne permet pas de la notifier");
-		} catch (BookNotAvailableException e) {
-			assertThat(e)
-			 .hasMessage("LIVRAISON ANNULEE = La date limite de votre réservation pour le pret du livre est dépassée");
-		}
-		
+		reservationMetier.livrerReservationAndCreerPret((long)7);
+		verify(reservationRepository, times(2)).save(any(Reservation.class));
+		verify(pretMetier, times(1)).createPret(any(PretDTO.class));
+		verify(livreMetier, times(1)).miseAJourLivres();
 	}
 	
 	@Test
-	public void testSearchAndNotifierReservations_withNoReservationsANotifier() {
+	public void testSearchAndNotifierReservations_withNoReservationsANotifier() throws Exception {
 
-		try {
 			List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
 			Assertions.assertTrue(reservationsANotifierList.isEmpty());
-		} catch (EntityNotFoundException | WrongNumberException e) {		
-		}
 	}
 		
 	@Test
-	public void testSearchAndNotifierReservations_withOnlyReservationsLAreadyNotifieesWithDeadlineValideANotifier() {
+	public void testSearchAndNotifierReservations_withOnlyReservationsLAreadyNotifieesWithDeadlineValideANotifier() throws Exception {
 		  Categorie categorie1 = new Categorie((long) 1,"Categorie1");
 		  User user3 = new User((long)3, "user3");
 		  Livre livre6 = new Livre((long) 6,"titre6", "auteur6", 1, 0, categorie1);	
@@ -521,18 +503,17 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		    
 		  List<Reservation> reservationsAlreadyNotifieesDeadlineValideList = Arrays.asList(reservation7);
 		  Mockito.when(reservationRepository.findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now())).thenReturn(Optional.of(reservationsAlreadyNotifieesDeadlineValideList));
-		try {
-			List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
-			verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now());
-			verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now()); 
-			verify(reservationRepository, times(1)).findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(ReservationStatut.ENREGISTREE, 1,1);
-		} catch (EntityNotFoundException | WrongNumberException e) {
-			
-		}
+		
+		List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
+		verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now());
+		verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now()); 
+		verify(reservationRepository, times(1)).findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(ReservationStatut.ENREGISTREE, 1,1);
+		Assert.assertTrue(reservationsANotifierList.size()==1);
+		Assert.assertTrue(reservationsANotifierList.get(0).getNumReservation()==(long)7);
 	}
 	
 	@Test
-	public void testSearchAndNotifierReservations_withOnlyReservationsLAreadyNotifieesWithDeadlineDechuesANotifier() {
+	public void testSearchAndNotifierReservations_withOnlyReservationsLAreadyNotifieesWithDeadlineDechuesANotifier() throws Exception {
 		  Categorie categorie1 = new Categorie((long) 1,"Categorie1");
 		  User user3 = new User((long)3, "user3");
 		  Livre livre6 = new Livre((long) 6,"titre6", "auteur6", 1, 0, categorie1);	
@@ -542,16 +523,13 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		  List<Reservation> reservationsAlreadyNotifieesDeadlineDechueList = Arrays.asList(reservation8);
 		  Mockito.when(reservationRepository.findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now())).thenReturn(Optional.of(reservationsAlreadyNotifieesDeadlineDechueList));			  
 				  
-		try {
-			List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
-			Assertions.assertTrue(reservationsANotifierList.isEmpty());
-		} catch (EntityNotFoundException | WrongNumberException e) {
-			
-		}
+		  List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
+		  Assertions.assertTrue(reservationsANotifierList.isEmpty());
+		
 	}
 	
 	@Test
-	public void testSearchAndNotifierReservations_withOnlyReservationsEnregistreesSelectionnees() {
+	public void testSearchAndNotifierReservations_withOnlyReservationsEnregistreesSelectionnees() throws Exception {
 		  Categorie categorie1 = new Categorie((long) 1,"Categorie1");
 		  User user3 = new User((long)3, "user3");
 		  Livre livre7 = new Livre((long) 7,"titre7", "auteur7", 1, 1, categorie1);	
@@ -564,14 +542,12 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 		  List<Reservation> reservationsEnregistreesSelectionneesList = Arrays.asList(reservation9);
 		  Mockito.when(reservationRepository.findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(ReservationStatut.ENREGISTREE, 1,1)).thenReturn(Optional.of(reservationsEnregistreesSelectionneesList));
 		
-		  
-		  try {
-				List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
-				verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now());
-				verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now()); 
-				verify(reservationRepository, times(1)).findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(ReservationStatut.ENREGISTREE, 1,1);			
-				} catch (EntityNotFoundException | WrongNumberException e) {
-			}	
+		  List<Reservation> reservationsANotifierList = reservationMetier.searchAndNotifierReservations();
+		  verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineValide(ReservationStatut.NOTIFIEE, LocalDate.now());
+		  verify(reservationRepository, times(1)).findAllByReservationStatutAndDateDeadlineDechue(ReservationStatut.NOTIFIEE, LocalDate.now()); 
+		  verify(reservationRepository, times(1)).findAllByReservationStatutAndNbExemplairesDisponiblesAndRangReservation(ReservationStatut.ENREGISTREE, 1,1);			
+		  Assert.assertTrue(reservationsANotifierList.size()==1);
+		  Assert.assertTrue(reservationsANotifierList.get(0).getNumReservation()==10);
 	}
 	
 	//***************************************** TETS DELETE *******************************************************************
@@ -618,7 +594,7 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 	}
 	
 	@Test
-	public void testSuppressReservation_withoutException_withReservationStatutEnregistree() {
+	public void testSuppressReservation_withoutException_withReservationStatutEnregistree() throws Exception {
 			Categorie categorie1 = new Categorie((long) 1,"Categorie1");
 			User user3 = new User((long)3, "user3");
 			Livre livre8 = new Livre((long) 7,"titre7", "auteur7", 1, 1, categorie1);	
@@ -626,39 +602,25 @@ public class ReservationMetierImplTest extends BiblioWebServiceRestMetierTests{
 			Mockito.when(reservationRepository.findById((long)14)).thenReturn(Optional.of(reservation14));
 		    Mockito.when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation14);
 		
-			try {
-				Reservation reservationToSuppress = reservationMetier.suppressReservation((long) 14);
-				verify(reservationRepository, times(1)).save(any(Reservation.class));
-			} catch (EntityNotFoundException e) {
-				assertThat(e).isInstanceOf(EntityNotFoundException.class)
-				 .hasMessage("RESERVATION INCONNUE = Cette réservation n'existe pas");
-			} catch (WrongNumberException e) {
-				assertThat(e).isInstanceOf(WrongNumberException.class);
-			}
+			Reservation reservationToSuppress = reservationMetier.suppressReservation((long) 14);
+			verify(reservationRepository, times(1)).save(any(Reservation.class));
+			Assert.assertTrue(reservation14.getReservationStatut().equals(ReservationStatut.SUPPRIMEE));
 	}
 	
 	@Test
-	public void testSuppressReservation_withoutException_withReservationStatutNotifiee() {
+	public void testSuppressReservation_withoutException_withReservationStatutNotifiee() throws Exception {
 		Categorie categorie1 = new Categorie((long) 1,"Categorie1");
 		User user3 = new User((long)3, "user3");
 		Livre livre8 = new Livre((long) 7,"titre7", "auteur7", 1, 1, categorie1);	
 		Reservation reservation15 = new Reservation((long)15, LocalDate.now().minusDays(10), LocalDate.now().minusDays(1), LocalDate.now().plusDays(1), null , ReservationStatut.NOTIFIEE, 1, user3, livre8);	
+		Reservation reservation15b = new Reservation((long)15, LocalDate.now().minusDays(10), LocalDate.now().minusDays(1), LocalDate.now().plusDays(1), LocalDate.now() , ReservationStatut.SUPPRIMEE, 1, user3, livre8);	
 		Mockito.when(reservationRepository.findById((long)15)).thenReturn(Optional.of(reservation15));
-	    Mockito.when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation15);
+	    Mockito.when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation15b);
 	
-			try {
-				Reservation reservationToSuppress = reservationMetier.suppressReservation((long) 15);
-				verify(reservationRepository, times(1)).save(any(Reservation.class));
-			} catch (EntityNotFoundException e) {
-				assertThat(e).isInstanceOf(EntityNotFoundException.class)
-				 .hasMessage("RESERVATION INCONNUE = Cette réservation n'existe pas");
-			} catch (Exception e) {
-				assertThat(e).isInstanceOf(WrongNumberException.class);
-			}	
-	}
-	
-	
-	
+		Reservation reservationToSuppress = reservationMetier.suppressReservation((long) 15);
+		verify(reservationRepository, times(1)).save(any(Reservation.class));
+		Assert.assertTrue(reservationToSuppress.getReservationStatut().equals(ReservationStatut.SUPPRIMEE));
+	}	
 }
 	
 	

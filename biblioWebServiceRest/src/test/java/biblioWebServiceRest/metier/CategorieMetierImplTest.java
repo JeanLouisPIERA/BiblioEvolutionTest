@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -59,8 +60,8 @@ public class CategorieMetierImplTest {
 		/*
 	     * Jeu de données pour les use cases READ
 	     */
-		Categorie categorie1 = new Categorie();
-		Categorie categorie2 = new Categorie();
+		Categorie categorie1 = new Categorie("categorie 1");
+		Categorie categorie2 = new Categorie("categorie 2");
 		
 		List<Categorie> categorieList1 = Arrays.asList(categorie1, categorie2);
 		
@@ -95,7 +96,7 @@ public class CategorieMetierImplTest {
 	}
 	
 	@Test
-	public void testCreateCategorie_withoutException() {
+	public void testCreateCategorie_withoutException() throws Exception {
 		
 		CategorieDTO newCategorieDTO = new CategorieDTO();
 		newCategorieDTO.setNomCategorie("categorie1");
@@ -105,13 +106,10 @@ public class CategorieMetierImplTest {
 		when(categorieMapper.categorieDTOToCategorie(newCategorieDTO)).thenReturn(categorie1);
 		when(categorieRepository.save(any(Categorie.class))).thenReturn(categorie1);
 		
-		try {
-			Categorie categorieTest = categorieMetier.createCategorie(newCategorieDTO);
-			verify(categorieRepository, times(1)).save(any(Categorie.class));
-		} catch (Exception e) {
-			assertThat(e).isInstanceOf(EntityAlreadyExistsException.class)
-						 .hasMessage("La categorie que vous souhaitez creer existe deja");
-		}	
+		
+		Categorie categorieTest = categorieMetier.createCategorie(newCategorieDTO);
+		verify(categorieRepository, times(1)).save(any(Categorie.class));
+		Assert.assertTrue(categorieTest.equals(categorie1));
 	}
 
 	
@@ -147,7 +145,7 @@ public class CategorieMetierImplTest {
 	}
 	
 	@Test
-	public void testDeleteCategorie_withoutException() {
+	public void testDeleteCategorie_withoutException() throws Exception {
 		
 		Categorie categorie1 = new Categorie((long)1, "categorie1");
 		List<Livre> livreList = Arrays.asList();
@@ -156,17 +154,11 @@ public class CategorieMetierImplTest {
 		when(categorieRepository.findById((long)1)).thenReturn(Optional.of(categorie1));	
 		doNothing().when(categorieRepository).deleteById((long)1);
 		
-		try {
-			categorieMetier.deleteCategorie((long)1);
-			verify(categorieRepository, times(1)).findById((long)1);
-			verify(categorieRepository, times(1)).deleteById((long)1);
-		} catch (EntityNotFoundException e) {
-			assertThat(e).isInstanceOf(EntityNotFoundException.class)
-			 .hasMessage("La categorie que vous voulez supprimer n'existe pas");
-		} catch (EntityNotDeletableException e) {
-			assertThat(e).isInstanceOf(EntityNotDeletableException.class)
-			 .hasMessage("Vous ne pouvez pas supprimer cette categorie qui contient des livres");
-		}
+		
+		categorieMetier.deleteCategorie((long)1);
+		verify(categorieRepository, times(1)).findById((long)1);
+		verify(categorieRepository, times(1)).deleteById((long)1);
+		
 	}
 	
 	//********************************* TESTS SEARCH By CRITERIA *******************************************************
@@ -179,7 +171,10 @@ public class CategorieMetierImplTest {
 		
 		Page<Categorie> categoriePageTest = categorieMetier.searchByCriteria(categorieCriteria, pageable);
 		verify(categorieRepository, times(1)).findAll(any(CategorieSpecification.class), any(Pageable.class));
-		Assertions.assertTrue(categoriePageTest.getContent().size()==2);
+		Assertions.assertTrue(categoriePageTest.getNumberOfElements()==2);
+		Assertions.assertTrue(categoriePageTest.getTotalPages()==1);
+		Assertions.assertTrue(categoriePageTest.getContent().get(0).getNomCategorie().contentEquals("categorie 1"));
+		Assertions.assertTrue(categoriePageTest.getContent().get(1).getNomCategorie().contentEquals("categorie 2"));
 	}
 	
 	

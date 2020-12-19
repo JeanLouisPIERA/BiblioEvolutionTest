@@ -64,5 +64,9 @@ public interface IPretRepository extends JpaRepository<Pret, Long>, JpaSpecifica
 	@Query("select pret from Pret pret where (pret.livre = ?1) " + " AND (pret.pretStatut <> ?2)" + " AND (pret.dateRetourPrevue > ?3)"+ "ORDER BY pret.dateRetourPrevue ASC")
 	Optional<List<Pret>> findAllByLivreAndNotPretStatutOrderByDateRetourPrevueAfterThisDate(Livre livre1, PretStatut pretStatut, LocalDate localDate);
 
+	Optional<List<Pret>> findAllByLivreAndPretStatut(Livre livre1, PretStatut pretStatut);
+	
+	@Query("select pret from Pret pret where (pret.livre.numLivre = ?1) " + " AND (pret.user.idUser = ?2)")
+	Optional<Pret> findByNumLivreAndUserId(Long numLivre, Long userId);
 	
 }

@@ -40,6 +40,13 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
 			ReservationStatut reservationStatut,
 			LocalDate localDate);
 	
+	@Query("select reservation from Reservation reservation where (reservation.livre = ?1 ) " + " AND (reservation.reservationStatut <> ?2) " + " AND (reservation.reservationStatut <> ?3) "+ " AND (reservation.reservationStatut <> ?4)")
+	Optional<List<Reservation>> findAllByLivreAndNotReservationStatutAndNotReservationStatutAndNotReservationStatut(
+			Livre livre,
+			ReservationStatut reservationStatut1,
+			ReservationStatut reservationStatut2, 
+			ReservationStatut reservationStatut3);
+	
 	@Query("select reservation from Reservation reservation where (reservation.reservationStatut = ?1) " + " AND (reservation.dateDeadline < ?2 )")
 	Optional<List<Reservation>> findAllByReservationStatutAndDateDeadlineDechue(
 			ReservationStatut reservationStatut,
@@ -84,5 +91,5 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
 	@Query("select reservation from Reservation reservation where (reservation.user = ?1) " + "AND (reservation.livre =?2)"+" AND (reservation.reservationStatut= ?3 "+" or reservation.reservationStatut = ?4)")
 	Optional<Reservation> findByUserAndLivreAndStatutReservationOrStatutReservation(User user, Livre livre, ReservationStatut reservationStatut1, ReservationStatut reservationStatut2);
 	
-	
+	Optional<List<Reservation>> findAllByLivreAndReservationStatutAndReservationStatutAndReservationStatut(Livre livre, ReservationStatut reservationStatut1, ReservationStatut reservationStatut2, ReservationStatut reservationStatut3);
 }

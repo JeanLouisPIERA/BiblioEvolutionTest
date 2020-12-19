@@ -18,14 +18,9 @@ import javax.validation.constraints.Size;
  */
 public class LivreDTO {
 	
-	@NotEmpty
 	public String titre; 
-	@NotEmpty
 	private String auteur;
-	@NotNull
-	@Positive
 	private Integer nbExemplaires;
-	@Positive
 	private Long numCategorie;
 	
 	
