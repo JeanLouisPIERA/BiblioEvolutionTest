@@ -28,7 +28,6 @@ import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
 import biblioWebServiceRest.entities.PretStatut;
-import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
@@ -199,9 +198,6 @@ public class PretMetierImpl implements IPretMetier {
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		Specification<Pret> pretSpecification = new PretSpecification(pretCriteria);
 		Page<Pret> prets = pretRepository.findAll(pretSpecification, pageable);
-		System.out.println("ListPret"+ prets.getContent().get(0).getNumPret());
-		System.out.println("ListPret"+ prets.getContent().get(0).getLivre().getNumLivre());
-		System.out.println("ListPret"+ prets.getContent().get(0).getUser().getIdUser());
 		return prets;
 	}
 	

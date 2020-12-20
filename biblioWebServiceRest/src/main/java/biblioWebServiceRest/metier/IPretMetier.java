@@ -10,9 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.dto.PretDTO;
-import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.entities.User;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.WrongNumberException;

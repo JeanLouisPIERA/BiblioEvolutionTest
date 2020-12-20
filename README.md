@@ -10,6 +10,7 @@ Le projet 10 a permis de corriger un bug du Projet 7 en empêchant la prolongati
 Le projet 10 a aussi permis de développer une nouvelle fonctionnalité de réservation de livres sans aucun exemplaire disponible en limitant le nombre de réservataires à 2 fois le nombre total d'exemplaires : l'utilisateur de l'appli WEB a la possibilité d'enregistrer ou de supprimer en ligne sa réservation et de connaitre pour chaque livre réservé la date de retour la plus proche, le nombre de réservataires inscrits et son rang dans la file d'attente. Dès qu'un exemplaire est disponible, la réservation en 1er rang est notifiée et son réservataire reçoit un mail l'informant qu'il dispose de 48 heures pour se rendre à la bibliothèque et emprunter le livre ; dans le cas contraire la réservation est annulée et le réservataire dans le rang immédiatement suivant reçoit un mail de notification. L'API prévoit un endpoint qui permet à l'agent de la bibliothèque de "livrer" la réservation notifiée en créant dans la même opération le prêt du livre. (#Ticket 1 branche Feature)
 
 Le projet 10 a enfin permis de mettre en place des tests unitaires pour l'ensemble des classes de la couche SERVICE de l'API avec un taux de couverture de 100%. Les tests d'intégration de l'API ont été automatisés sur tous les endpoints de la couche CONTROLLER à l'aide de l'outil POSTMAN. (#Ticket 3 branche Release 1.1.2) 
+
 # Références :
 
 - CONTACT : jeanlouispiera@yahoo.fr
@@ -36,6 +37,7 @@ Les données ne sont accessibles aux modules Web et Batch qu'au travers de l'API
 Ce projet a été écrit en Java avec JEE et la version 2.3.0.M2 de Springboot. Toutes les méthodes sont commentées en Javadoc.
 
 
+
 # Prérequis : 
 L'environnement d'installation minimum est :
 - Apache Maven version 3.6.2
@@ -60,7 +62,8 @@ L'API "biblioWebServiceRest" doit être lancée en premier. Avant son lancement,
 - ouvrir la commande en ligne dans la directory où vous avez copié l'API "biblioWebServiceRest"
 - taper la commande "mvn spring-boot:run" pour lancer la compilation de l'applicationn
 
-- pour lancer les tests unitaires avec JUnit taper la commande "mvn clean test". La dépendance Jacoco édite un fichier INDEX au format HTML accessible dans votre dépôt en suivant le path biblioWebServiceRest\target\site\jacoco qui permet la lecture du taux de couverture
+
+- pour lancer avec JUnit les tests unitaires développés avec SpringBootTest et Mockito taper la commande "mvn clean test". La dépendance Jacoco édite un fichier index.html accessible dans votre dépôt en suivant le path biblioWebServiceRest\target\site\jacoco qui permet la lecture du taux de couverture
 
 
 # Installation et lancement de l'Application Web "biblioWebAppli".

@@ -13,10 +13,8 @@ import javax.transaction.Transactional;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import biblioWebServiceRest.criteria.LivreCriteria;
@@ -173,8 +171,7 @@ public class LivreMetierImpl implements ILivreMetier{
 		Optional<Livre> livreAfterUpdate = livreRepository.findByTitreAndAuteur(livreDTO.getTitre(), livreDTO.getAuteur()); 
 		if(livreAfterUpdate.isPresent()) {
 			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
-		}else {
-			//Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
+		}else { 
 			livreToUpdate.get().setTitre(livreDTO.getTitre());
 			livreToUpdate.get().setAuteur(livreDTO.getAuteur());
 		}

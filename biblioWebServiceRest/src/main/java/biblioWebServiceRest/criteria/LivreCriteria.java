@@ -4,8 +4,6 @@
 package biblioWebServiceRest.criteria;
 
 
-import biblioWebServiceRest.entities.Categorie;
-
 
 /**
  * @author jeanl

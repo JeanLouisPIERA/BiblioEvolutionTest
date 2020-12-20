@@ -46,9 +46,6 @@ public class LivreSpecification implements Specification<Livre> {
             if (livreCriteria.getNbExemplairesDisponibles()!= null) {
             	predicates.getExpressions().add(builder.equal(root.get("nbExemplairesDisponibles"), livreCriteria.getNbExemplairesDisponibles()));	
             }
-        
-            System.out.println("spec3"+builder);
-            System.out.println("spec4"+predicates);
             
         return builder.and(predicates);
     }

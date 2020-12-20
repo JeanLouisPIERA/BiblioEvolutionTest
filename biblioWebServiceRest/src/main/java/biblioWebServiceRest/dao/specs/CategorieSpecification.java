@@ -36,11 +36,7 @@ private CategorieCriteria categorieCriteria;
             if (categorieCriteria.getNomCategorie()!= null) {
             	predicates.getExpressions().add(builder.like(root.get("nomCategorie"), "%" + categorieCriteria.getNomCategorie() + "%"));			
             }
-            /**
-            if (categorieCriteria.getNumCategorie()!= null) {
-            	predicates.getExpressions().add(builder.equal(root.get("numCategorie"), categorieCriteria.getNumCategorie()));			
-            }
-            **/
+            
         return builder.and(predicates);
     }
 

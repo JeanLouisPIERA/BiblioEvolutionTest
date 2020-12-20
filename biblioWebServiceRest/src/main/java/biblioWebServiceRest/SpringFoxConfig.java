@@ -55,9 +55,9 @@ public class SpringFoxConfig {
 
                  .title("Biblio")
 
-                 .description("Projet 7 Openclassrooms Springboot REST API pour la gestion des prets d'une bibliothèque municipale")
+                 .description("Projet 10 Openclassrooms Springboot REST API pour la gestion des prets et réservations d'une bibliothèque municipale")
 
-                 .version("1.0.0")
+                 .version("1.1.2")
 
                  .license("Apache 2.0")
 

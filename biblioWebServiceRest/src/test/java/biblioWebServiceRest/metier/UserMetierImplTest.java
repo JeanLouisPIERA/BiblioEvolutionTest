@@ -3,7 +3,6 @@ package biblioWebServiceRest.metier;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,11 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
 import biblioWebServiceRest.dto.UserDTO;
-import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.entities.Role;
 import biblioWebServiceRest.entities.RoleEnum;
 import biblioWebServiceRest.entities.User;
-import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.mapper.UserMapper;
 
 @SpringBootTest

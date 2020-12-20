@@ -26,16 +26,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import biblioWebServiceRest.criteria.CategorieCriteria;
 import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.dao.ICategorieRepository;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.IReservationRepository;
-import biblioWebServiceRest.dao.specs.CategorieSpecification;
 import biblioWebServiceRest.dao.specs.LivreSpecification;
 import biblioWebServiceRest.dto.LivreDTO;
 import biblioWebServiceRest.entities.Categorie;
@@ -440,45 +437,6 @@ public class LivreMetierImplTest  {
 		}
 	}
 	
-	/*
-	@Override
-	public void deleteLivre(Long numLivre) throws EntityNotFoundException, EntityNotDeletableException{
-		Optional<Livre> livreToDelete = livreRepository.findById(numLivre);
-		if(!livreToDelete.isPresent()) 
-			throw new EntityNotFoundException("Le livre que vous voulez supprimer n'existe pas"); 
-		
-		 * Comme les prets clotures ne sont pas supprimés, le seul moyen de s'assurer qu'il n'existe pas de pret encours pour un 
-		 * livre à supprimer est de vérifier que le nombre total d'exemplaires est égal au nombre d'exemplaires disponibles
-		 
-		Optional<List<Pret>> pretsNonClotures = pretRepository.findAllByLivreAndNotPretStatut(livreToDelete.get(), PretStatut.CLOTURE);
-		Optional<List<Reservation>> reservationsNonSupprimeesAndNonAnnuleesAndNonLivrees = reservationRepository.findAllByLivreAndNotReservationStatutAndNotReservationStatutAndNotReservationStatut(livreToDelete.get(), ReservationStatut.ANNULEE, ReservationStatut.SUPPRIMEE, ReservationStatut.LIVREE);		
-		if(pretsNonClotures.isPresent() || reservationsNonSupprimeesAndNonAnnuleesAndNonLivrees.isPresent()) 
-			throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts ou des réservations encours"); 
-		
-		Optional<List<Pret>> pretsClotures = pretRepository.findAllByLivreAndPretStatut(livreToDelete.get(), PretStatut.CLOTURE);
-		if(pretsClotures.isPresent()) {
-			for(Pret pret : pretsClotures.get()) {
-				pretRepository.deleteById(pret.getNumPret());
-			}
-		}
-		
-		Optional<List<Reservation>> reservationsSupprimeesAndAnnulees = reservationRepository.findAllByLivreAndReservationStatutAndReservationStatutAndReservationStatut(
-				livreToDelete.get(),
-				ReservationStatut.ANNULEE,
-				ReservationStatut.SUPPRIMEE, 
-				ReservationStatut.LIVREE);
-		if(reservationsSupprimeesAndAnnulees.isPresent()) {
-			for(Reservation reservation : reservationsSupprimeesAndAnnulees.get()) {
-				reservationRepository.deleteById(reservation.getNumReservation());
-			}
-		}
-		livreRepository.deleteById(numLivre);
-		
-	}
-*/
-	
-	
-		
 	@Test
 	public void testDeleteLivre_whenEntityNotDeletableException_withPretsNonClotures() {
 		Categorie categorie1 = new Categorie((long)1, "categorie1");

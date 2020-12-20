@@ -29,15 +29,6 @@
 
 	<dependencies>
 		
-		<!-- dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -48,12 +39,6 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.12</version>
-			<scope>compile</scope>
-		</dependency-->
 		
 		<!-- Tomcat embedded container-->
 		<dependency>
@@ -61,43 +46,7 @@
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
-		<!-- JSTL pour JSP>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
-		<utilitaire de compilation JSP>
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-jasper</artifactId>
-			<scope>provided</scope>
-		</dependency-->
-
-		<!-- utilitaire de compilation JSP 
-			en cas de défaillance Tomcat jasper -->
-		<!-- dependency>
-			<groupId>org.eclipse.jdt.core.compiler</groupId>
-			<artifactId>ecj</artifactId>
-			<version>4.6.1</version>
-			<scope>provided</scope>
-		</dependency-->
-
-		<!-- Test optionnel pour le contenu static, bootstrap CSS -->
-		<!-- dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>3.3.7</version>
-		</dependency>
-		
-		<dependency>
-             <groupId>org.webjars</groupId>
-             <artifactId>jquery</artifactId>
-             <version>3.2.1</version>
-        </dependency-->
-		
-		
-		
+	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import biblioWebAppli.criteria.PretCriteria;
 import biblioWebAppli.exceptions.PretsExceptionsMessage;
-import biblioWebAppli.exceptions.ReservationsExceptionsMessage;
 import biblioWebAppli.metier.IPretMetier;
 
 import biblioWebAppli.objets.Pret;

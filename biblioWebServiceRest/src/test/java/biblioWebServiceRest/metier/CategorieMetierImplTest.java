@@ -33,7 +33,6 @@ import biblioWebServiceRest.dao.specs.CategorieSpecification;
 import biblioWebServiceRest.dto.CategorieDTO;
 import biblioWebServiceRest.entities.Categorie;
 import biblioWebServiceRest.entities.Livre;
-import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.EntityAlreadyExistsException;
 import biblioWebServiceRest.exceptions.EntityNotDeletableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;

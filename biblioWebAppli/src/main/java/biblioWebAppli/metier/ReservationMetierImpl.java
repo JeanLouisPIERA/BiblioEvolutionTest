@@ -69,7 +69,6 @@ public class ReservationMetierImpl implements IReservationMetier {
     	
     	HttpEntity<ReservationDTO> requestEntity = new HttpEntity<>(reservationDTO, headers);
     	ResponseEntity<Reservation> response = restTemplate.exchange(uRL, HttpMethod.POST, requestEntity, Reservation.class);
-			System.out.println(response.getStatusCodeValue());
 			
     	return response.getBody();
 	}

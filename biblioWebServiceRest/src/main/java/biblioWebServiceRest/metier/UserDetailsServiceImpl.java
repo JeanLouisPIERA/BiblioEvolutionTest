@@ -48,7 +48,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         
         Role role = user.get().getRole();
-            System.out.println("le role est:" + role.getName().toString());
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName().toString()));
         
         

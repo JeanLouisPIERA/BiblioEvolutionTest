@@ -25,17 +25,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import biblioWebServiceRest.configurations.ApplicationPropertiesConfiguration;
-import biblioWebServiceRest.criteria.LivreCriteria;
 import biblioWebServiceRest.criteria.PretCriteria;
 import biblioWebServiceRest.dao.ILivreRepository;
 import biblioWebServiceRest.dao.IPretRepository;
 import biblioWebServiceRest.dao.IRoleRepository;
 import biblioWebServiceRest.dao.IUserRepository;
-import biblioWebServiceRest.dao.specs.LivreSpecification;
 import biblioWebServiceRest.dao.specs.PretSpecification;
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Categorie;
