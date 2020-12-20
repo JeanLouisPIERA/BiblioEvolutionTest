@@ -70,7 +70,7 @@ public class MailScheduler {
  		 * @throws IOException
  		 */
  		
- /*		
+ 	
  	 	@Scheduled(cron= "${application.cron}")
  	    public void sendMailsList() throws MessagingException, UnsupportedEncodingException{
  	    	
@@ -94,7 +94,7 @@ public class MailScheduler {
  		    	}
  	    
  	    }
- */	 	
+  	
  	 	/**
  		 * Cette méthode permet d'envoyer une série de mails à partir de la liste des prêts échus récupérée dans l'API Biblio
  	     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService
@@ -106,7 +106,7 @@ public class MailScheduler {
  		 * @throws IOException
  		 */
     	
-/*    	
+   	
  	 	@Scheduled(cron= "${application.cron}")
  	    public void sendMailsRappelList() throws MessagingException, UnsupportedEncodingException{
  	    	
@@ -127,7 +127,7 @@ public class MailScheduler {
  		         mailService.sendMessageUsingThymeleafTemplateRappel(mailTo, nomUser, subjectRappel, model);
  	    	}
  	 	}
- */
+ 
         /**
  		 * Cette méthode permet d'envoyer une série de mails à partir de la liste des réservations A NOTIFIER récupérée dans l'API Biblio
  	     * Elle fournit le modèle et appelle la méthode d'envoi d'un mail dans la classe MailService

@@ -53,7 +53,7 @@ public class PretController {
      */
     @RequestMapping(value="/prets", method = RequestMethod.GET)
     public String searchByCriteria(Model model, @PathParam(value = "pretCriteria") PretCriteria pretCriteria, @RequestParam(name="page", defaultValue="0") int page, 
-			@RequestParam(name="size", defaultValue="4") int size){
+			@RequestParam(name="size", defaultValue="6") int size){
     	model.addAttribute("pretCriteria", new PretCriteria());
     	
     	Page<Pret> pagePrets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
