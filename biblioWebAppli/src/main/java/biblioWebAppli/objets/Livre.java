@@ -3,8 +3,6 @@
  */
 package biblioWebAppli.objets;
 
-import java.time.LocalDate;
-
 public class Livre {
 	
 	private Long numLivre; 

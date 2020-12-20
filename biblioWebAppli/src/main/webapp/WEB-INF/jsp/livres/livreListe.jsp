@@ -30,11 +30,11 @@
 
 <div class="container-fluid">
  <div class="row justify-content-center mb-3">
-  <div class="col-md-8 col-md-offset-2 ">
+  <div class="col-md-10 col-md-offset-1 ">
   
    <div class="panel panel-primary">
     <div class="panel-heading">
-    <h3>Recherche des livres enregistrés</h3>
+    <h3><center>Recherche des livres enregistrés</center></h3>
     </div>
     
 	    <div class="panel-body">
@@ -83,24 +83,24 @@
  
 <div class="container-fluid">
 	<div class="row d-flex justify-content-center">
-		<div class="container col-md-8 col-md-offset-2">
+		<div class="container col-md-10 col-md-offset-1">
 			<div class="wrapper">
 				 <div class="panel panel-primary">
 				  <div class="panel-heading">
-				   <h3>Informations sur les livres</h3>
+				   <h3><center>Informations sur les livres</center></h3>
 				  </div>
   					<div class="panel-body">
-					   <table class="table table-striped table-condensed table-bordered">
+					   <table class="table table-striped table-condensed table-bordered" style="text-align:center">
 					   		 <thead>		  	  	 
 					    			 <tr>
-									      <th>Référence</th>
-									      <th>Titre</th>
-									      <th>Auteur</th>
-									      <th>Nombre d'exemplaires</th>
-									      <th>Exemplaires disponibles</th>
-									      <th>Catégorie</th>
-									      <th>Date de retour la plus proche</th>
-									      <th>Réservations en cours : nombre d'utilisateurs inscrits</th>
+									      <th style="text-align:center">Référence</th>
+									      <th style="text-align:center">Titre</th>
+									      <th style="text-align:center">Auteur</th>
+									      <th style="text-align:center">Nombre d'exemplaires</th>
+									      <th style="text-align:center">Exemplaires disponibles</th>
+									      <th style="text-align:center">Catégorie</th>
+									      <th style="text-align:center">Date de retour la plus proche</th>
+									      <th style="text-align:center">Réservations en cours : nombre d'utilisateurs inscrits</th>
 								     </tr>
 								     </thead>
 								     <tbody>
@@ -137,10 +137,9 @@
 								        	href="/reservations/creation/${livre.numLivre}">Réserver DEMO</a>
 								           </td>	
 								          </c:if>
-								         
-					        	      	  
 					    				 </tr>
 				   					</c:forEach>
+				   					
 								</tbody>
 							</table>			
 			   			<div class="container">

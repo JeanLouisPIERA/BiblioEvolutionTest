@@ -4,13 +4,11 @@
 
 package biblioWebServiceRest.dto;
 
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+
 
 /**
  * @author jeanl
@@ -18,17 +16,28 @@ import javax.validation.constraints.Size;
  */
 public class LivreDTO {
 	
-	@NotEmpty
 	public String titre; 
-	@NotEmpty
 	private String auteur;
-	@NotNull
-	@Positive
 	private Integer nbExemplaires;
-	@Positive
 	private Long numCategorie;
 	
 	
+	
+	public LivreDTO() {
+		super();
+	}
+	
+	
+	public LivreDTO(@NotEmpty String titre, @NotEmpty String auteur, @NotNull @Positive Integer nbExemplaires,
+			@Positive Long numCategorie) {
+		super();
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.numCategorie = numCategorie;
+	}
+
+
 	/**
 	 * @return the nbExemplaires
 	 */

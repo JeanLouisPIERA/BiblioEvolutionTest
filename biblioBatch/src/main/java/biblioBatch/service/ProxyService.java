@@ -3,15 +3,7 @@
  */
 package biblioBatch.service;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

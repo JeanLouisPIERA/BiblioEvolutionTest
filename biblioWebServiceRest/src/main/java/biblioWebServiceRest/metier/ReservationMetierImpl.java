@@ -2,14 +2,12 @@ package biblioWebServiceRest.metier;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,8 +63,6 @@ public class ReservationMetierImpl implements IReservationMetier{
 	IPretMetier pretMetier;
 	@Autowired
 	ILivreMetier livreMetier;
-	@Value("${constante-multiplicateur}")
-	private Integer multiplicateur;
 	
 
 	@Override
@@ -79,47 +75,42 @@ public class ReservationMetierImpl implements IReservationMetier{
 		Optional<Livre> livreToRent = livreRepository.findById(reservationDTO.getNumLivre());
 		if(!livreToRent.isPresent()) 
 			throw new EntityNotFoundException ("OUVRAGE INCONNU = Aucun enregistrement de livre ne correspond à votre demande");
+	
 		if(livreToRent.get().getNbExemplaires()==0)
 			throw new BookNotAvailableException ("RESERVATION IMPOSSIBLE = Il n'y a aucun exemplaire à emprunter pour cette référence de livre");
+	
 		if(livreToRent.get().getNbExemplairesDisponibles() >0) 
 			throw new BookAvailableException ("RESERVATION IMPOSSIBLE = Vous pouvez emprunter immédiatement un exemplaire disponible de ce livre");
-		
+	
 		Optional<Reservation> reservation = reservationRepository.findByUserAndLivreAndStatutReservationOrStatutReservation(user.get(), livreToRent.get(), ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
-		if(reservation.isPresent())
+		if(reservation.isPresent()) 
 			 throw new EntityAlreadyExistsException ("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre pour lequel vous avez déjà une réservation en cours");	
-		
 		
 		Optional<List<Pret>> pretListe = pretRepository.findAllByLivreAndUserAndNotPretStatut(livreToRent.get(), user.get(), PretStatut.CLOTURE);
 		if(pretListe.isPresent())
 			 throw new RentAlreadyExistsException ("RESERVATION IMPOSSIBLE : vous ne pouvez pas réserver un livre que vous avez déjà en cours de prêt");	
-		
 			
 		//TICKET 1 FONCTIONNALITE REGLE DE GESTION
 		//PERMET DE RESPECTER LA REGLE DE GESTION ET DE GERER LE RANG DANS LA FILE D'ATTENTE
 		Optional<List<Reservation>> reservationsByUser = reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livreToRent.get(), ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
-		if(reservationsByUser.isPresent() && ((reservationsByUser.get().size())>=(multiplicateur*(livreToRent.get().getNbExemplaires()))))
+	
+		if(reservationsByUser.isPresent()) {  	
+			if ((reservationsByUser.get().size())>=(appProperties.getMultiplicateur()*(livreToRent.get().getNbExemplaires()))) 
 			throw new BookNotAvailableException ("RESERVATION IMPOSSIBLE : le nombre maximum d'utilisateurs ayant fait une réservation est atteint");
-			
+		}
+		
 		Reservation newReservation = new Reservation();
 		
 		newReservation.setLivre(livreToRent.get());
-		
+	
 		newReservation.setUser(user.get());
-		
+	
 		LocalDate dateReservation = LocalDate.now();
 		newReservation.setDateReservation(dateReservation);
 		
 		//Incrémente le rang de la réservation en cours de création dans la file d'attente du livre à réserver
 		if(reservationsByUser.isPresent()) {
-			if(!reservationRepository.findAllByUserAndLivreAndReservationStatutOrReservationStatut(
-					user.get(), 
-					livreToRent.get(),
-					ReservationStatut.ENREGISTREE,
-					ReservationStatut.NOTIFIEE).isPresent()){
 				newReservation.setRangReservation(reservationsByUser.get().size()+1);
-			}else {
-				newReservation.setRangReservation(reservationsByUser.get().size());
-			}
 		} else {
 			newReservation.setRangReservation(1);
 		}
@@ -149,6 +140,19 @@ public class ReservationMetierImpl implements IReservationMetier{
 		
 		return reservationRepository.save(searchedReservation.get());
 	}
+	
+	@Override
+	public void miseAJourRangReservationDansFileAttente(Livre livre) {
+		//TICKET 1 FONCTIONNALITE
+		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
+		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(livre, ReservationStatut.ENREGISTREE);
+		if(reservationList.isPresent()) {
+			for(Reservation reservation : reservationList.get()) {
+				reservation.setRangReservation(reservation.getRangReservation()-1);
+				reservationRepository.save(reservation);
+			}
+		}
+	}
 
 	@Override
 	public Reservation livrerReservationAndCreerPret(Long numReservation) throws EntityNotFoundException, WrongNumberException, BookNotAvailableException {
@@ -165,13 +169,7 @@ public class ReservationMetierImpl implements IReservationMetier{
 		//TICKET 1 FONCTIONNALITE
 		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE
 		Livre livreSearchedReservation = searchedReservation.get().getLivre();
-		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(livreSearchedReservation, ReservationStatut.ENREGISTREE);
-		if(reservationList.isPresent()) {
-			for(Reservation reservation : reservationList.get()) {
-				reservation.setRangReservation(reservation.getRangReservation()-1);
-				reservationRepository.save(reservation);
-			}
-		}
+		this.miseAJourRangReservationDansFileAttente(livreSearchedReservation);
 		searchedReservation.get().setReservationStatut(ReservationStatut.LIVREE);
 		searchedReservation.get().setRangReservation(null);
 		searchedReservation.get().getLivre().setNbExemplairesDisponibles(searchedReservation.get().getLivre().getNbExemplairesDisponibles()+1);
@@ -199,15 +197,8 @@ public class ReservationMetierImpl implements IReservationMetier{
 				
 		//TICKET 1 FONCTIONNALITE 
 		//PERMET DE METTRE A JOUR LE RANG DANS LA FILE D'ATTENTE DES RESERVATIONS DE RANG SUPERIEUR A LA RESERVATION A ANNULER
-		Optional<List<Reservation>> reservationList = reservationRepository.findAllByLivreAndReservationStatut(searchedReservation.get().getLivre(), ReservationStatut.ENREGISTREE);
-		if(reservationList.isPresent()) {
-			for(Reservation reservation : reservationList.get()) {
-				if(searchedReservation.get().getRangReservation()<reservation.getRangReservation()) {
-				reservation.setRangReservation(reservation.getRangReservation()-1);
-				reservationRepository.save(reservation);
-				}
-			}
-		}
+		this.miseAJourRangReservationDansFileAttente(searchedReservation.get().getLivre());
+		
 		if(searchedReservation.get().getReservationStatut()==ReservationStatut.ENREGISTREE) {
 			searchedReservation.get().setReservationStatut(ReservationStatut.SUPPRIMEE);
 		}
@@ -274,4 +265,4 @@ public class ReservationMetierImpl implements IReservationMetier{
 		return searchedReservation.get();
 	}
 
-}
+} 

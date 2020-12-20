@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import biblioWebServiceRest.criteria.ReservationCriteria;
 import biblioWebServiceRest.dto.ReservationDTO;
+import biblioWebServiceRest.entities.Livre;
 import biblioWebServiceRest.entities.Reservation;
 import biblioWebServiceRest.exceptions.BookAvailableException;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
@@ -55,6 +56,12 @@ public interface IReservationMetier {
 	 * @throws BookNotAvailableException 
 	 */
 	Reservation livrerReservationAndCreerPret(Long numReservation) throws EntityNotFoundException, WrongNumberException, BookNotAvailableException ;
+	
+	/**
+	 * Permet de mettre à jour le rang des réservations dans la liste d'attente quand on livre ou quand on supprime une réservation d'un rang inférieur
+	 * @param livre
+	 */
+	void miseAJourRangReservationDansFileAttente(Livre livre);
 	
 	/**
 	 * CRUD : DELETE un emprunteur supprime volontairement une réservation

@@ -3,13 +3,11 @@
  */
 package biblioWebServiceRest.dto;
 
-import java.time.LocalDate;
 
-import javax.validation.constraints.NotEmpty;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import biblioWebServiceRest.entities.PretStatut;
 
 
 
@@ -27,6 +25,19 @@ public class PretDTO {
 	@Positive
 	private Long numLivre;
 	
+	public PretDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public PretDTO(@NotNull @Positive Long idUser, @NotNull @Positive Long numLivre) {
+		super();
+		this.idUser = idUser;
+		this.numLivre = numLivre;
+	}
+
+
 	/**
 	 * @return the idUser
 	 */

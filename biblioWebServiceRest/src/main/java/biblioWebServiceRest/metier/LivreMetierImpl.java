@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import biblioWebServiceRest.criteria.LivreCriteria;
@@ -40,7 +39,8 @@ import biblioWebServiceRest.mapper.LivreMapper;
 @Service
 @Transactional
 public class LivreMetierImpl implements ILivreMetier{
-
+	
+	
 	@Autowired
 	private ILivreRepository livreRepository;
 	@Autowired
@@ -79,13 +79,15 @@ public class LivreMetierImpl implements ILivreMetier{
 					// le rang de la réservation dans la liste des réservations d'un livre
 					Optional<List<Reservation>> reservations = reservationRepository.findAllByLivreAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
 						if(reservations.isPresent()) {
-							livre.setNbReservationsEnCours(reservations.get().size());}
+							livre.setNbReservationsEnCours(reservations.get().size());
+							}
 						else {
 							livre.setNbReservationsEnCours(0);
 						}
 					Optional<List<Reservation>> reservationsByUser = reservationRepository.findAllByLivreGroupByUserAndReservationStatutOrReservationStatut(livre, ReservationStatut.ENREGISTREE, ReservationStatut.NOTIFIEE);
 						if(reservationsByUser.isPresent()) {
-							livre.setNbReservataires(reservationsByUser.get().size());}
+							livre.setNbReservataires(reservationsByUser.get().size());
+							System.out.println(livre.getNbReservataires());}
 						else {
 							livre.setNbReservataires(0);
 						}
@@ -109,8 +111,8 @@ public class LivreMetierImpl implements ILivreMetier{
 	public Page<Livre> searchByLivreCriteria(LivreCriteria livreCriteria, Pageable pageable) {
 		// TICKET 1 FONCTIONNALITE DE MISE A JOURS DES LIVRES SUR DATE DE RETOUR LA PLUS PROCHE ET TAILLE DE LA LISTE D'ATTENTE
 		this.miseAJourLivres();
-		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
-		Page<Livre> livres = livreRepository.findAll(livreSpecification, pageable);
+		//Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
+		Page<Livre> livres = livreRepository.findAll(new LivreSpecification(livreCriteria), pageable);
 		return livres;
 	}
 
@@ -133,17 +135,12 @@ public class LivreMetierImpl implements ILivreMetier{
 		if(!categorie.isPresent()) 
 			throw new EntityNotFoundException("Le livre ne peut pas etre enregistre car la categorie saisie n'existe pas");
 		
-		/*
-		 * Recherche d'un livre via LivreCriteria : un livre est identifié par la combinaison unique d'un titre et d'un auteur
-		 */
-		LivreCriteria livreCriteria = new LivreCriteria(); 
-		livreCriteria.setTitre(livreDTO.getTitre());
-		livreCriteria.setAuteur(livreDTO.getAuteur());
-		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
-		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
-		if(!livreCriteriaList.isEmpty()) 
+		Optional<Livre> livreAlreadyCreated = livreRepository.findByTitreAndAuteur(livreDTO.getTitre(), livreDTO.getAuteur());
+		if(livreAlreadyCreated.isPresent()) 
 			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
+		
 		Livre livreToCreate = livreMapper.livreDTOToLivre(livreDTO); 
+		
 		livreToCreate.setCategorie(categorie.get());
 		livreToCreate.setNbExemplairesDisponibles(livreDTO.getNbExemplaires());
 		
@@ -170,36 +167,22 @@ public class LivreMetierImpl implements ILivreMetier{
 		if(!livreToUpdate.isPresent()) 
 			throw new EntityNotFoundException("Le livre à mettre à jour n'existe pas");
 		
-		Livre livreUpdates = livreMapper.livreDTOToLivre(livreDTO); 
-	
-		/*
-		 * Si la modification du titre ou du nom de l'auteur créée une nouvelle combinaison déjà existante identifiée 
-		 * par la recherche via LivreCriteria, la mise à jour du livre est refusée pour respecter l'unicité des enregistrements
-		 */
-		
-		LivreCriteria livreCriteria = new LivreCriteria(); 
-		livreCriteria.setTitre(livreDTO.getTitre());
-		livreCriteria.setAuteur(livreDTO.getAuteur());
-		Specification<Livre> livreSpecification = new LivreSpecification(livreCriteria);
-		List<Livre> livreCriteriaList = livreRepository.findAll(livreSpecification);
-		
-		if(livreCriteriaList.size() == 1 
-				&& (
-					(livreToUpdate.get().getTitre()!=livreDTO.getTitre() && livreToUpdate.get().getAuteur()==livreDTO.getAuteur())
-					||
-					(livreToUpdate.get().getTitre()==livreDTO.getTitre() && livreToUpdate.get().getAuteur()==livreDTO.getAuteur())
-				)
-			)
+		if(livreDTO.getTitre()!=null && livreDTO.getAuteur()!=null) {
+		Optional<Livre> livreAfterUpdate = livreRepository.findByTitreAndAuteur(livreDTO.getTitre(), livreDTO.getAuteur()); 
+		if(livreAfterUpdate.isPresent()) {
 			throw new EntityAlreadyExistsException("Ce livre a déjà été référencé");
+		}else { 
+			livreToUpdate.get().setTitre(livreDTO.getTitre());
+			livreToUpdate.get().setAuteur(livreDTO.getAuteur());
+		}
+		}
 		
+		if(livreDTO.getNumCategorie()!=null) {
 		Optional<Categorie> categorie = categorieRepository.findById(livreDTO.getNumCategorie());
 		if(!categorie.isPresent()) 
 			throw new EntityNotFoundException("Le changement de categorie est impossible car la categorie saisie n'existe pas");
 		livreToUpdate.get().setCategorie(categorie.get());
-		
-		livreToUpdate.get().setTitre(livreUpdates.getTitre());
-		livreToUpdate.get().setAuteur(livreUpdates.getAuteur());
-				
+		}		
 		/*
 		 * La mise à jour du nombre total d'exemplaires d'une référence de livre est inférieure au nombre des exemplaires
 		 * disponibles avant mise à jour soulève une exception car il y a un problème de gestion : on supprime un livre 
@@ -207,13 +190,14 @@ public class LivreMetierImpl implements ILivreMetier{
 		 * à jour		
 		 */
 		Integer nbExemplairesIndisponibles = livreToUpdate.get().getNbExemplaires()-livreToUpdate.get().getNbExemplairesDisponibles();
-		if(livreUpdates.getNbExemplaires()<0) 
+		if(livreDTO.getNbExemplaires()<0) 
 			throw new WrongNumberException("Le nombre total d'exemplaires de la référence de livre à mettre à jour doit au moins être égale à 0");
-		if(livreToUpdate.get().getNbExemplairesDisponibles()- (livreUpdates.getNbExemplaires())>0 || livreToUpdate.get().getNbExemplairesDisponibles()<0) throw new WrongNumberException("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
-		livreToUpdate.get().setNbExemplaires(livreUpdates.getNbExemplaires());
-		livreToUpdate.get().setNbExemplairesDisponibles(livreUpdates.getNbExemplaires()-nbExemplairesIndisponibles);
+		if((livreDTO.getNbExemplaires()-nbExemplairesIndisponibles)<0)
+			throw new WrongNumberException("Le nombre total d'exemplaires ne peut pas être inférieur au nombre de livres actuellement en cours de prêt"); 
+		livreToUpdate.get().setNbExemplaires(livreDTO.getNbExemplaires());
+		livreToUpdate.get().setNbExemplairesDisponibles(livreDTO.getNbExemplaires()-nbExemplairesIndisponibles);
 		
-		return livreToUpdate.get();
+		return livreRepository.save(livreToUpdate.get());
 	}
 
 	/**
@@ -236,11 +220,32 @@ public class LivreMetierImpl implements ILivreMetier{
 		 * Comme les prets clotures ne sont pas supprimés, le seul moyen de s'assurer qu'il n'existe pas de pret encours pour un 
 		 * livre à supprimer est de vérifier que le nombre total d'exemplaires est égal au nombre d'exemplaires disponibles
 		 */
-		if(livreToDelete.get().getNbExemplairesDisponibles()!=livreToDelete.get().getNbExemplaires()) 
-			throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts encours"); 
+		Optional<List<Pret>> pretsNonClotures = pretRepository.findAllByLivreAndNotPretStatut(livreToDelete.get(), PretStatut.CLOTURE);
+		Optional<List<Reservation>> reservationsNonSupprimeesAndNonAnnuleesAndNonLivrees = reservationRepository.findAllByLivreAndNotReservationStatutAndNotReservationStatutAndNotReservationStatut(livreToDelete.get(), ReservationStatut.ANNULEE, ReservationStatut.SUPPRIMEE, ReservationStatut.LIVREE);		
+		if(pretsNonClotures.isPresent() || reservationsNonSupprimeesAndNonAnnuleesAndNonLivrees.isPresent()) 
+			throw new EntityNotDeletableException("Vous ne pouvez pas supprimer ce livre qui a encore des prêts ou des réservations encours"); 
+		
+		Optional<List<Pret>> pretsClotures = pretRepository.findAllByLivreAndPretStatut(livreToDelete.get(), PretStatut.CLOTURE);
+		if(pretsClotures.isPresent()) {
+			for(Pret pret : pretsClotures.get()) {
+				pretRepository.deleteById(pret.getNumPret());
+			}
+		}
+		
+		Optional<List<Reservation>> reservationsSupprimeesOuAnnuleesOuLivrees = reservationRepository.findAllByLivreAndReservationStatutAndReservationStatutAndReservationStatut(
+				livreToDelete.get(),
+				ReservationStatut.ANNULEE,
+				ReservationStatut.SUPPRIMEE, 
+				ReservationStatut.LIVREE);
+		if(reservationsSupprimeesOuAnnuleesOuLivrees.isPresent()) {
+			for(Reservation reservation : reservationsSupprimeesOuAnnuleesOuLivrees.get()) {
+				reservationRepository.deleteById(reservation.getNumReservation());
+			}
+		}
 		livreRepository.deleteById(numLivre);
 		
 	}
+
 
 }
 	

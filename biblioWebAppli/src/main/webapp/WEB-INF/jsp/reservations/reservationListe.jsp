@@ -26,7 +26,7 @@
   
    <div class="panel panel-primary">
     <div class="panel-heading">
-    <h3>Recherche des réservations enregistrées</h3>
+    <h3><center>Recherche des réservations enregistrées</center></h3>
     </div>
     
 	    <div class="panel-body">
@@ -87,22 +87,22 @@
 			<div class="wrapper">
 				 <div class="panel panel-primary">
 				  <div class="panel-heading">
-				   <h3>Informations sur les réservations de livre</h3>
+				   <h3><center>Informations sur les réservations de livre</center></h3>
 				  </div>
   					<div class="panel-body">
-					   <table class="table table-striped table-condensed table-bordered">
+					   <table class="table table-striped table-condensed table-bordered" style="text-align:center">
 					   		 <thead>		 
 					   			  	 
 					    			 <tr>
-									      <th>Référence Réservation</th>
-									      <th>Date de Réservation</th>
-									      <th>Référence du Livre</th>
-									      <th>Titre</th>
-									      <th>Catégorie</th>
-									      <th>Disponibilité du Livre</th>
-									      <th>Date de retour la plus proche</th>
-									      <th>Rang dans liste d'attente</th>
-									      <th>Statut de la réservation</th>
+									      <th style="text-align:center">Référence Réservation</th>
+									      <th style="text-align:center">Date de Réservation</th>
+									      <th style="text-align:center">Référence du Livre</th>
+									      <th style="text-align:center">Titre</th>
+									      <th style="text-align:center">Catégorie</th>
+									      <th style="text-align:center">Disponibilité du Livre</th>
+									      <th style="text-align:center">Date de retour la plus proche</th>
+									      <th style="text-align:center">Rang dans liste d'attente</th>
+									      <th style="text-align:center">Statut de la réservation</th>
 									      
 								     </tr>
 								     </thead>

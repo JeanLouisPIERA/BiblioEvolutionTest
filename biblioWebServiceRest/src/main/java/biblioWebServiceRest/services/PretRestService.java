@@ -13,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,7 +28,6 @@ import biblioWebServiceRest.criteria.PretCriteria;
 
 import biblioWebServiceRest.dto.PretDTO;
 import biblioWebServiceRest.entities.Pret;
-import biblioWebServiceRest.entities.PretStatut;
 import biblioWebServiceRest.exceptions.BookNotAvailableException;
 import biblioWebServiceRest.exceptions.EntityNotFoundException;
 import biblioWebServiceRest.exceptions.WrongNumberException;
@@ -73,7 +70,7 @@ public class PretRestService {
 	@ApiOperation(value = "Enregistrement d'un nouveau prêt", response = Pret.class)
 	@ApiResponses(value = {
 	        @ApiResponse(code = 201, message = "Le prêt a été créé"),
-	        @ApiResponse(code = 404, message = "Ressource inexistante"),
+	        @ApiResponse(code = 401, message = "Ressource inexistante"),
 	        @ApiResponse(code = 423, message = "Il n'y a plus d'exemplaire disponible de ce livre")
 	})
 	@PostMapping(value="/prets", produces = "application/json", consumes = "application/json")
@@ -120,6 +117,7 @@ public class PretRestService {
 	 * @param numPret
 	 * @return
 	 * @throws EntityNotFoundException 
+	 * @throws BookNotAvailableException 
 	 * @see biblioWebServiceRest.metier.IPretMetier#cloturerPret(java.lang.Long)
 	 */
 	@ApiOperation(value = "Cloture d'un prêt à la restitution de l'ouvrage", response = Pret.class)
@@ -128,7 +126,7 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
 	@PutMapping(value="/prets/cloture/{numPret}", produces="application/json")
-	public ResponseEntity<Pret> cloturerPret(@PathVariable Long numPret) throws EntityNotFoundException {
+	public ResponseEntity<Pret> cloturerPret(@PathVariable Long numPret) throws EntityNotFoundException, BookNotAvailableException {
 		
 		Pret cloturePret = pretMetier.cloturerPret(numPret);
 		return new ResponseEntity<Pret>(cloturePret, HttpStatus.ACCEPTED);
@@ -150,7 +148,7 @@ public class PretRestService {
 	        @ApiResponse(code = 404, message = "Ressource inexistante"),
 	})
 	@GetMapping(value="/prets", produces="application/json")
-	public ResponseEntity<Page<Pret>> searchByPretCriteria(@PathParam("pretCriteria")PretCriteria pretCriteria, @RequestParam int page, @RequestParam int size ) {
+	public ResponseEntity<Page<Pret>> searchByPretCriteria(@PathParam("pretCriteria")PretCriteria pretCriteria,  @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "3") int size ) {
 		Page<Pret> prets = pretMetier.searchByCriteria(pretCriteria, PageRequest.of(page, size));
 		return new ResponseEntity<Page<Pret>>(prets, HttpStatus.OK);
 	}

@@ -1,7 +1,5 @@
 package biblioWebAppli.criteria;
 
-import java.util.List;
-
 import biblioWebAppli.objets.ReservationStatut;
 
 public class ReservationCriteria {
