@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import biblioWebAppli.criteria.PretCriteria;
 import biblioWebAppli.objets.Pret;
-import biblioWebAppli.objets.Reservation;
+
 
 
 
@@ -93,7 +93,6 @@ public class PretMetierImpl implements IPretMetier{
 	@Override
 	public Page<Pret> searchByCriteria(PretCriteria pretCriteria, Pageable pageable) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		System.out.println(username);
 		
 		HttpHeaders headers = httpHeadersFactory.createHeaders(username,password);
 		
@@ -102,7 +101,6 @@ public class PretMetierImpl implements IPretMetier{
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uRL)
     	        .queryParam("numPret", pretCriteria.getNumPret())
     	        .queryParam("username", username)
-    	        //.queryParam("userId", pretCriteria.getUserId())
     	        .queryParam("numLivre", pretCriteria.getNumLivre())
     	        .queryParam("titre", pretCriteria.getTitre())
     	        .queryParam("auteur", pretCriteria.getAuteur())

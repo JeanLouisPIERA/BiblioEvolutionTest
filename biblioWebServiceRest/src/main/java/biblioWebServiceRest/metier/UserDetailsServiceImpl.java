@@ -5,6 +5,7 @@ package biblioWebServiceRest.metier;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,20 +39,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).get();
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { 
+        Optional<User> user = userRepository.findByUsername(username);
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found"); 
         }
 
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         
-        Role role = user.getRole();
-            System.out.println("le role est:" + role.getName().toString());
+        Role role = user.get().getRole();
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName().toString()));
         
         
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
+        return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), grantedAuthorities);
         
     }
 }

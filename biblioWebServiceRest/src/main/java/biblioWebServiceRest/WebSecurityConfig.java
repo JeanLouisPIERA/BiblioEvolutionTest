@@ -110,9 +110,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     protected void configure(HttpSecurity http) throws Exception {
         http
         	.csrf().disable()
-        	//.antMatcher("/api/categories")
-        	//.httpBasic()
-            //.authenticationEntryPoint(authenticationEntryPoint)
         	.authorizeRequests()
         	.antMatchers(HttpMethod.POST, "/biblio/users/login" ).permitAll()
         	.antMatchers(HttpMethod.PUT, "/biblio/prets/prolongation/**").hasAnyAuthority(RoleEnum.ADMIN.toString(),RoleEnum.USER.toString())
@@ -129,9 +126,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             .authenticationEntryPoint(authenticationEntryPoint)
             ;
         
-    	  	//http.addFilterAfter(new CustomFilter(),
-            //BasicAuthenticationFilter.class);
-            
     }
     
     /**

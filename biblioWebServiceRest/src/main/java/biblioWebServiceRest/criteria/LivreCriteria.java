@@ -4,8 +4,6 @@
 package biblioWebServiceRest.criteria;
 
 
-import biblioWebServiceRest.entities.Categorie;
-
 
 /**
  * @author jeanl
@@ -19,6 +17,25 @@ public class LivreCriteria {
 	private String nomCategorie;
 	private Integer nbExemplairesDisponibles;
 	
+	
+	
+	public LivreCriteria() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public LivreCriteria(Long numLivre, String titre, String auteur, String nomCategorie,
+			Integer nbExemplairesDisponibles) {
+		super();
+		this.numLivre = numLivre;
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nomCategorie = nomCategorie;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+	}
+
+
 	/**
 	 * @return the numLivre
 	 */

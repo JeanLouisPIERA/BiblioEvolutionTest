@@ -16,6 +16,9 @@ import biblioWebServiceRest.entities.Livre;
 @Repository
 public interface ILivreRepository extends JpaRepository <Livre, Long>, JpaSpecificationExecutor<Livre>{
 	
+	
+	Optional<Livre> findByTitreAndAuteur(String titre, String auteur);
+	
 	@Query("select l from Livre l where l.titre like %?1")
 	Optional<Livre> findByTitre(String titre);
 

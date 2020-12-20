@@ -57,7 +57,7 @@ public class ReservationController {
     public String searchByCriteria(Model model, @PathParam(value = "reservationCriteria") ReservationCriteria reservationCriteria, 
     		@PathParam(value = "reservationStatut") String reservationStatut,
     		@RequestParam(name="page", defaultValue="0") int page, 
-			@RequestParam(name="size", defaultValue="4") int size){
+			@RequestParam(name="size", defaultValue="6") int size){
     	
     	model.addAttribute("reservationCriteria", new ReservationCriteria());
     	model.addAttribute("reservationStatutList", ReservationStatut.getListReservationStatut());

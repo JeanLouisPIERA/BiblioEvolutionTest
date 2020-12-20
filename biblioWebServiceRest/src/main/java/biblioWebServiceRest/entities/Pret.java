@@ -54,6 +54,20 @@ public class Pret implements Serializable, Comparable<Pret>{
 		this.user = user;
 		this.livre = livre;
 	}
+	
+	
+
+	public Pret(Long numPret, LocalDate datePret, LocalDate dateRetourPrevue, LocalDate dateRetourEffectif,
+			PretStatut pretStatut, User user, Livre livre) {
+		super();
+		this.numPret = numPret;
+		this.datePret = datePret;
+		this.dateRetourPrevue = dateRetourPrevue;
+		this.dateRetourEffectif = dateRetourEffectif;
+		this.pretStatut = pretStatut;
+		this.user = user;
+		this.livre = livre;
+	}
 
 	public Pret(LocalDate datePret, LocalDate dateRetourPrevue, LocalDate dateRetourEffectif, PretStatut pretStatut,
 			User user, Livre livre) {

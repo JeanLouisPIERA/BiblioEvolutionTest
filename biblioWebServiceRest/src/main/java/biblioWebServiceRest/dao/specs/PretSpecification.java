@@ -58,26 +58,14 @@ public class PretSpecification implements Specification<Pret> {
             }
             
             if (pretCriteria.getNumLivre()!= null) {
-            	System.out.println("Code1"+root.get("livre").get("numLivre"));
-            	System.out.println("Code2"+pretCriteria.getNumLivre());
             	predicates.getExpressions().add(builder.equal(root.get("livre").get("numLivre"), pretCriteria.getNumLivre()));	
             }
            
             if (pretCriteria.getCode()!= null) {
-            	//System.out.println("Code1"+root.get("pretStatut").in("code").as(String.class));
-            	//System.out.println("Code2"+pretCriteria.getCode());
             	predicates.getExpressions().add(builder.equal(root.get("pretStatut"),pretCriteria.getCode()));			
             	
             }
-	        
-        	
-        /**	
-            if (pretCriteria.getPretStatut().getCode()!= null) {
-            	
-            	predicates.getExpressions().add(builder.equal(root.get("pretStatut").get("text"), pretCriteria.getPretStatut().getText()));			
-            	
-            }
-        **/
+	   
         return builder.and(predicates);
 		
 	}

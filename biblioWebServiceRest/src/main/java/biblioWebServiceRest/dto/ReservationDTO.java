@@ -11,6 +11,20 @@ public class ReservationDTO {
 	@NotNull
 	@Positive
 	private Long numLivre;
+
+	public ReservationDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public ReservationDTO(@NotNull @Positive Long idUser, @NotNull @Positive Long numLivre) {
+		super();
+		this.idUser = idUser;
+		this.numLivre = numLivre;
+	}
+
+
 	public Long getIdUser() {
 		return idUser;
 	}

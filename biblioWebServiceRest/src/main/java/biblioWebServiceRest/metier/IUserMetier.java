@@ -3,7 +3,6 @@
  */
 package biblioWebServiceRest.metier;
 
-import java.util.Optional;
 
 import biblioWebServiceRest.dto.UserDTO;
 import biblioWebServiceRest.entities.User;

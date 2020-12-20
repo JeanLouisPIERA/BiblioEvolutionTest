@@ -1,6 +1,5 @@
 package biblioWebServiceRest.criteria;
 
-import biblioWebServiceRest.entities.ReservationStatut;
 
 public class ReservationCriteria {
 	

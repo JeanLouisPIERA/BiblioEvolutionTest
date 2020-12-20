@@ -4,8 +4,6 @@
 package biblioWebServiceRest.entities;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -72,6 +70,19 @@ public class Livre implements Serializable{
 	public Livre(String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
 			Categorie categorie) {
 		super();
+		this.titre = titre;
+		this.auteur = auteur;
+		this.nbExemplaires = nbExemplaires;
+		this.nbExemplairesDisponibles = nbExemplairesDisponibles;
+		this.categorie = categorie;
+	}
+	
+	
+
+	public Livre(Long numLivre, String titre, String auteur, Integer nbExemplaires, Integer nbExemplairesDisponibles,
+			Categorie categorie) {
+		super();
+		this.numLivre = numLivre;
 		this.titre = titre;
 		this.auteur = auteur;
 		this.nbExemplaires = nbExemplaires;

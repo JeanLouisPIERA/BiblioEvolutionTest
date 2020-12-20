@@ -46,9 +46,10 @@ public interface IPretMetier {
 	 * @param numPret
 	 * @return
 	 * @throws EntityNotFoundException 
+	 * @throws BookNotAvailableException 
 	 * @throws Exception
 	 */
-	Pret cloturerPret(Long numPret) throws EntityNotFoundException;
+	Pret cloturerPret(Long numPret) throws EntityNotFoundException, BookNotAvailableException;
 	
 
 // AFFICHER LES PRETS ENCOURS ***************************************************************************

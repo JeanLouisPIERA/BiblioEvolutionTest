@@ -26,7 +26,7 @@
   
    <div class="panel panel-primary">
     <div class="panel-heading">
-    <h3>Recherche des prets enregistrés</h3>
+    <h3><center>Recherche des prets enregistrés</center></h3>
     </div>
     
 	    <div class="panel-body">
@@ -73,21 +73,21 @@
 			<div class="wrapper">
 				 <div class="panel panel-primary">
 				  <div class="panel-heading">
-				   <h3>Informations sur les prets de livre</h3>
+				   <h3><center>Informations sur les prets de livre</center></h3>
 				  </div>
   					<div class="panel-body">
-					   <table class="table table-striped table-condensed table-bordered">
+					   <table class="table table-striped table-condensed table-bordered" style="text-align:center">
 					   		 <thead>		 
 					   			  	 
 					    			 <tr>
-									      <th>Référence du Prêt</th>
-									      <th>Référence du Livre</th>
-									      <th>Titre</th>
-									      <th>Catégorie</th>
-									      <th>Date du Pret</th>
-									      <th>Date de Retour Prévue</th>
-									      <th>Date de Retour Effectif</th>
-									      <th>Statut du prêt</th>
+									      <th style="text-align:center">Référence du Prêt</th>
+									      <th style="text-align:center">Référence du Livre</th>
+									      <th style="text-align:center">Titre</th>
+									      <th style="text-align:center">Catégorie</th>
+									      <th style="text-align:center">Date du Pret</th>
+									      <th style="text-align:center">Date de Retour Prévue</th>
+									      <th style="text-align:center">Date de Retour Effectif</th>
+									      <th style="text-align:center">Statut du prêt</th>
 									      
 								     </tr>
 								     </thead>

@@ -3,7 +3,6 @@
  */
 package biblioWebServiceRest.criteria;
 
-import biblioWebServiceRest.entities.PretStatut;
 
 /**
  * @author jeanl

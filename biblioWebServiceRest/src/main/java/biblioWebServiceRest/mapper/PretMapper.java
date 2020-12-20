@@ -39,9 +39,6 @@ public interface PretMapper {
 		
 		LivreDTO livreToLivreDTO(Livre entity);
 		Livre livreDTOToLivre(LivreDTO dto);
-		
-		//CategorieDTO categorieToCategorieDTO(Categorie entity);
-		//Categorie categorieDTOToCategorie(CategorieDTO dto);
 	
 		UserDTO userToUserDTO(User entity);
 		User userDTOToUser(UserDTO dto);
